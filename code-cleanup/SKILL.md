@@ -195,10 +195,9 @@ List manual verification needed for features that lack test coverage.
 Remove AI slop, fix code smells, and improve code quality at the file level.
 
 ### Triage Order
-Work safety-critical issues first, style issues second:
+Work safety-critical issues first, style issues second. A SQL injection in production matters more than a naming convention — fix the things that can hurt users before fixing things that annoy developers.
 - **Pass 1 (Safety):** SQL injection, unhandled errors, race conditions, auth bypasses, data leaks
 - **Pass 2 (Quality):** Naming, formatting, dead code, comments, code smells
-Never spend time on Pass 2 items while Pass 1 items remain.
 
 ### Workflow
 

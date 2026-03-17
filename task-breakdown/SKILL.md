@@ -34,7 +34,7 @@ Previous: `system-architecture` or `plan-interviewer` | Next: task execution (Ph
 
 ---
 
-### Step 0: Scope Mode
+## Step 0: Scope Mode
 
 Before decomposing, confirm the user's scope intent. This prevents mismatch between decomposition behavior and expectations.
 

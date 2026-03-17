@@ -181,6 +181,8 @@ Follow the template in `references/doc-template.md`. Adapt sections based on wha
 
 ## Documentation Audit Mode
 
+Documentation rots faster than code — setup steps reference old versions, env vars get added without updating docs, and architecture diagrams describe last quarter's design. Stale docs are worse than no docs because they actively mislead.
+
 When asked to "audit docs", "check documentation", or "are docs up to date":
 
 ### Step 1: Inventory
