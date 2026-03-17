@@ -34,6 +34,16 @@ Previous: none | Next: `task-breakdown` or `system-architecture`
 
 ## Core Process
 
+### Phase 0: Problem Validation
+
+Before diving into details, challenge the premise. Detailed specs for the wrong feature waste more time than vague specs for the right one.
+
+1. **Right problem?** — Is this the most direct path to the user/business outcome, or are we solving a proxy problem? Restate the actual outcome in one sentence.
+2. **What if we did nothing?** — Is there real, measurable pain today, or is this hypothetical? If nobody is complaining, probe why this surfaced now.
+3. **What already exists?** — Does existing code, tooling, or process already partially solve this? Map each sub-problem to what's already in place before designing net-new solutions.
+
+If any answer reveals the request is misdirected, surface it before proceeding. One round of "are we building the right thing?" saves multiple rounds of detailed spec work on the wrong thing.
+
 ### Phase 1: Context Gathering
 
 1. **Read existing artifacts**: If a plan file or spec file exists (or is mentioned), read it first to understand current state
@@ -71,6 +81,7 @@ Conduct interviews using **AskUserQuestion** tool. Each round explores a differe
 - Coupling concerns (Does this create a dependency we'll regret?)
 - Testability (How do we verify this works without manual testing?)
 - Observability (How do we know this is broken in production?)
+- Implementation foresight (What decisions will need to be made mid-build that should be resolved now? What will surprise the implementer?)
 
 #### Security & Privacy
 - Trust boundaries (What if this input comes from an attacker?)
