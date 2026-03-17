@@ -39,9 +39,6 @@ Artifacts save to `.agents/`.
 - "Break down tasks" → `task-breakdown`
 - "Clean up the codebase" → `code-cleanup`
 - "Write documentation" → `technical-writer`
-
-## Part of [Agent Skills](https://github.com/hungv47/agent-skills)
-
 ## License
 
 MIT

@@ -17,6 +17,3 @@ Skills write to `.agents/`:
 ## Cross-Stack (Optional)
 system-architecture and technical-writer can read `.agents/product-context.md`.
 Created by `icp-research`: `npx skills add hungv47/comms-skills`
-
-## Part of Agent Skills
-https://github.com/hungv47/agent-skills
