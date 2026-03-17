@@ -4,7 +4,7 @@ description: "Design system architecture, plan the tech stack, create database s
 license: MIT
 metadata:
   author: hungv47
-  version: "2.0.0"
+  version: "2.1.0"
 ---
 
 # System Architecture Designer

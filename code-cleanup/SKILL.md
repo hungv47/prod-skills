@@ -4,7 +4,7 @@ description: "Clean up the codebase, reorganize files, remove dead code, remove 
 license: MIT
 metadata:
   author: hungv47
-  version: "2.1.0"
+  version: "2.2.0"
 ---
 
 # Code Cleanup
@@ -56,7 +56,7 @@ None — this is a standalone skill.
 3. **Check existing conventions first** — Before changing anything, read the codebase's existing coding guidelines, linting config, naming patterns, and file structure. Match them.
 4. **Test after each change** — Run the test suite after every modification. If tests break, revert and try a smaller step.
 5. **Rollback awareness** — Commit before starting. Note the hash. If a change chain gets too complex, `git reset --hard <hash>` and try a different approach.
-6. **Session limits** — Cap at 30 changes per cleanup session. After 15 changes, generate an interim summary of what's been done and what remains. If each fix is spawning 2+ new issues, stop and reassess scope — cleanup is bounded work, not open-ended exploration.
+6. **Session limits** — Target ~30 changes per cleanup session. After 15 changes, generate an interim summary of what's been done and what remains. If each fix is spawning 2+ new issues, stop and reassess scope — cleanup is bounded work, not open-ended exploration.
 
 ## Triage
 

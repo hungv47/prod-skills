@@ -4,7 +4,7 @@ description: "Plan mode, plan file, spec file, interview me about the plan, help
 license: MIT
 metadata:
   author: hungv47
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Plan Interviewer
@@ -42,7 +42,7 @@ Before diving into details, challenge the premise. Detailed specs for the wrong 
 2. **What if we did nothing?** — Is there real, measurable pain today, or is this hypothetical? If nobody is complaining, probe why this surfaced now.
 3. **What already exists?** — Does existing code, tooling, or process already partially solve this? Map each sub-problem to what's already in place before designing net-new solutions.
 
-If any answer reveals the request is misdirected, surface it before proceeding. One round of "are we building the right thing?" saves multiple rounds of detailed spec work on the wrong thing.
+If any answer reveals the request is misdirected, recommend the right framing before continuing. If the user confirms they want to proceed anyway, note the concern in the artifact and continue — don't block. One round of "are we building the right thing?" saves multiple rounds of detailed spec work on the wrong thing.
 
 ### Phase 1: Context Gathering
 

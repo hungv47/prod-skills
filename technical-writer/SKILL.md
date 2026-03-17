@@ -4,7 +4,7 @@ description: "Document this project, create a user guide, write documentation, e
 license: MIT
 metadata:
   author: hungv47
-  version: "2.0.0"
+  version: "2.1.0"
 ---
 
 # Technical Writer
