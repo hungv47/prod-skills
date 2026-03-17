@@ -56,6 +56,7 @@ None — this is a standalone skill.
 3. **Check existing conventions first** — Before changing anything, read the codebase's existing coding guidelines, linting config, naming patterns, and file structure. Match them.
 4. **Test after each change** — Run the test suite after every modification. If tests break, revert and try a smaller step.
 5. **Rollback awareness** — Commit before starting. Note the hash. If a change chain gets too complex, `git reset --hard <hash>` and try a different approach.
+6. **Session limits** — Cap at 30 changes per cleanup session. After 15 changes, generate an interim summary of what's been done and what remains. If each fix is spawning 2+ new issues, stop and reassess scope — cleanup is bounded work, not open-ended exploration.
 
 ## Triage
 
@@ -192,6 +193,12 @@ List manual verification needed for features that lack test coverage.
 ## Part 2: Code-Level Cleanup
 
 Remove AI slop, fix code smells, and improve code quality at the file level.
+
+### Triage Order
+Work safety-critical issues first, style issues second:
+- **Pass 1 (Safety):** SQL injection, unhandled errors, race conditions, auth bypasses, data leaks
+- **Pass 2 (Quality):** Naming, formatting, dead code, comments, code smells
+Never spend time on Pass 2 items while Pass 1 items remain.
 
 ### Workflow
 

@@ -34,6 +34,22 @@ Previous: `system-architecture` or `plan-interviewer` | Next: task execution (Ph
 
 ---
 
+### Step 0: Scope Mode
+
+Before decomposing, confirm the user's scope intent. This prevents mismatch between decomposition behavior and expectations.
+
+| Mode | When | Behavior |
+|------|------|----------|
+| **FULL SCOPE** | Discovery, greenfield, "what would it take?" | Capture everything — defer cuts to after decomposition |
+| **LOCKED SCOPE** | Spec is final, ready to build | Decompose exactly what's written — flag gaps but don't add |
+| **MINIMAL SCOPE** | Too much on the plate, need an MVP | Actively cut before decomposing — ask "can we ship without this?" for each feature |
+
+Ask: *"Are we decomposing everything (full scope), building exactly what's spec'd (locked), or cutting to minimum (minimal)?"*
+
+Default to LOCKED SCOPE if the user provides a finished spec. Default to MINIMAL SCOPE if the user mentions MVP, prototype, or time pressure.
+
+---
+
 ## Phase 1: Task Decomposition
 
 ### Task Format

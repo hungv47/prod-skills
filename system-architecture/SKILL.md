@@ -350,3 +350,4 @@ CLERK_SECRET_KEY, NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
 - [references/api-patterns.md](references/api-patterns.md) — REST best practices and endpoint examples
 - [references/auth-patterns.md](references/auth-patterns.md) — Authentication implementations
 - [references/deployment-patterns.md](references/deployment-patterns.md) — CI/CD and infrastructure patterns
+- [references/failure-modes.md](references/failure-modes.md) — Failure mode criticality classification
