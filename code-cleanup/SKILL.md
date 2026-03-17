@@ -199,6 +199,8 @@ Work safety-critical issues first, style issues second. A SQL injection in produ
 - **Pass 1 (Safety):** SQL injection, unhandled errors, race conditions, auth bypasses, data leaks
 - **Pass 2 (Quality):** Naming, formatting, dead code, comments, code smells
 
+Complete all Pass 1 fixes and verify tests pass before starting Pass 2. Mixing passes makes it hard to isolate whether a test failure came from a safety fix or a style change.
+
 ### Workflow
 
 1. Determine scope:

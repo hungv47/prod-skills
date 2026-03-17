@@ -81,7 +81,7 @@ Conduct interviews using **AskUserQuestion** tool. Each round explores a differe
 - Coupling concerns (Does this create a dependency we'll regret?)
 - Testability (How do we verify this works without manual testing?)
 - Observability (How do we know this is broken in production?)
-- Implementation foresight (What decisions will need to be made mid-build that should be resolved now? What will surprise the implementer?)
+- Implementation foresight (What decisions will need to be made mid-build that should be resolved now? What will surprise the implementer? Example: "If enrichment APIs partially fail, do we degrade gracefully or block the whole flow?" — resolve this now, not at 2am during implementation.)
 
 #### Security & Privacy
 - Trust boundaries (What if this input comes from an attacker?)

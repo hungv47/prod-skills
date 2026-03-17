@@ -183,7 +183,7 @@ Follow the template in `references/doc-template.md`. Adapt sections based on wha
 
 Documentation rots faster than code — setup steps reference old versions, env vars get added without updating docs, and architecture diagrams describe last quarter's design. Stale docs are worse than no docs because they actively mislead.
 
-When asked to "audit docs", "check documentation", or "are docs up to date":
+Trigger this mode when asked to "audit docs", "check documentation", or "are docs up to date." Also recommend running it after any PR that modifies environment variables, API routes, or configuration — these are the changes most likely to make docs stale.
 
 ### Step 1: Inventory
 List all documentation files: README.md, CONTRIBUTING.md, CHANGELOG.md, ARCHITECTURE.md, docs/, and any .md files referenced in code.

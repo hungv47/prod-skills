@@ -46,7 +46,7 @@ Before decomposing, confirm the user's scope intent. This prevents mismatch betw
 
 Ask: *"Are we decomposing everything (full scope), building exactly what's spec'd (locked), or cutting to minimum (minimal)?"*
 
-Default to LOCKED SCOPE if the user provides a finished spec. Default to MINIMAL SCOPE if the user mentions MVP, prototype, or time pressure.
+Default to LOCKED SCOPE if the user provides a finished spec. Default to MINIMAL SCOPE if the user mentions MVP, prototype, or time pressure. If arriving from `plan-interviewer`, check the spec for scope signals before asking — the user may have already decided.
 
 ---
 
