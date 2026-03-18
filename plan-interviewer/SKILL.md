@@ -30,6 +30,27 @@ Before delivering, verify:
 ## Chain Position
 Previous: none | Next: `task-breakdown` or `system-architecture`
 
+### Skill Deference
+- **Have a FEATURE or PRODUCT to specify?** → Use this skill.
+- **Have a declining METRIC to diagnose** (X is at Y, should be Z)? → Use `problem-analysis` (from strategy-skills) instead — it structures metric diagnosis with hypothesis testing, not feature specification.
+
+**Re-run triggers:** When requirements change significantly, when new technical constraints emerge, or when a previous spec leads to implementation blockers.
+
+---
+
+## Before Starting
+
+### Step 0: Product Context
+Check for `.agents/product-context.md`. If available, read for product and audience context before interviewing — it prevents asking questions already answered. If missing, this is fine — plan-interviewer can work standalone.
+
+If `.agents/product-context.md` has a `date` field older than 30 days, recommend re-running `icp-research` (from comms-skills) to refresh it.
+
+### Optional Artifacts
+| Artifact | Source | Benefit |
+|----------|--------|---------|
+| `.agents/product-context.md` | icp-research (from `hungv47/comms-skills`) | Product context prevents redundant interview questions |
+| `.agents/problem-analysis.md` | problem-analysis (from `hungv47/strategy-skills`) | Root cause context when the feature being spec'd is a solution to a diagnosed problem |
+
 ---
 
 ## Core Process

@@ -9,7 +9,7 @@ metadata:
 
 # System Architecture Designer
 
-*Productivity — Step 1 of 1. Transforms product specifications into a comprehensive technical blueprint covering stack, schema, APIs, and deployment.*
+*Productivity — Standalone with chain connections. Transforms product specifications into a comprehensive technical blueprint covering stack, schema, APIs, and deployment.*
 
 **Core Question:** "Will this still work at 10x scale with 10x team?"
 
@@ -32,7 +32,9 @@ Before delivering, verify:
 - [ ] At least one architectural trade-off is documented with alternatives considered
 
 ## Chain Position
-Previous: `task-breakdown` (optional) | Next: `task-breakdown` (optional)
+Previous: `plan-interviewer` or `task-breakdown` (optional) | Next: `task-breakdown` (optional) | Cross-stack: reads `solution-design.md` (from strategy-skills), `user-flow.md` (from design-skills)
+
+**Re-run triggers:** When product spec changes significantly, when scale requirements change (10x growth), when migrating core infrastructure, or when adding major new integrations.
 
 ---
 
@@ -42,6 +44,8 @@ Previous: `task-breakdown` (optional) | Next: `task-breakdown` (optional)
 
 Check for `.agents/product-context.md`. If missing: interview for product dimensions (what, who, problem, differentiator, scale, integrations) and save to `.agents/product-context.md`. Or recommend running `icp-research` (from `hungv47/comms-skills`) to bootstrap it.
 
+If `.agents/product-context.md` has a `date` field older than 30 days, recommend re-running `icp-research` (from comms-skills) to refresh it.
+
 ### Required Artifacts
 None — this skill can run standalone.
 
@@ -50,6 +54,8 @@ None — this skill can run standalone.
 |----------|--------|---------|
 | `product-context.md` | icp-research (from `hungv47/comms-skills`) | Industry context, user personas, and constraints |
 | `task-breakdown.md` | task-breakdown | Feature list already decomposed into buildable units |
+| `solution-design.md` | solution-design (from `hungv47/strategy-skills`) | Business initiatives and constraints from strategy track — informs what to build and why |
+| `.agents/design/user-flow.md` | user-flow (from `hungv47/design-skills`) | User flow diagrams for API endpoint design and feature scoping |
 
 ### Two Modes of Operation
 
