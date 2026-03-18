@@ -1,6 +1,6 @@
 ---
 name: task-breakdown
-description: "Breaks down architecture or feature specs into granular, testable tasks with clear acceptance criteria and dependency chains. Use when the user asks to break down tasks, create a task list, plan implementation, decompose architecture, create agent tasks, plan an MVP build, break down a feature, or create an execution plan — task decomposition, implementation planning, agent task creation."
+description: "This skill should be invoked when the user has a spec, architecture, or defined feature and needs it broken into buildable tasks with acceptance criteria. Triggers include 'break this down', 'create tasks', 'what do I build first', 'make this actionable', 'create tickets', 'plan the implementation steps', or 'break this into sprints' -- even if they just say 'this is too big, where do I start.' Produces tasks for AI agents or engineers. Not for clarifying unclear requirements (use plan-interviewer) or designing architecture (use system-architecture)."
 license: MIT
 metadata:
   author: hungv47

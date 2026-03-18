@@ -1,6 +1,6 @@
 ---
 name: code-cleanup
-description: "Performs structural cleanup, code-level cleanup, and refactoring without breaking functionality — removes dead code, AI slop, and code smells. Use when the user asks to clean up the codebase, reorganize files, remove dead code, remove AI slop, fix AI-generated code, clean up a PR, remove unnecessary comments, refactor, or fix code smells — structural cleanup, code-level cleanup, dead code removal, refactoring."
+description: "This skill should be invoked when the user wants to clean up, refactor, or improve existing code without changing behavior. Triggers include 'this code is a mess', 'clean up this file', 'remove dead code', 'too much complexity', 'I inherited bad code', 'fix AI slop', 'refactor', or 'reorganize the codebase' -- even if they just say 'this is ugly' or 'simplify this.' Not for diagnosing business problems (use problem-analysis) or writing documentation (use technical-writer)."
 argument-hint: "[file or directory]"
 license: MIT
 metadata:

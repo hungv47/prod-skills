@@ -1,6 +1,6 @@
 ---
 name: technical-writer
-description: "Scans a codebase and produces clear, structured documentation — READMEs, user guides, API references, and configuration guides. Use when the user asks to document a project, create a user guide, write documentation, explain an app, create a README, write technical docs, or document a codebase — product documentation, user guides, API references, technical writing."
+description: "This skill should be invoked when the user wants documentation for a codebase or project -- READMEs, user guides, API references, setup guides, or architecture docs. Triggers include 'write a README', 'document this', 'nobody knows how this works', 'I need docs', 'explain this codebase', 'create a user guide', or 'onboarding documentation' -- even if they just say 'a new dev couldn't figure this out.' Not for specifying what to build (use plan-interviewer) or cleaning up code (use code-cleanup)."
 license: MIT
 metadata:
   author: hungv47

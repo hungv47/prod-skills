@@ -1,6 +1,6 @@
 ---
 name: system-architecture
-description: "Transforms product specifications into comprehensive technical blueprints covering tech stack, database schema, API design, file structure, and deployment. Use when the user asks to design system architecture, plan a tech stack, create a database schema, design API structure, architect a system, plan a backend, or design infrastructure — system architecture, technical blueprints, database design, API design, tech stack selection."
+description: "This skill should be invoked when the user has a defined product or feature and needs the technical blueprint -- tech stack, database schema, API design, file structure, or deployment plan. Triggers include 'how should I build this', 'what tech stack', 'design the architecture', 'plan my backend', 'how should I structure this app', or 'I need a database schema' -- even if they just say 'architect this.' Not for clarifying vague requirements (use plan-interviewer) or breaking architecture into coding tasks (use task-breakdown)."
 license: MIT
 metadata:
   author: hungv47
