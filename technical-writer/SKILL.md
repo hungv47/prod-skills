@@ -4,7 +4,7 @@ description: "This skill should be invoked when the user wants documentation for
 license: MIT
 metadata:
   author: hungv47
-  version: "2.1.0"
+  version: "2.1.1"
 ---
 
 # Technical Writer

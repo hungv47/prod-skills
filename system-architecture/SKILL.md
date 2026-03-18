@@ -4,7 +4,7 @@ description: "This skill should be invoked when the user has a defined product o
 license: MIT
 metadata:
   author: hungv47
-  version: "2.1.0"
+  version: "2.1.1"
 ---
 
 # System Architecture Designer

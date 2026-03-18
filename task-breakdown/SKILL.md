@@ -4,7 +4,7 @@ description: "This skill should be invoked when the user has a spec, architectur
 license: MIT
 metadata:
   author: hungv47
-  version: "1.1.0"
+  version: "1.1.1"
 ---
 
 # Task Breakdown
