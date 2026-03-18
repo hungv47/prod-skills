@@ -55,6 +55,8 @@ None — scans project structure directly.
 | `system-architecture.md` | system-architecture | Architecture decisions and component relationships pre-mapped |
 | `.agents/design/brand-system.md` | brand-system (from `hungv47/design-skills`) | Brand voice and terminology guidelines for documentation tone consistency |
 
+If optional upstream artifacts' `date` fields are older than 30 days, consider re-running their source skills — stale product context or architecture docs produce outdated documentation.
+
 ### Audience Interview
 If the user doesn't specify an audience, interview:
 1. Who reads this documentation? (developers integrating, end-users, ops team, all three?)
