@@ -26,6 +26,21 @@ system-architecture ↔ task-breakdown
 code-cleanup, technical-writer: standalone
 ```
 
+## Cross-Stack DAG
+
+```
+strategy: problem-analysis → solution-design → funnel-planner → experiment
+                                    ↓                  ↓
+comms:    icp-research → imc-plan → content-create → attribution
+               ↓              ↕ (reads solution-design, targets)
+design:   brand-system → user-flow
+                              ↓
+prod:     plan-interviewer → system-architecture → task-breakdown
+          code-cleanup (standalone)    technical-writer (standalone)
+```
+
+`system-architecture` can read `.agents/solution-design.md` (from strategy-skills) and `.agents/design/user-flow.md` (from design-skills) for cross-stack context.
+
 Artifacts save to `.agents/`.
 
 ## Cross-Stack Workflow

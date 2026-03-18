@@ -32,6 +32,15 @@ Before delivering, verify:
 ## Chain Position
 Previous: `system-architecture` or `plan-interviewer` | Next: task execution (Phase 2)
 
+**Re-run triggers:** When architecture changes after initial breakdown, when scope mode changes (e.g., full → minimal), or when tasks consistently fail acceptance criteria (indicates decomposition issues).
+
+### Optional Artifacts
+| Artifact | Source | Benefit |
+|----------|--------|---------|
+| `system-architecture.md` | system-architecture | Architecture defines structure for task decomposition |
+| `spec.md` | plan-interviewer | Feature specification with decided requirements |
+| `user-flow.md` | user-flow (from `hungv47/design-skills`) | User flow diagrams for feature decomposition and acceptance criteria |
+
 ---
 
 ## Step 0: Scope Mode

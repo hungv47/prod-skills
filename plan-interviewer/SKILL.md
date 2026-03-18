@@ -30,6 +30,12 @@ Before delivering, verify:
 ## Chain Position
 Previous: none | Next: `task-breakdown` or `system-architecture`
 
+### Skill Deference
+- **Have a FEATURE or PRODUCT to specify?** → Use this skill.
+- **Have a declining METRIC to diagnose** (X is at Y, should be Z)? → Use `problem-analysis` (from strategy-skills) instead — it structures metric diagnosis with hypothesis testing, not feature specification.
+
+**Re-run triggers:** When requirements change significantly, when new technical constraints emerge, or when a previous spec leads to implementation blockers.
+
 ---
 
 ## Core Process
