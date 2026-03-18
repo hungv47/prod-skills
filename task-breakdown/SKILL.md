@@ -1,6 +1,6 @@
 ---
 name: task-breakdown
-description: "Break down tasks, create a task list, plan implementation, decompose architecture, create agent tasks, plan MVP build, break down feature, create execution plan — two-phase workflow for breaking down implementation into granular, testable tasks with AI agents."
+description: "Breaks down architecture or feature specs into granular, testable tasks with clear acceptance criteria and dependency chains. Use when the user asks to break down tasks, create a task list, plan implementation, decompose architecture, create agent tasks, plan an MVP build, break down a feature, or create an execution plan — task decomposition, implementation planning, agent task creation."
 license: MIT
 metadata:
   author: hungv47

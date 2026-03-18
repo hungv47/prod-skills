@@ -1,6 +1,7 @@
 ---
 name: code-cleanup
-description: "Clean up the codebase, reorganize files, remove dead code, remove AI slop, fix AI-generated code, clean up PR, remove unnecessary comments, refactor this, fix code smells, improve project structure — structural cleanup, code-level cleanup, dead code removal, and refactoring without breaking functionality."
+description: "Performs structural cleanup, code-level cleanup, and refactoring without breaking functionality — removes dead code, AI slop, and code smells. Use when the user asks to clean up the codebase, reorganize files, remove dead code, remove AI slop, fix AI-generated code, clean up a PR, remove unnecessary comments, refactor, or fix code smells — structural cleanup, code-level cleanup, dead code removal, refactoring."
+argument-hint: "[file or directory]"
 license: MIT
 metadata:
   author: hungv47
@@ -303,30 +304,6 @@ Apply design patterns only when the code has a concrete problem — not prophyla
 
 ---
 
-## Worked Example
-
-**User:** "Clean up this Express API project, it's gotten messy after 6 months of fast iteration."
-
-**Step 1 — Structural scan:** Found 4 unused files in `/utils`, 2 duplicate helper modules, inconsistent naming (`userController.js` vs `product-controller.js`).
-
-**Step 2 — Code-level:** Removed 12 `// TODO: fix later` comments with no context, 3 console.log statements, 2 commented-out code blocks (>50 lines each).
-
-**Step 3 — Refactoring:** Extracted shared validation logic from 3 controllers into `middleware/validate.js`. Normalized file naming to kebab-case.
-
-**Step 4 — Validation:** `bun test` — 47/47 passing. `tsc --noEmit` — clean. No behavioral changes.
-
-**Artifact saved to `.agents/cleanup-report.md`.**
-
----
-
-## Anti-Patterns
-
-- **Behavioral changes disguised as cleanup** — if the observable output changes, it's not cleanup. Refactoring means same behavior, different structure.
-- **"Tests pass so it's fine"** — passing tests don't guarantee behavioral equivalence if test coverage is incomplete. Flag uncovered code for manual verification.
-- **Combining cleanup with features** — one change at a time. Never sneak a feature change into a cleanup PR.
-
----
-
 ## Artifact Template
 
 On re-run: rename existing artifact to `cleanup-report.v[N].md` and create new with incremented version.
@@ -365,3 +342,27 @@ status: complete
 ## Manual Verification Needed
 - [Features lacking test coverage that need manual check]
 ```
+
+---
+
+## Worked Example
+
+**User:** "Clean up this Express API project, it's gotten messy after 6 months of fast iteration."
+
+**Step 1 — Structural scan:** Found 4 unused files in `/utils`, 2 duplicate helper modules, inconsistent naming (`userController.js` vs `product-controller.js`).
+
+**Step 2 — Code-level:** Removed 12 `// TODO: fix later` comments with no context, 3 console.log statements, 2 commented-out code blocks (>50 lines each).
+
+**Step 3 — Refactoring:** Extracted shared validation logic from 3 controllers into `middleware/validate.js`. Normalized file naming to kebab-case.
+
+**Step 4 — Validation:** `bun test` — 47/47 passing. `tsc --noEmit` — clean. No behavioral changes.
+
+**Artifact saved to `.agents/cleanup-report.md`.**
+
+---
+
+## Anti-Patterns
+
+- **Behavioral changes disguised as cleanup** — if the observable output changes, it's not cleanup. Refactoring means same behavior, different structure.
+- **"Tests pass so it's fine"** — passing tests don't guarantee behavioral equivalence if test coverage is incomplete. Flag uncovered code for manual verification.
+- **Combining cleanup with features** — one change at a time. Never sneak a feature change into a cleanup PR.

@@ -1,6 +1,6 @@
 ---
 name: technical-writer
-description: "Document this project, create a user guide, write documentation, explain this app, create README, write technical docs, document the codebase — product documentation, user guides, API references, technical writing. Scans project structure and translates code into clear, structured documentation."
+description: "Scans a codebase and produces clear, structured documentation — READMEs, user guides, API references, and configuration guides. Use when the user asks to document a project, create a user guide, write documentation, explain an app, create a README, write technical docs, or document a codebase — product documentation, user guides, API references, technical writing."
 license: MIT
 metadata:
   author: hungv47

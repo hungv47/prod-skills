@@ -1,6 +1,6 @@
 ---
 name: plan-interviewer
-description: "Plan mode, plan file, spec file, interview me about the plan, help me think through this, implementation planning — multi-round interviews to surface non-obvious requirements, edge cases, and tradeoffs before writing specifications."
+description: "Transforms shallow feature requests into well-specified plans through multi-round interviews that surface non-obvious requirements, edge cases, and tradeoffs. Use when the user asks to plan, spec out a feature, think through an implementation, enter plan mode, create a spec file, or refine a plan — multi-round interviews, implementation planning, specification writing."
 license: MIT
 metadata:
   author: hungv47

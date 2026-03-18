@@ -1,6 +1,6 @@
 ---
 name: system-architecture
-description: "Design system architecture, plan the tech stack, create database schema, design API structure, architect the system, plan the backend, design infrastructure — system architecture, technical blueprints, database design, API design, tech stack selection. Transforms product specs into production-ready technical blueprints before a single line of code is written."
+description: "Transforms product specifications into comprehensive technical blueprints covering tech stack, database schema, API design, file structure, and deployment. Use when the user asks to design system architecture, plan a tech stack, create a database schema, design API structure, architect a system, plan a backend, or design infrastructure — system architecture, technical blueprints, database design, API design, tech stack selection."
 license: MIT
 metadata:
   author: hungv47
