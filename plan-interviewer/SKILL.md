@@ -1,6 +1,6 @@
 ---
 name: plan-interviewer
-description: "This skill should be invoked when the user has a vague or underspecified idea and needs to think it through before building. Triggers include 'I have an idea but...', 'help me think this through', 'let's scope this', 'spec this out', 'what am I missing', or 'I'm not sure what to build' -- even if they just describe a feature in one sentence without details. This skill interviews the user to surface hidden requirements. Not for breaking an existing spec into tasks (use task-breakdown) or designing technical architecture (use system-architecture)."
+description: "This skill should be invoked when the user has a vague or underspecified idea and needs to think it through before building. Triggers include 'I have an idea but...', 'help me think this through', 'let's scope this', 'spec this out', 'write a PRD', 'product requirements', 'what am I missing', 'I'm building an MVP', or 'I'm not sure what to build' -- even if they just describe a feature in one sentence without details. This skill interviews the user to surface hidden requirements. Not for breaking an existing spec into tasks (use task-breakdown), designing technical architecture (use system-architecture), or marketing plans (use imc-plan)."
 license: MIT
 metadata:
   author: hungv47

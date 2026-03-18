@@ -1,6 +1,6 @@
 ---
 name: task-breakdown
-description: "This skill should be invoked when the user has a spec, architecture, or defined feature and needs it broken into buildable tasks with acceptance criteria. Triggers include 'break this down', 'create tasks', 'what do I build first', 'make this actionable', 'create tickets', 'plan the implementation steps', or 'break this into sprints' -- even if they just say 'this is too big, where do I start.' Produces tasks for AI agents or engineers. Not for clarifying unclear requirements (use plan-interviewer) or designing architecture (use system-architecture)."
+description: "This skill should be invoked when the user has a spec, architecture, or defined feature and needs it broken into buildable tasks with acceptance criteria. Triggers include 'break this down', 'create tasks', 'what do I build first', 'make this actionable', 'create tickets', 'sprint planning', 'backlog', 'roadmap', or 'break this into sprints' -- even if they just say 'this is too big, where do I start.' Produces tasks for AI agents or engineers. Not for clarifying unclear requirements (use plan-interviewer), designing architecture (use system-architecture), or marketing/strategic plans (use imc-plan or solution-design)."
 license: MIT
 metadata:
   author: hungv47

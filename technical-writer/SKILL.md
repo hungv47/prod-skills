@@ -1,6 +1,6 @@
 ---
 name: technical-writer
-description: "This skill should be invoked when the user wants documentation for a codebase or project -- READMEs, user guides, API references, setup guides, or architecture docs. Triggers include 'write a README', 'document this', 'nobody knows how this works', 'I need docs', 'explain this codebase', 'create a user guide', or 'onboarding documentation' -- even if they just say 'a new dev couldn't figure this out.' Not for specifying what to build (use plan-interviewer) or cleaning up code (use code-cleanup)."
+description: "This skill should be invoked when the user wants documentation for a codebase or project -- READMEs, user guides, API references, API docs, setup guides, runbooks, changelogs, or architecture docs. Triggers include 'write a README', 'document this', 'nobody knows how this works', 'I need docs', 'explain this codebase', 'create a user guide', 'knowledge base', or 'onboarding documentation' -- even if they just say 'a new dev couldn't figure this out.' Not for specifying what to build (use plan-interviewer) or cleaning up code (use code-cleanup)."
 license: MIT
 metadata:
   author: hungv47

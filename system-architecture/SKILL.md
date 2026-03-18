@@ -1,6 +1,6 @@
 ---
 name: system-architecture
-description: "This skill should be invoked when the user has a defined product or feature and needs the technical blueprint -- tech stack, database schema, API design, file structure, or deployment plan. Triggers include 'how should I build this', 'what tech stack', 'design the architecture', 'plan my backend', 'how should I structure this app', or 'I need a database schema' -- even if they just say 'architect this.' Not for clarifying vague requirements (use plan-interviewer) or breaking architecture into coding tasks (use task-breakdown)."
+description: "This skill should be invoked when the user has a defined product or feature and needs the technical blueprint -- tech stack, database schema, API design, file structure, or deployment plan. Triggers include 'how should I build this', 'what tech stack', 'design the architecture', 'plan my backend', 'how should I structure this app', 'system design', 'how should I deploy this', 'picking a database', or 'architect my MVP' -- even if they just say 'architect this.' Not for clarifying vague requirements (use plan-interviewer) or breaking architecture into coding tasks (use task-breakdown)."
 license: MIT
 metadata:
   author: hungv47
