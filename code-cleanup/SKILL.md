@@ -4,7 +4,7 @@ description: "Clean up the codebase, reorganize files, remove dead code, remove 
 license: MIT
 metadata:
   author: hungv47
-  version: "2.1.0"
+  version: "2.2.0"
 ---
 
 # Code Cleanup
@@ -56,6 +56,7 @@ None — this is a standalone skill.
 3. **Check existing conventions first** — Before changing anything, read the codebase's existing coding guidelines, linting config, naming patterns, and file structure. Match them.
 4. **Test after each change** — Run the test suite after every modification. If tests break, revert and try a smaller step.
 5. **Rollback awareness** — Commit before starting. Note the hash. If a change chain gets too complex, `git reset --hard <hash>` and try a different approach.
+6. **Session limits** — Target ~30 changes per cleanup session. After 15 changes, generate an interim summary of what's been done and what remains. If each fix is spawning 2+ new issues, stop and reassess scope — cleanup is bounded work, not open-ended exploration.
 
 ## Triage
 
@@ -192,6 +193,13 @@ List manual verification needed for features that lack test coverage.
 ## Part 2: Code-Level Cleanup
 
 Remove AI slop, fix code smells, and improve code quality at the file level.
+
+### Triage Order
+Work safety-critical issues first, style issues second. A SQL injection in production matters more than a naming convention — fix the things that can hurt users before fixing things that annoy developers.
+- **Pass 1 (Safety):** SQL injection, unhandled errors, race conditions, auth bypasses, data leaks
+- **Pass 2 (Quality):** Naming, formatting, dead code, comments, code smells
+
+Complete all Pass 1 fixes and verify tests pass before starting Pass 2. Mixing passes makes it hard to isolate whether a test failure came from a safety fix or a style change.
 
 ### Workflow
 

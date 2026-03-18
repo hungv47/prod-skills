@@ -4,7 +4,7 @@ description: "Design system architecture, plan the tech stack, create database s
 license: MIT
 metadata:
   author: hungv47
-  version: "2.0.0"
+  version: "2.1.0"
 ---
 
 # System Architecture Designer
@@ -157,7 +157,7 @@ Before finalizing, cross-check the architecture against the product spec:
 
 1. **Feature coverage** — trace every product feature to at least one API endpoint + DB table + UI component
 2. **User flow completeness** — walk through each critical flow end-to-end and verify every step has infrastructure
-3. **Edge case inventory** — for each flow: what happens on failure, timeout, invalid input, concurrent access?
+3. **Edge case inventory** — for each flow, trace four paths: happy path, nil/missing input, empty/zero-length input, and upstream error. These are distinct failure modes — nil crashes, empty creates silent orphan data, and upstream errors need retry or degradation. See `references/failure-modes.md` for the tracing table and `references/interaction-edge-cases.md` for UI-level edge cases.
 4. **Env var audit** — every secret, API key, and config value is listed in the deployment section
 5. **Scale check** — identify the first bottleneck under 10x current load; document the mitigation path
 
@@ -350,3 +350,5 @@ CLERK_SECRET_KEY, NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
 - [references/api-patterns.md](references/api-patterns.md) — REST best practices and endpoint examples
 - [references/auth-patterns.md](references/auth-patterns.md) — Authentication implementations
 - [references/deployment-patterns.md](references/deployment-patterns.md) — CI/CD and infrastructure patterns
+- [references/failure-modes.md](references/failure-modes.md) — Failure mode criticality, error tracing table, shadow path analysis
+- [references/interaction-edge-cases.md](references/interaction-edge-cases.md) — UI and interaction edge case categories

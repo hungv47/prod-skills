@@ -4,7 +4,7 @@ description: "Document this project, create a user guide, write documentation, e
 license: MIT
 metadata:
   author: hungv47
-  version: "2.0.0"
+  version: "2.1.0"
 ---
 
 # Technical Writer
@@ -176,6 +176,39 @@ Adjust language and depth based on the target audience:
 
 ### Structure
 Follow the template in `references/doc-template.md`. Adapt sections based on what the codebase reveals — omit sections with no content rather than writing placeholder text.
+
+---
+
+## Documentation Audit Mode
+
+Documentation rots faster than code — setup steps reference old versions, env vars get added without updating docs, and architecture diagrams describe last quarter's design. Stale docs are worse than no docs because they actively mislead.
+
+Trigger this mode when asked to "audit docs", "check documentation", or "are docs up to date." Also recommend running it after any PR that modifies environment variables, API routes, or configuration — these are the changes most likely to make docs stale.
+
+### Step 1: Inventory
+List all documentation files: README.md, CONTRIBUTING.md, CHANGELOG.md, ARCHITECTURE.md, docs/, and any .md files referenced in code.
+
+### Step 2: Staleness Check
+For each doc file, compare against current codebase:
+- [ ] Setup steps match actual dependencies (check package.json/requirements.txt versions)
+- [ ] Environment variables listed match .env.example or code references
+- [ ] API endpoints documented match actual route definitions
+- [ ] Configuration options match current defaults and valid values
+- [ ] Architecture descriptions match current file/folder structure
+- [ ] Links and cross-references resolve (no 404s within docs)
+
+### Step 3: Consistency Check
+- [ ] No contradictions between documents (README says X, CONTRIBUTING says Y)
+- [ ] Terminology is consistent (same feature isn't called different names)
+- [ ] Code examples compile/run against current codebase
+
+### Step 4: Staleness Report
+For each finding:
+- **What's stale:** specific text or section
+- **What's current:** actual state from codebase
+- **Fix:** exact replacement text or "remove section"
+
+Prioritize: Security-relevant docs (auth, env vars) > Setup docs > Architecture > Everything else.
 
 ---
 
