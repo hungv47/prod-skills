@@ -30,6 +30,8 @@ Before delivering, verify:
 ## Chain Position
 Previous: none | Next: none (standalone)
 
+**Re-run triggers:** After major feature additions, before release milestones, when test suite runtime grows significantly, or when onboarding new team members.
+
 ---
 
 ## Before Starting

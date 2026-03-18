@@ -39,7 +39,9 @@ Previous: `system-architecture` or `plan-interviewer` | Next: task execution (Ph
 |----------|--------|---------|
 | `system-architecture.md` | system-architecture | Architecture defines structure for task decomposition |
 | `spec.md` | plan-interviewer | Feature specification with decided requirements |
-| `user-flow.md` | user-flow (from `hungv47/design-skills`) | User flow diagrams for feature decomposition and acceptance criteria |
+| `.agents/design/user-flow.md` | user-flow (from `hungv47/design-skills`) | User flow diagrams for feature decomposition and acceptance criteria |
+
+If upstream artifacts' `date` fields are older than 30 days, recommend re-running the source skill before proceeding — stale architecture or specs produce misaligned tasks.
 
 ---
 

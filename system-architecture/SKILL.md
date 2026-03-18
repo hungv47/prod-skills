@@ -9,7 +9,7 @@ metadata:
 
 # System Architecture Designer
 
-*Productivity — Step 1 of 1. Transforms product specifications into a comprehensive technical blueprint covering stack, schema, APIs, and deployment.*
+*Productivity — Standalone with chain connections. Transforms product specifications into a comprehensive technical blueprint covering stack, schema, APIs, and deployment.*
 
 **Core Question:** "Will this still work at 10x scale with 10x team?"
 
@@ -55,7 +55,7 @@ None — this skill can run standalone.
 | `product-context.md` | icp-research (from `hungv47/comms-skills`) | Industry context, user personas, and constraints |
 | `task-breakdown.md` | task-breakdown | Feature list already decomposed into buildable units |
 | `solution-design.md` | solution-design (from `hungv47/strategy-skills`) | Business initiatives and constraints from strategy track — informs what to build and why |
-| `user-flow.md` | user-flow (from `hungv47/design-skills`) | User flow diagrams for API endpoint design and feature scoping |
+| `.agents/design/user-flow.md` | user-flow (from `hungv47/design-skills`) | User flow diagrams for API endpoint design and feature scoping |
 
 ### Two Modes of Operation
 

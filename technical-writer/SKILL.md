@@ -35,6 +35,8 @@ Previous: none | Next: none (standalone)
 
 Pairs well with: `system-architecture` (for architecture docs), `task-breakdown` (for contributor guides)
 
+**Re-run triggers:** After PRs that modify environment variables, API routes, or configuration. After major version releases. When new features ship without documentation updates.
+
 ---
 
 ## Before Starting
@@ -51,6 +53,7 @@ None — scans project structure directly.
 |----------|--------|---------|
 | `product-context.md` | icp-research (from `hungv47/comms-skills`) | Product positioning, audience, and value prop already defined |
 | `system-architecture.md` | system-architecture | Architecture decisions and component relationships pre-mapped |
+| `.agents/design/brand-system.md` | brand-system (from `hungv47/design-skills`) | Brand voice and terminology guidelines for documentation tone consistency |
 
 ### Audience Interview
 If the user doesn't specify an audience, interview:
