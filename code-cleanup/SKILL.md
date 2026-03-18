@@ -1,6 +1,6 @@
 ---
 name: code-cleanup
-description: "This skill should be invoked when the user wants to clean up, refactor, or improve existing code without changing behavior. Triggers include 'this code is a mess', 'clean up this file', 'remove dead code', 'tech debt', 'too much complexity', 'I inherited bad code', 'fix AI slop', 'code quality', 'refactor', or 'reorganize the codebase' -- even if they just say 'this is ugly' or 'simplify this.' Not for diagnosing business problems (use problem-analysis) or writing documentation (use technical-writer)."
+description: "This skill should be invoked when the user wants to clean up, refactor, or improve existing code without changing behavior. Triggers include 'this code is a mess', 'clean up this file', 'clean up this PR', 'remove dead code', 'tech debt', 'too much complexity', 'I inherited bad code', 'fix AI slop', 'unmaintainable', 'duplication', 'code quality', 'refactor', or 'make this readable' -- even if they just say 'this is ugly' or 'simplify this.' Not for fixing bugs or changing behavior, diagnosing business problems (use problem-analysis), or writing documentation (use technical-writer)."
 argument-hint: "[file or directory]"
 license: MIT
 metadata:
