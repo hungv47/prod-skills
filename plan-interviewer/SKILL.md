@@ -1,10 +1,10 @@
 ---
 name: plan-interviewer
-description: "Transforms shallow feature requests into well-specified plans through multi-round interviews that surface non-obvious requirements, edge cases, and tradeoffs. Use when the user asks to plan, spec out a feature, think through an implementation, enter plan mode, create a spec file, or refine a plan — multi-round interviews, implementation planning, specification writing."
+description: "This skill should be invoked when the user has a vague or underspecified idea and needs to think it through before building. Triggers include 'I need a plan', 'I have an idea but...', 'help me think this through', 'let's scope this', 'spec this out', 'write a PRD', 'product requirements', 'what am I missing', 'I'm building an MVP', 'am I overcomplicating this', or 'I'm not sure what to build' -- even if they just describe a feature in one sentence with no spec or written requirements yet, or say 'is this feature feasible' or 'I keep changing my mind about what to build.' Not for breaking an existing spec into tasks (use task-breakdown), designing technical architecture (use system-architecture), marketing plans (use imc-plan), or documenting existing features (use technical-writer)."
 license: MIT
 metadata:
   author: hungv47
-  version: "1.1.0"
+  version: "1.1.1"
 ---
 
 # Plan Interviewer
