@@ -270,6 +270,14 @@ Keep it tight. Agent needs signal, not narrative.
 
 ---
 
+## References
+
+- [references/sizing-examples.md](references/sizing-examples.md) -- Right-sized vs wrong-sized tasks with split/combine guidance
+- [references/dependency-patterns.md](references/dependency-patterns.md) -- Common dependency patterns, visualization, and hidden dependency detection
+- [references/acceptance-criteria.md](references/acceptance-criteria.md) -- Acceptance criteria templates by task type
+
+---
+
 ## Artifact Template
 
 On re-run: rename existing artifact to `tasks.v[N].md` and create new with incremented version.
