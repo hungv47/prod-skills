@@ -1,11 +1,11 @@
 ---
 name: code-cleanup
-description: "This skill should be invoked when the user wants to clean up, refactor, or improve existing code without changing behavior or fixing bugs. Triggers include 'this code is a mess', 'clean up this file', 'clean up this PR', 'review my code quality', 'remove dead code', 'tech debt', 'too much complexity', 'I inherited bad code', 'fix AI slop', 'unmaintainable', 'legacy code', 'duplication', 'refactor', or 'make this readable' -- even if they just say 'this is ugly', 'simplify this', or 'this is hard to follow' and mean the code structure itself. Not for diagnosing business problems (use problem-analysis) or writing documentation to explain code (use technical-writer)."
-argument-hint: "[file or directory]"
+description: "Audits and refactors existing code for readability, maintainability, and dead code removal without changing behavior. Produces `.agents/cleanup-report.md` and applies fixes in-place. Not for diagnosing business problems (use problem-analysis) or writing documentation (use technical-writer)."
+argument-hint: "[file or directory to clean]"
 license: MIT
 metadata:
   author: hungv47
-  version: "2.2.1"
+  version: "2.2.2"
 ---
 
 # Code Cleanup

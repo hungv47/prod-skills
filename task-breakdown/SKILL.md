@@ -1,10 +1,11 @@
 ---
 name: task-breakdown
-description: "This skill should be invoked when the user has a spec, architecture, or defined feature and needs it broken into buildable tasks with acceptance criteria for AI agents or engineers. Triggers include 'break this into tasks', 'create tasks', 'what do I build first', 'make this actionable', 'create tickets', 'sprint planning', 'backlog', 'implementation order', or 'break this into sprints' -- even if they just say 'this is too big, where do I start', 'I'm overwhelmed by how much there is to do', or 'I have the architecture, now what.' Not for clarifying unclear requirements (use plan-interviewer), designing architecture (use system-architecture), marketing/strategic plans (use imc-plan or solution-design), or diagnosing root causes (use problem-analysis)."
+description: "Decomposes a spec or architecture into buildable tasks with acceptance criteria, dependencies, and implementation order for AI agents or engineers. Produces `.agents/tasks.md`. Not for clarifying unclear requirements (use plan-interviewer) or designing architecture (use system-architecture)."
+argument-hint: "[spec or architecture to decompose]"
 license: MIT
 metadata:
   author: hungv47
-  version: "1.1.1"
+  version: "1.1.2"
 ---
 
 # Task Breakdown

@@ -1,10 +1,11 @@
 ---
 name: system-architecture
-description: "This skill should be invoked when the user has a defined product or feature and needs the technical blueprint including tech stack, database schema, API design, file structure, or deployment plan. Triggers include 'how should I build this', 'what tech stack', 'design the architecture', 'plan my backend', 'how should I structure this app', 'system design', 'how should I deploy this', 'picking a database', 'monolith vs microservices', or 'architect my MVP' -- even if they just say 'architect this', 'I don't know what tech to use', or 'is this overengineered.' Not for clarifying vague requirements or undefined specs (use plan-interviewer) or breaking architecture into coding tasks (use task-breakdown)."
+description: "Designs technical blueprints — tech stack selection, database schema, API design, file structure, and deployment plan for a defined product or feature. Produces `.agents/system-architecture.md`. Not for unclear requirements (use plan-interviewer) or task decomposition (use task-breakdown)."
+argument-hint: "[product or feature to architect]"
 license: MIT
 metadata:
   author: hungv47
-  version: "2.1.1"
+  version: "2.1.2"
 ---
 
 # System Architecture Designer
