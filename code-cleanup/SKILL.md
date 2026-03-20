@@ -1,6 +1,6 @@
 ---
 name: code-cleanup
-description: "Audits and refactors existing code for readability, maintainability, and dead code removal without changing behavior. Produces annotated diffs or cleaned files in-place. Not for diagnosing business problems (use problem-analysis) or writing documentation (use technical-writer)."
+description: "Audits and refactors existing code for readability, maintainability, and dead code removal without changing behavior. Produces `.agents/cleanup-report.md` and applies fixes in-place. Not for diagnosing business problems (use problem-analysis) or writing documentation (use technical-writer)."
 argument-hint: "[file or directory to clean]"
 license: MIT
 metadata:
