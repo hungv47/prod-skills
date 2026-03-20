@@ -1,6 +1,6 @@
 ---
 name: task-breakdown
-description: "Decomposes a spec or architecture into buildable tasks with acceptance criteria, dependencies, and implementation order for AI agents or engineers. Produces `.agents/task-breakdown.md`. Not for clarifying unclear requirements (use plan-interviewer) or designing architecture (use system-architecture)."
+description: "Decomposes a spec or architecture into buildable tasks with acceptance criteria, dependencies, and implementation order for AI agents or engineers. Produces `.agents/tasks.md`. Not for clarifying unclear requirements (use plan-interviewer) or designing architecture (use system-architecture)."
 argument-hint: "[spec or architecture to decompose]"
 license: MIT
 metadata:

@@ -1,6 +1,6 @@
 ---
 name: plan-interviewer
-description: "Interviews the user to clarify a vague idea into a concrete spec — asks probing questions, identifies gaps, and produces a structured PRD. Produces `.agents/plan-interviewer.md`. Not for breaking an existing spec into tasks (use task-breakdown) or designing technical architecture (use system-architecture)."
+description: "Interviews the user to clarify a vague idea into a concrete spec — asks probing questions, identifies gaps, and produces a structured PRD. Produces `.agents/spec.md`. Not for breaking an existing spec into tasks (use task-breakdown) or designing technical architecture (use system-architecture)."
 license: MIT
 metadata:
   author: hungv47
