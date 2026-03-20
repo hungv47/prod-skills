@@ -1,7 +1,37 @@
 #!/usr/bin/env python3
 """
-Analyze codebase structure and identify cleanup opportunities.
-Outputs a report of file dependencies, unused files, and cleanup recommendations.
+Analyze a codebase directory and identify cleanup opportunities.
+
+Usage:
+    python analyze_codebase.py [directory]
+    python analyze_codebase.py                  # analyzes current working directory
+    python analyze_codebase.py /path/to/project  # analyzes the given directory
+
+Output:
+    - Human-readable report printed to stdout
+    - JSON report written to <directory>/cleanup_report.json
+
+Supported languages:
+    Python, JavaScript, TypeScript, JSX, TSX, Vue, Svelte,
+    Ruby, Go, Rust, Java, Kotlin, Swift, C, C++, C/C++ headers (.h)
+
+What gets flagged:
+    - Junk files (.DS_Store, Thumbs.db, *.pyc, *.swp, *.bak, etc.)
+    - Empty directories
+    - Large directories (>20 files) that may need splitting
+    - Potentially unused code files (not imported by any other file
+      and not recognized as an entry point, test, or config file)
+
+Limitations:
+    - Static analysis only; does not execute code
+    - Import analysis only works for JS-family (JS, TS, JSX, TSX, Vue,
+      Svelte) and Python; other listed languages are scanned for
+      junk/unused but imports are not traced, so "potentially unused"
+      results are unreliable for those languages
+    - May flag files loaded via dynamic imports, barrel/index re-exports,
+      or monorepo workspace aliases (e.g., @myapp/utils)
+    - No test coverage analysis
+    - Import resolution limited to relative paths (not bare specifiers)
 """
 
 import os
@@ -12,22 +42,26 @@ from pathlib import Path
 from collections import defaultdict
 from typing import Set, Dict, List
 
+# Directories to skip entirely during traversal (build artifacts, caches, vendored deps)
 IGNORE_DIRS = {
     'node_modules', '.git', '__pycache__', '.next', 'dist', 'build', 
     'venv', '.venv', 'env', '.env', 'coverage', '.nyc_output', '.cache',
     '.idea', '.vscode', 'vendor', 'target'
 }
 
+# Exact filenames always considered junk and safe to delete
 JUNK_FILES = {
     '.DS_Store', 'Thumbs.db', 'desktop.ini', '.gitkeep', '.keep'
 }
 
+# Regex patterns matched against filenames to detect junk (compiled bytecode, swap files, backups)
 JUNK_PATTERNS = [
     r'.*\.pyc$', r'.*\.pyo$', r'.*\.swp$', r'.*\.swo$', 
     r'.*~$', r'.*\.bak$', r'.*\.backup$', r'.*\.log$',
     r'.*\.orig$', r'.*\.tmp$'
 ]
 
+# File extensions recognized as source code for import analysis and unused-file detection
 CODE_EXTENSIONS = {
     '.py', '.js', '.jsx', '.ts', '.tsx', '.vue', '.svelte',
     '.rb', '.go', '.rs', '.java', '.kt', '.swift', '.c', '.cpp', '.h'
