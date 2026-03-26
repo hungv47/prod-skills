@@ -5,7 +5,7 @@ argument-hint: "[idea or feature to specify]"
 license: MIT
 metadata:
   author: hungv47
-  version: "1.1.2"
+  version: "1.2.0"
 ---
 
 # Plan Interviewer
@@ -69,12 +69,15 @@ If any answer reveals the request is misdirected, recommend the right framing be
 ### Phase 1: Context Gathering
 
 1. **Read existing artifacts**: If a plan file or spec file exists (or is mentioned), read it first to understand current state
-2. **Identify the domain**: Determine whether this is frontend, backend, full-stack, infrastructure, data, etc.
-3. **Assess complexity**: Estimate how many rounds of questioning are needed
+2. **Explore the codebase**: Before each question, check whether the codebase already answers it — read configs, schemas, existing implementations, and tests. If the codebase provides the answer, state what you found and move on instead of asking the user. This applies throughout the interview, not just in this phase.
+3. **Identify the domain**: Determine whether this is frontend, backend, full-stack, infrastructure, data, etc.
+4. **Assess complexity**: Estimate how many rounds of questioning are needed
 
 ### Phase 2: Multi-Round Interview
 
 Conduct interviews using **AskUserQuestion** tool. Each round explores a different dimension. Avoid obvious questions like "what framework?" or "what language?" when context already provides this — they waste interview rounds and erode trust.
+
+**Decision dependency awareness:** Some decisions unlock or constrain others. Before asking the next question, check whether an earlier answer already narrows the options or answers it outright. Resolve upstream decisions first — e.g., "local-first vs server-first" must be resolved before asking about conflict resolution strategy. When you notice a dependency, say so: "This depends on your answer to X, so let me ask that first."
 
 **Interview Dimensions (cycle through these):**
 
@@ -149,6 +152,7 @@ Frame questions to surface hidden assumptions:
 - Ask 2-4 questions per round maximum
 - Group related questions together
 - After each round, briefly acknowledge answers before next questions
+- **Resolve each branch before moving on** — when a question opens a sub-topic (e.g., "yes we need offline support"), exhaust the follow-up decisions for that sub-topic (sync strategy, conflict resolution, storage limits) before switching dimensions. Partially resolved branches create ambiguity in the spec.
 - Stop when answers start repeating or user indicates completion
 
 ## AskUserQuestion Tool Usage
@@ -161,6 +165,7 @@ Use AskUserQuestion with:
 - Each question has 2-4 concrete options
 - Options should represent real tradeoffs, not obvious choices
 - Include brief description explaining implications of each option
+- State which option you recommend and why — let users confirm good defaults instead of evaluating from scratch
 ```
 
 **Example question structure:**
@@ -171,6 +176,7 @@ Options:
 2. Toast notification - User informed but may be annoyed
 3. Badge indicator - Subtle, user can investigate when ready
 4. Block UI until resolved - Safest but worst UX
+Recommended: Option 1 — most sync failures are transient and resolve on retry; alerting the user for infra hiccups creates unnecessary anxiety. Fall back to option 2 if retries exhaust.
 ```
 
 ## Spec File Format
@@ -268,7 +274,7 @@ Save to user-designated path (default: `.agents/spec.md`) using the Spec File Fo
 
 **Scope creep during interview** — Each new question expands the feature surface area. Periodically re-anchor to the original problem: "Is this still in scope for the MVP, or should we defer it?"
 
-**Asking questions the codebase answers** — "What framework are you using?" when `package.json` is right there. Read existing artifacts and code before interviewing — redundant questions waste rounds and erode trust.
+**Asking questions the codebase answers** — "What framework are you using?" when `package.json` is right there. Before asking any factual question, explore the codebase first: read configs, schemas, existing implementations, and tests. If you find the answer, state what you found and your interpretation — don't ask the user to confirm what the code already proves. Redundant questions waste rounds and erode trust.
 
 ---
 
