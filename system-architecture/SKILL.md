@@ -31,7 +31,7 @@ Previous: `plan-interviewer` or `task-breakdown` (optional) | Next: `task-breakd
 
 ## Multi-Agent Architecture
 
-### Agent Roster
+### Agent Manifest
 
 | Agent | File | Focus |
 |-------|------|-------|
@@ -67,7 +67,7 @@ Layer 2 (sequential):
 5. **Revision loop** — if critic returns NEEDS REVISION, re-dispatch affected agents with feedback. Maximum 2 revision rounds.
 6. **Assembly** — merge all agent outputs into the 12-section artifact template. Save to `.agents/system-architecture.md`.
 
-### Routing Rules
+### Routing Logic
 
 | Condition | Route |
 |-----------|-------|
