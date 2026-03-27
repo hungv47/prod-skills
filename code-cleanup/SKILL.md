@@ -8,7 +8,7 @@ metadata:
   version: "3.0.0"
 ---
 
-# Code Cleanup
+# Code Cleanup — Orchestrator
 
 *Productivity — Multi-agent orchestration. Structural cleanup, code-level cleanup, and refactoring — without breaking functionality.*
 
@@ -67,7 +67,7 @@ Layer 2 (sequential):
 3. **Safe removal** — pass all scan results to `safe-removal-agent`. It creates a backup commit, then removes verified-safe targets.
 4. **Refactoring** — pass code scanner results + removal results to `refactoring-agent`. It fixes code-level issues.
 5. **Validation** — `validation-agent` runs all available checks (tests, types, lint, build).
-6. **Critic review** — `critic-agent` checks golden rules compliance. If NEEDS REVISION, identify the specific change to revert.
+6. **Critic review** — `critic-agent` checks golden rules compliance. If FAIL, identify the specific change to revert.
 7. **Assembly** — compile cleanup report. Save to `.agents/cleanup-report.md`.
 
 ### Routing Rules
@@ -79,8 +79,8 @@ Layer 2 (sequential):
 | User says "refactor this" | Only dispatch code-scanner → refactoring → validation → critic |
 | User says "clean up everything" | All scanners → safe-removal → refactoring → validation → critic |
 | Validation fails | Identify which change broke it; revert that specific change |
-| Critic APPROVED | Assemble report and deliver |
-| Critic NEEDS REVISION | Revert specific change; re-run validation |
+| Critic PASS | Assemble report and deliver |
+| Critic FAIL | Revert specific change; re-run validation |
 | Session >30 changes | Stop and reassess scope |
 
 ---
@@ -189,7 +189,7 @@ The refactoring-agent skips these situations:
 - `safe-removal-agent` → backup commit, removes 4 unused files + 2 commented blocks + lodash + underscore. Tests pass.
 - `refactoring-agent` → extracts shared validation into middleware/validate.js, normalizes to kebab-case, removes 12 TODOs and 3 console.logs
 - `validation-agent` → bun test: 47/47 pass. tsc --noEmit: clean. Lint: clean.
-- `critic-agent` → APPROVED. All 5 golden rules pass.
+- `critic-agent` → PASS. All 5 golden rules pass.
 
 **Artifact saved to `.agents/cleanup-report.md`.**
 

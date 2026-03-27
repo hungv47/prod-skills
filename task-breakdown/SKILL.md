@@ -8,7 +8,7 @@ metadata:
   version: "2.0.0"
 ---
 
-# Task Breakdown
+# Task Breakdown — Orchestrator
 
 *Productivity — Multi-agent orchestration. Break architecture into executable tasks and build them one at a time with AI agents.*
 
@@ -67,7 +67,7 @@ Layer 2 (sequential):
 1. **Confirm scope mode** — ask the user: "Are we decomposing everything (FULL), building exactly what's spec'd (LOCKED), or cutting to minimum (MINIMAL)?" Default to LOCKED if finished spec provided, MINIMAL if MVP mentioned.
 2. **Layer 1 dispatch** — send brief + scope mode to `decomposer-agent` and `dependency-mapper-agent` in parallel.
 3. **Layer 2 sequential chain** — pass both outputs to `ordering-agent`, then ordered list to `acceptance-agent`, then complete breakdown to `critic-agent`.
-4. **Revision loop** — if critic returns NEEDS REVISION, re-dispatch affected agents with feedback. Maximum 2 rounds.
+4. **Revision loop** — if critic returns FAIL, re-dispatch affected agents with feedback. Maximum 2 rounds.
 5. **Assembly** — merge into the task artifact format. Save to `.agents/tasks.md`.
 
 ### Routing Rules
@@ -77,8 +77,8 @@ Layer 2 (sequential):
 | Scope mode MINIMAL | decomposer-agent actively cuts features before decomposing |
 | Scope mode FULL | decomposer-agent captures everything; defer cuts to after |
 | Scope mode LOCKED | decomposer-agent follows spec exactly; flags gaps but doesn't add |
-| Critic APPROVED | Assemble and deliver |
-| Critic NEEDS REVISION | Re-dispatch cited agents with feedback |
+| Critic PASS | Assemble and deliver |
+| Critic FAIL | Re-dispatch cited agents with feedback |
 | Revision round > 2 | Deliver with critic's remaining issues noted |
 
 ---
@@ -249,7 +249,7 @@ If you discover a missing requirement:
 **Layer 2 chain:**
 - `ordering-agent` → merges: moves Resend API key to Prerequisites, orders risk-first (auth before CRUD), identifies parallelism (signup and tasks table can run simultaneously)
 - `acceptance-agent` → writes: "Submit signup form → user appears in Supabase Auth → confirmation email sent" for Task 2
-- `critic-agent` → APPROVED, all 6 gates pass
+- `critic-agent` → PASS, all 6 gates pass
 
 **Artifact saved to `.agents/tasks.md`.**
 

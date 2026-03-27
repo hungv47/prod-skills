@@ -25,7 +25,7 @@ Run `system-architecture` BEFORE `task-breakdown`. Architecture defines WHAT to 
 - `.agents/solution-design.md` (from strategy-skills) → `system-architecture`: Business initiatives inform what to build
 - `.agents/design/user-flow.md` (from design-skills) → `system-architecture` and `task-breakdown`: User flows inform API design and feature decomposition
 
-## Multi-Agent Orchestration
+## Multi-Agent Skills
 
 All 5 skills use multi-agent orchestration with a shared pattern:
 - **Layer 1 agents** run in parallel (scanners, extractors, profilers)
@@ -47,7 +47,7 @@ All 5 skills use multi-agent orchestration with a shared pattern:
 1. **Dispatch** — route to correct agents based on user intent and routing rules
 2. **Assemble** — merge agent outputs into the final artifact
 3. **Gate** — enforce Critical Gates via the critic agent before delivery
-4. **Revise** — re-dispatch specific agents when critic returns NEEDS REVISION (max 2 rounds)
+4. **Revise** — re-dispatch specific agents when critic returns FAIL (max 2 rounds)
 5. **Fallback** — use single-agent mode when multi-agent is overkill
 
 ### Agent File Convention

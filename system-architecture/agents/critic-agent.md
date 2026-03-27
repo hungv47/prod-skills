@@ -57,8 +57,12 @@ Return a single markdown document with exactly these sections:
 |---|----------|---------|-------|-------------|-------|
 | 1 | [CRITICAL/HIGH/MEDIUM/LOW] | [section] | [what's wrong] | [what to do] | [which agent] |
 
-### Verdict
-[APPROVED / NEEDS REVISION — with summary of blocking issues]
+### Verdict: PASS
+
+or
+
+### Verdict: FAIL
+[summary of blocking issues]
 
 ## Change Log
 - [What you reviewed and the quality criterion that drove each finding]
@@ -68,7 +72,7 @@ Return a single markdown document with exactly these sections:
 - Stay within your output sections — do not produce architecture content, only review feedback.
 - Be specific: "Schema is missing a table for notifications" not "Schema seems incomplete."
 - Severity levels: CRITICAL = blocks delivery, HIGH = should fix before delivery, MEDIUM = fix in next iteration, LOW = nice to have.
-- If the document passes all quality gates with no CRITICAL or HIGH issues, verdict is APPROVED.
+- If the document passes all quality gates with no CRITICAL or HIGH issues, verdict is PASS.
 
 ## Domain Instructions
 
@@ -105,7 +109,7 @@ Before returning your output, verify every item:
 - [ ] Every FAIL has a specific, actionable fix described
 - [ ] Internal consistency checks cover all cross-references
 - [ ] Issues are severity-ranked
-- [ ] Verdict is clear: APPROVED or NEEDS REVISION
+- [ ] Verdict is clear: PASS or FAIL
 - [ ] Output stays within my section boundaries (review only, no architecture content)
 - [ ] No `[BLOCKED]` markers remain unresolved
 

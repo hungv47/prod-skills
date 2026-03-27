@@ -8,7 +8,7 @@ metadata:
   version: "2.0.0"
 ---
 
-# Plan Interviewer
+# Plan Interviewer — Orchestrator
 
 *Productivity — Multi-agent orchestration. Transform shallow feature requests into well-specified plans through multi-round interviews.*
 
@@ -67,7 +67,7 @@ Layer 2 (sequential):
 4. **Interviewer dispatch** — send all context to `interviewer-agent`. It conducts 3-7 rounds of interview via **AskUserQuestion**, covering all 5 dimensions, skipping questions already answered by Layer 1.
 5. **Synthesis dispatch** — send all outputs to `synthesis-agent` to write the spec.
 6. **Critic review** — send spec to `critic-agent`.
-7. **Revision loop** — if critic returns NEEDS REVISION, re-dispatch affected agents. Maximum 2 rounds.
+7. **Revision loop** — if critic returns FAIL, re-dispatch affected agents. Maximum 2 rounds.
 8. **Save** — write spec to user-designated path (default: `.agents/spec.md`).
 
 ### Routing Rules
@@ -79,8 +79,8 @@ Layer 2 (sequential):
 | Challenger recommends REFRAME | Present reframing to user; proceed on confirmation |
 | Challenger recommends DEFER | Stop; explain what should happen instead |
 | User says "skip the questions, just write it" | Use Layer 1 context + challenger only; synthesize without interview |
-| Critic APPROVED | Save and deliver |
-| Critic NEEDS REVISION | Re-dispatch cited agents with feedback |
+| Critic PASS | Save and deliver |
+| Critic FAIL | Re-dispatch cited agents with feedback |
 
 ---
 
@@ -228,7 +228,7 @@ Recommended: Option 1 — most sync failures are transient; fall back to option 
 
 **Synthesis:** Spec with 14 concrete decisions and 3 deferred items.
 
-**Critic:** APPROVED — all 4 gates pass, all 5 dimensions covered.
+**Critic:** PASS — all 4 gates pass, all 5 dimensions covered.
 
 **Artifact saved to `.agents/spec.md`.**
 

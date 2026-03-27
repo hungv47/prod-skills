@@ -53,8 +53,12 @@ Return a single markdown document with exactly these sections:
 - Manual verification needed: [yes/no — for what]
 - Session limit: [under 30 / approaching 30 / over 30 — recommend stopping?]
 
-### Verdict
-[APPROVED / NEEDS REVISION — with summary]
+### Verdict: PASS
+
+or
+
+### Verdict: FAIL
+[summary]
 
 ## Change Log
 - [What you reviewed and the golden rule that drove each finding]
@@ -105,7 +109,7 @@ Before returning your output, verify every item:
 - [ ] Quality gate items verified against validation results
 - [ ] Issues reference specific golden rules
 - [ ] Session limits checked
-- [ ] Verdict is clear
+- [ ] Verdict is clear: PASS or FAIL
 - [ ] Output stays within my section boundaries
 
 If any check fails, revise your output before returning.

@@ -8,7 +8,7 @@ metadata:
   version: "3.0.0"
 ---
 
-# Technical Writer
+# Technical Writer — Orchestrator
 
 *Productivity — Multi-agent orchestration. Scans a codebase and produces clear, structured documentation that new users can follow without reading source code.*
 
@@ -67,7 +67,7 @@ Layer 2 (sequential):
 2. **Writer dispatch** — send all Layer 1 outputs to `writer-agent`. It produces the documentation following `references/doc-template.md`, calibrated for the audience.
 3. **Staleness check** — send writer output + codebase facts to `staleness-checker-agent`. It verifies every claim in the docs matches the current codebase.
 4. **Critic review** — send documentation + staleness results to `critic-agent`.
-5. **Revision loop** — if critic returns NEEDS REVISION, re-dispatch affected agents. Maximum 2 rounds.
+5. **Revision loop** — if critic returns FAIL, re-dispatch affected agents. Maximum 2 rounds.
 6. **Save** — write documentation to project root or specified location.
 
 ### Routing Rules
@@ -78,8 +78,8 @@ Layer 2 (sequential):
 | User says "document this" (no type) | audience-profiler defaults to User Guide (developers) or README (library) |
 | User says "audit docs" | Skip writer-agent; run scanner → staleness-checker → critic directly |
 | Monorepo detected | scanner-agent identifies package boundaries; writer produces per-package docs |
-| Critic APPROVED | Save and deliver |
-| Critic NEEDS REVISION | Re-dispatch cited agents with feedback |
+| Critic PASS | Save and deliver |
+| Critic FAIL | Re-dispatch cited agents with feedback |
 
 ---
 
@@ -192,9 +192,9 @@ Prioritize: auth docs and env var docs being stale is a security risk.
 **Layer 2 (sequential):**
 - `writer-agent` → writes README with Getting Started (5 numbered steps), API Reference, Configuration table, Troubleshooting section
 - `staleness-checker-agent` → flags: Node version in setup (docs say 16, code needs 18), missing SMTP_PORT env var (in code but not documented)
-- `critic-agent` → NEEDS REVISION: 2 staleness issues must be fixed
+- `critic-agent` → FAIL: 2 staleness issues must be fixed
 
-**Revision:** writer-agent updates Node version and adds SMTP_PORT. Critic → APPROVED.
+**Revision:** writer-agent updates Node version and adds SMTP_PORT. Critic → PASS.
 
 **Artifact saved to `README.md`.**
 

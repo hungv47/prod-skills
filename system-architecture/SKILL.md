@@ -8,7 +8,7 @@ metadata:
   version: "3.0.0"
 ---
 
-# System Architecture Designer
+# System Architecture Designer — Orchestrator
 
 *Productivity — Multi-agent orchestration. Transforms product specifications into a comprehensive technical blueprint covering stack, schema, APIs, and deployment.*
 
@@ -64,7 +64,7 @@ Layer 2 (sequential):
 2. **Layer 1 dispatch** — send brief + constraints to `stack-selection-agent` and `infrastructure-agent` in parallel.
 3. **Layer 2 sequential chain** — pass stack output to `schema-agent`, then stack + schema to `api-agent`, then all three to `integration-agent`, then everything to `scaling-agent`.
 4. **Critic review** — send assembled document to `critic-agent`.
-5. **Revision loop** — if critic returns NEEDS REVISION, re-dispatch affected agents with feedback. Maximum 2 revision rounds.
+5. **Revision loop** — if critic returns FAIL, re-dispatch affected agents with feedback. Maximum 2 revision rounds.
 6. **Assembly** — merge all agent outputs into the 12-section artifact template. Save to `.agents/system-architecture.md`.
 
 ### Routing Logic
@@ -73,8 +73,8 @@ Layer 2 (sequential):
 |-----------|-------|
 | User provides tech stack upfront | Skip stack-selection-agent; pass user's stack directly to schema-agent |
 | User needs stack recommendations | Run stack-selection-agent first |
-| Critic returns APPROVED | Assemble and deliver |
-| Critic returns NEEDS REVISION | Re-dispatch only the agents cited in critic's issues |
+| Critic returns PASS | Assemble and deliver |
+| Critic returns FAIL | Re-dispatch only the agents cited in critic's issues |
 | Revision round > 2 | Deliver with critic's remaining issues noted as Open Questions |
 
 ---
@@ -186,7 +186,7 @@ All 8 answers are necessary before dispatching agents.
 - `integration-agent` → designs file structure, Stripe checkout flow, SendGrid email integration
 - `scaling-agent` → identifies invoice PDF generation as first bottleneck at 10x, traces webhook failure modes
 
-**Critic review:** APPROVED — all 7 quality gates pass.
+**Critic review:** PASS — all 7 quality gates pass.
 
 **Artifact saved to `.agents/system-architecture.md` with all 12 sections.**
 

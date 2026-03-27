@@ -52,8 +52,12 @@ Return a single markdown document with exactly these sections:
 |---|----------|---------|-------|-------------|
 | 1 | [CRITICAL/HIGH/MEDIUM/LOW] | [section] | [what's wrong] | [what to do] |
 
-### Verdict
-[APPROVED / NEEDS REVISION — with summary]
+### Verdict: PASS
+
+or
+
+### Verdict: FAIL
+[summary]
 
 ## Change Log
 - [What you reviewed and the quality criterion that drove each finding]
@@ -99,7 +103,7 @@ Before returning your output, verify every item:
 - [ ] Edge case coverage cross-referenced against common failure modes
 - [ ] Consistency check performed across all sections
 - [ ] Issues have severity and specific fixes
-- [ ] Verdict is clear
+- [ ] Verdict is clear: PASS or FAIL
 - [ ] Output stays within my section boundaries
 
 If any check fails, revise your output before returning.

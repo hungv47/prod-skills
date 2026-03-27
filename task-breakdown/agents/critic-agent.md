@@ -54,8 +54,12 @@ Return a single markdown document with exactly these sections:
 |---|----------|------|-------|-------------|
 | 1 | [CRITICAL/HIGH/MEDIUM/LOW] | [N] | [what's wrong] | [what to do] |
 
-### Verdict
-[APPROVED / NEEDS REVISION — with summary of blocking issues]
+### Verdict: PASS
+
+or
+
+### Verdict: FAIL
+[summary of blocking issues]
 
 ## Change Log
 - [What you reviewed and the quality criterion that drove each finding]
@@ -108,7 +112,7 @@ Before returning your output, verify every item:
 - [ ] Coverage trace was performed against the source spec/architecture
 - [ ] Dependency integrity was verified (no circulars, no hidden deps)
 - [ ] Issues have severity and specific fixes
-- [ ] Verdict is clear: APPROVED or NEEDS REVISION
+- [ ] Verdict is clear: PASS or FAIL
 - [ ] Output stays within my section boundaries (review only, no task content)
 - [ ] No `[BLOCKED]` markers remain unresolved
 
