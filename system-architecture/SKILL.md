@@ -5,12 +5,12 @@ argument-hint: "[product or feature to architect]"
 license: MIT
 metadata:
   author: hungv47
-  version: "2.1.2"
+  version: "3.0.0"
 ---
 
-# System Architecture Designer
+# System Architecture Designer — Orchestrator
 
-*Productivity — Standalone with chain connections. Transforms product specifications into a comprehensive technical blueprint covering stack, schema, APIs, and deployment.*
+*Productivity — Multi-agent orchestration. Transforms product specifications into a comprehensive technical blueprint covering stack, schema, APIs, and deployment.*
 
 **Core Question:** "Will this still work at 10x scale with 10x team?"
 
@@ -22,8 +22,67 @@ metadata:
 ## Output
 - `.agents/system-architecture.md`
 
-## Quality Gate
-Before delivering, verify:
+## Chain Position
+Previous: `plan-interviewer` or `task-breakdown` (optional) | Next: `task-breakdown` (optional) | Cross-stack: reads `solution-design.md` (from strategy-skills), `user-flow.md` (from design-skills)
+
+**Re-run triggers:** When product spec changes significantly, when scale requirements change (10x growth), when migrating core infrastructure, or when adding major new integrations.
+
+---
+
+## Multi-Agent Architecture
+
+### Agent Manifest
+
+| Agent | File | Focus |
+|-------|------|-------|
+| stack-selection-agent | `agents/stack-selection-agent.md` | Technology choices with rationale and alternatives |
+| infrastructure-agent | `agents/infrastructure-agent.md` | Deployment, CI/CD, monitoring, env vars |
+| schema-agent | `agents/schema-agent.md` | Database tables, relationships, indexes, queries |
+| api-agent | `agents/api-agent.md` | Endpoints, auth, request/response contracts |
+| integration-agent | `agents/integration-agent.md` | File structure, service connections, feature blueprints |
+| scaling-agent | `agents/scaling-agent.md` | Bottleneck analysis, failure modes, edge cases |
+| critic-agent | `agents/critic-agent.md` | Quality gate review, internal consistency |
+
+### Execution Layers
+
+```
+Layer 1 (parallel):
+  stack-selection-agent ──┐
+  infrastructure-agent ───┘─── run simultaneously
+
+Layer 2 (sequential):
+  schema-agent ─────────────── depends on stack choice
+    → api-agent ────────────── depends on stack + schema
+      → integration-agent ──── depends on stack + schema + API
+        → scaling-agent ────── validates everything above
+          → critic-agent ───── final quality review
+```
+
+### Dispatch Protocol
+
+1. **Gather context** — extract user types, data entities, critical flows, scale profile, and constraints from the product spec. If missing, run the Architecture Interview (see below).
+2. **Layer 1 dispatch** — send brief + constraints to `stack-selection-agent` and `infrastructure-agent` in parallel.
+3. **Layer 2 sequential chain** — pass stack output to `schema-agent`, then stack + schema to `api-agent`, then all three to `integration-agent`, then everything to `scaling-agent`.
+4. **Critic review** — send assembled document to `critic-agent`.
+5. **Revision loop** — if critic returns FAIL, re-dispatch affected agents with feedback. Maximum 2 revision rounds.
+6. **Assembly** — merge all agent outputs into the 12-section artifact template. Save to `.agents/system-architecture.md`.
+
+### Routing Logic
+
+| Condition | Route |
+|-----------|-------|
+| User provides tech stack upfront | Skip stack-selection-agent; pass user's stack directly to schema-agent |
+| User needs stack recommendations | Run stack-selection-agent first |
+| Critic returns PASS | Assemble and deliver |
+| Critic returns FAIL | Re-dispatch only the agents cited in critic's issues |
+| Revision round > 2 | Deliver with critic's remaining issues noted as Open Questions |
+
+---
+
+## Critical Gates
+
+Before delivering, the critic-agent verifies ALL of these pass:
+
 - [ ] Every tech choice has a rationale (not just "it's popular")
 - [ ] API endpoints exist for every user-facing feature
 - [ ] Database schema covers all entities mentioned in product spec
@@ -32,10 +91,22 @@ Before delivering, verify:
 - [ ] Auth model covers all user roles and permission levels
 - [ ] At least one architectural trade-off is documented with alternatives considered
 
-## Chain Position
-Previous: `plan-interviewer` or `task-breakdown` (optional) | Next: `task-breakdown` (optional) | Cross-stack: reads `solution-design.md` (from strategy-skills), `user-flow.md` (from design-skills)
+**If any gate fails:** the critic identifies which agent must fix it and the orchestrator re-dispatches with specific feedback.
 
-**Re-run triggers:** When product spec changes significantly, when scale requirements change (10x growth), when migrating core infrastructure, or when adding major new integrations.
+---
+
+## Single-Agent Fallback
+
+When context window is constrained or the product is simple (fewer than 3 user types, fewer than 5 data entities):
+
+1. Skip multi-agent dispatch
+2. Execute Steps 1-4 from the original process sequentially:
+   - Step 1: Gather context and constraints
+   - Step 2: Architecture decisions (use `references/tech-stack-patterns.md` and `references/tech-stack-matrix.md`)
+   - Step 3: Generate all 12 sections of the architecture document
+   - Step 4: Validation cross-reference
+3. Run the Critical Gates checklist as self-review
+4. Save to `.agents/system-architecture.md`
 
 ---
 
@@ -55,16 +126,16 @@ None — this skill can run standalone.
 |----------|--------|---------|
 | `product-context.md` | icp-research (from `hungv47/comms-skills`) | Industry context, user personas, and constraints |
 | `task-breakdown.md` | task-breakdown | Feature list already decomposed into buildable units |
-| `solution-design.md` | solution-design (from `hungv47/strategy-skills`) | Business initiatives and constraints from strategy track — informs what to build and why |
+| `solution-design.md` | solution-design (from `hungv47/strategy-skills`) | Business initiatives and constraints from strategy track |
 | `.agents/design/user-flow.md` | user-flow (from `hungv47/design-skills`) | User flow diagrams for API endpoint design and feature scoping |
 
 ### Two Modes of Operation
 
 **Mode 1: Tech Stack Already Chosen**
-User provides tech stack upfront. Focus on architecture patterns, file structure, schema, and implementation details.
+User provides tech stack upfront. Skip stack-selection-agent. Focus on schema, API, file structure, and implementation details.
 
 **Mode 2: Need Tech Stack Recommendations**
-User needs help choosing stack. Recommend technologies based on requirements using `references/tech-stack-patterns.md`, then provide full architecture.
+User needs help choosing stack. Run stack-selection-agent first, then chain remaining agents.
 
 ### Architecture Interview
 If the user provides only a vague description ("build me an app", "I need a platform"):
@@ -78,112 +149,46 @@ If the user provides only a vague description ("build me an app", "I need a plat
 7. Performance requirements? (real-time updates, complex queries, offline support)
 8. Security/compliance needs? (SOC2, HIPAA, GDPR, PCI)
 
-All 8 answers are necessary before proceeding — without them, architectural decisions become guesswork and rework is inevitable.
-
----
-
-## Step 1: Gather Context and Constraints
-
-Extract from product spec or interview answers:
-
-1. **User types** — list every role and what they can do
-2. **Data entities** — every noun that needs to be stored
-3. **Critical flows** — the 3-5 journeys that define the product
-4. **Scale profile** — read-heavy vs. write-heavy, expected load, burst patterns
-5. **Integration points** — every external service the system touches
-6. **Non-functional requirements** — latency targets, uptime SLA, compliance
-
-Use WebSearch if industry-specific benchmarks are needed: `"[product type] architecture patterns"` or `"[scale level] infrastructure recommendations"`.
-
----
-
-## Step 2: Architecture Decisions
-
-For each major decision, document the choice and the alternatives considered:
-
-| Decision | Options Considered | Choice | Rationale |
-|----------|-------------------|--------|-----------|
-| Architecture pattern | Monolith, Microservices, Serverless | ? | ? |
-| Database | PostgreSQL, MongoDB, DynamoDB | ? | ? |
-| Auth | Clerk, Auth.js, Supabase Auth, Custom | ? | ? |
-| Hosting | Vercel, AWS, Railway, Fly.io | ? | ? |
-| Real-time (if needed) | WebSockets, SSE, Polling | ? | ? |
-
-**Decision principles:**
-- Start simple, scale when needed — a monolith is fine until it isn't
-- Choose boring, proven tech over cutting-edge — reliability beats novelty
-- Optimize for developer velocity first — speed of iteration matters most early on
-- Ensure a clear upgrade path — avoid lock-in without escape routes
-
-### Quick Stack Recommendations
-
-| Use Case | Recommended Stack |
-|----------|-------------------|
-| MVP/Startup | Next.js + Supabase + Vercel |
-| Enterprise SaaS | Next.js + PostgreSQL + Clerk + Stripe |
-| Real-time App | Next.js + Supabase Realtime + Redis |
-| API-first | Express/Fastify + PostgreSQL + Docker |
-| Mobile App | React Native + Supabase + Expo |
-
-Consult `references/tech-stack-patterns.md` and `references/tech-stack-matrix.md` for detailed comparisons.
-
----
-
-## Step 3: Generate Architecture Document
-
-Produce all 12 sections for the output artifact:
-
-### Section Guide
-
-| # | Section | Key Content | Reference |
-|---|---------|-------------|-----------|
-| 1 | System Overview | Architecture pattern, component diagram (text-based), key decisions | — |
-| 2 | Tech Stack | Every dependency with version and rationale | `references/tech-stack-patterns.md` |
-| 3 | File & Folder Structure | Complete tree with purpose annotations | `references/file-structure-patterns.md` |
-| 4 | Database Schema | Tables, relationships, indexes, key queries | `references/database-patterns.md` |
-| 5 | API Architecture | All endpoints: method, path, auth, request/response | `references/api-patterns.md` |
-| 6 | State Management & Data Flow | Where state lives, data flow between layers | — |
-| 7 | Service Connections | Inter-service communication, webhook handling, retry policies | — |
-| 8 | Authentication & Authorization | Auth flow, permission model, session handling | `references/auth-patterns.md` |
-| 9 | Key Features Implementation | Per-feature: components, API calls, state, edge cases | — |
-| 10 | Deployment & Infrastructure | Env vars, CI/CD, staging/prod config | `references/deployment-patterns.md` |
-| 11 | Monitoring & Debugging | Error tracking, logging, performance monitoring | — |
-| 12 | Security Checklist | Input validation, secrets, HTTPS, headers, dependencies | — |
-
-**Specificity rules:**
-- Use exact package names and versions, not "some ORM"
-- Use real file paths, not "a config file"
-- Name specific services (e.g., "Sentry" not "an error tracker")
-- Include actual code snippets for non-obvious patterns
-
----
-
-## Step 4: Validation Cross-Reference
-
-Before finalizing, cross-check the architecture against the product spec:
-
-1. **Feature coverage** — trace every product feature to at least one API endpoint + DB table + UI component
-2. **User flow completeness** — walk through each critical flow end-to-end and verify every step has infrastructure
-3. **Edge case inventory** — for each flow, trace four paths: happy path, nil/missing input, empty/zero-length input, and upstream error. These are distinct failure modes — nil crashes, empty creates silent orphan data, and upstream errors need retry or degradation. See `references/failure-modes.md` for the tracing table and `references/interaction-edge-cases.md` for UI-level edge cases.
-4. **Env var audit** — every secret, API key, and config value is listed in the deployment section
-5. **Scale check** — identify the first bottleneck under 10x current load; document the mitigation path
-
-Flag gaps in the artifact under a `## Open Questions` section.
+All 8 answers are necessary before dispatching agents.
 
 ---
 
 ## Anti-Patterns
 
-Avoid these — they cause predictable rework:
-
-| Anti-Pattern | Problem | Instead |
+| Anti-Pattern | Problem | INSTEAD |
 |--------------|---------|---------|
 | Premature microservices | Adds operational complexity before product-market fit | Start monolith, extract services at pain points |
-| Schema without queries | Tables look clean but critical queries require full scans | Design schema around access patterns, not just entities |
-| Auth as afterthought | Retrofitting permissions breaks existing flows | Define roles and permissions before API design |
-| Missing error states | Happy-path-only architecture crumbles in production | Document error handling for every API endpoint |
-| "We'll add monitoring later" | Debugging production without observability is guesswork | Include logging and error tracking in v1 |
-| Over-engineering for scale | Building for 1M users when you have 100 wastes months | Design for 10x current load, have a plan for 100x |
+| Schema without queries | Tables look clean but critical queries require full scans | Design schema around access patterns via schema-agent |
+| Auth as afterthought | Retrofitting permissions breaks existing flows | api-agent defines roles and permissions before endpoint design |
+| Missing error states | Happy-path-only architecture crumbles in production | scaling-agent traces failure modes for every critical operation |
+| "We'll add monitoring later" | Debugging production without observability is guesswork | infrastructure-agent includes logging and error tracking in v1 |
+| Over-engineering for scale | Building for 1M users when you have 100 wastes months | scaling-agent designs for 10x current load, plans for 100x |
+
+---
+
+## Worked Example
+
+**User:** "I need architecture for a SaaS invoicing tool. Small businesses send invoices, clients pay online. Need Stripe integration."
+
+**Orchestrator gathers context:**
+- Users: business owners (send invoices), clients (view/pay)
+- Scale: ~500 businesses, ~2000 invoices/month at launch
+- Integrations: Stripe for payments, SendGrid for email
+- Constraints: small team, fast launch needed
+
+**Layer 1 dispatch (parallel):**
+- `stack-selection-agent` → recommends Next.js + Supabase + Clerk + Stripe + Vercel
+- `infrastructure-agent` → plans Vercel deployment, GitHub Actions CI/CD, Sentry monitoring
+
+**Layer 2 chain (sequential):**
+- `schema-agent` → designs businesses, invoices, payments, clients tables with indexes on (business_id, status) and (stripe_payment_id)
+- `api-agent` → maps POST /api/invoices (business_owner), GET /api/pay/:token (public), POST /api/webhooks/stripe (stripe_signature)
+- `integration-agent` → designs file structure, Stripe checkout flow, SendGrid email integration
+- `scaling-agent` → identifies invoice PDF generation as first bottleneck at 10x, traces webhook failure modes
+
+**Critic review:** PASS — all 7 quality gates pass.
+
+**Artifact saved to `.agents/system-architecture.md` with all 12 sections.**
 
 ---
 
@@ -202,149 +207,22 @@ status: draft
 # System Architecture: [Product Name]
 
 ## 1. System Overview
-
-**Architecture pattern:** [monolith / microservices / serverless / hybrid]
-
-**Component diagram:**
-​```
-[Client] → [API Layer] → [Database]
-                ↓
-         [External Services]
-​```
-
-**Key architectural decisions:**
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| [decision] | [choice] | [why] |
-
 ## 2. Tech Stack
-
-| Layer | Technology | Version | Rationale |
-|-------|-----------|---------|-----------|
-| Frontend | [framework] | [ver] | [why] |
-| Backend | [framework] | [ver] | [why] |
-| Database | [db] | [ver] | [why] |
-| Auth | [provider] | [ver] | [why] |
-| Hosting | [platform] | — | [why] |
-
 ## 3. File & Folder Structure
-
-​```
-project/
-├── src/
-│   ├── [dir]/ — [purpose]
-│   └── [dir]/ — [purpose]
-├── [config files]
-└── [other root files]
-​```
-
 ## 4. Database Schema
-
-[Tables with columns, types, relationships, indexes]
-
-**Key queries:**
-- [Query 1]: [purpose]
-- [Query 2]: [purpose]
-
 ## 5. API Architecture
-
-| Method | Path | Auth | Purpose |
-|--------|------|------|---------|
-| [GET/POST/...] | [/api/...] | [role] | [what it does] |
-
 ## 6. State Management & Data Flow
-
-[Where state lives, how data flows between layers]
-
 ## 7. Service Connections
-
-[How services communicate, webhook handling, retry policies]
-
 ## 8. Authentication & Authorization
-
-**Auth flow:** [description]
-**Permission model:**
-| Role | Permissions |
-|------|-------------|
-| [role] | [what they can do] |
-
 ## 9. Key Features Implementation
-### [Feature 1]
-- **Components:** / **API calls:** / **State:** / **Edge cases:**
-
 ## 10. Deployment & Infrastructure
-**Env vars:** [VAR_NAME — purpose — required?]
-**CI/CD:** [pipeline] | **Environments:** [staging, production]
-
 ## 11. Monitoring & Debugging
-Error tracking: [tool] | Logging: [strategy] | Performance: [metrics]
-
 ## 12. Security Checklist
-- [ ] Input validation, auth on protected routes, secrets in env vars
-- [ ] HTTPS enforced, security headers, dependencies audited
 
 ## Open Questions
-
-- [Any gaps or decisions that need user input]
-
 ## Next Step
-
 Run `task-breakdown` to decompose this architecture into implementable tasks.
 ```
-
----
-
-## Worked Example
-
-**User:** "I need architecture for a SaaS invoicing tool. Small businesses send invoices, clients pay online. Need Stripe integration."
-
-**Interview answers gathered:**
-- Users: business owners (send invoices), clients (view/pay)
-- Scale: ~500 businesses, ~2000 invoices/month at launch
-- Integrations: Stripe for payments, SendGrid for email
-- Requirements: PDF generation, payment tracking, dashboard
-- Constraints: small team, fast launch needed
-
-**Artifact saved to `.agents/system-architecture.md` (excerpts):**
-
-```markdown
-# System Architecture: InvoiceFlow
-
-## 1. System Overview
-Architecture: Monolith (appropriate for team size and launch timeline)
-[React SPA] → [Next.js API Routes] → [PostgreSQL]
-                    ↓          ↓
-              [Stripe]    [SendGrid]
-
-## 2. Tech Stack
-| Layer | Technology | Rationale |
-|-------|-----------|-----------|
-| Frontend | Next.js 14.x | Full-stack, fast iteration |
-| Database | PostgreSQL via Supabase | Relational, strong joins for invoice queries |
-| Auth | Clerk | Drop-in auth, org support |
-| Payments | Stripe | Industry standard, PCI compliant |
-| Hosting | Vercel | Zero-config Next.js deployment |
-
-## 4. Database Schema (excerpt)
-businesses: id, name, email, stripe_account_id, created_at
-invoices: id, business_id (FK), client_id (FK), amount, status, due_date, pdf_url
-payments: id, invoice_id (FK), stripe_payment_id, amount, status, paid_at
-Indexes: invoices(business_id, status), payments(stripe_payment_id)
-
-## 5. API Architecture (excerpt)
-| Method | Path | Auth | Purpose |
-|--------|------|------|---------|
-| POST | /api/invoices | business_owner | Create draft invoice |
-| POST | /api/invoices/:id/send | business_owner | Send invoice email |
-| GET | /api/pay/:token | public (token) | Client payment page |
-| POST | /api/webhooks/stripe | stripe_signature | Payment status sync |
-
-## 10. Deployment — Env Vars
-DATABASE_URL, STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, SENDGRID_API_KEY,
-CLERK_SECRET_KEY, NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
-```
-
-*(Full artifact contains all 12 sections)*
 
 ---
 

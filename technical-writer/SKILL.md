@@ -5,12 +5,12 @@ argument-hint: "[codebase or project to document]"
 license: MIT
 metadata:
   author: hungv47
-  version: "2.1.2"
+  version: "3.0.0"
 ---
 
-# Technical Writer
+# Technical Writer — Orchestrator
 
-*Productivity — Standalone skill. Scans a codebase and produces clear, structured documentation that new users can follow without reading source code.*
+*Productivity — Multi-agent orchestration. Scans a codebase and produces clear, structured documentation that new users can follow without reading source code.*
 
 **Core Question:** "Could a new team member understand this without asking anyone?"
 
@@ -22,15 +22,6 @@ metadata:
 ## Output
 - Documentation artifact saved to project root or specified location (e.g., `docs/`, `README.md`)
 
-## Quality Gate
-Before delivering, verify:
-- [ ] Every user-facing feature has a documentation section
-- [ ] Setup steps are numbered with expected outcomes after each step
-- [ ] A new user could follow Getting Started independently without reading source code
-- [ ] Code examples compile/run — no pseudocode unless explicitly labeled
-- [ ] Configuration options list defaults and valid values
-- [ ] Troubleshooting covers errors visible in the codebase's error handling
-
 ## Chain Position
 Previous: none | Next: none (standalone)
 
@@ -40,37 +31,89 @@ Pairs well with: `system-architecture` (for architecture docs), `task-breakdown`
 
 ---
 
-## Before Starting
+## Multi-Agent Architecture
 
-### Step 0: Product Context
+### Agent Roster
 
-Check for existing context files: `README.md`, `CLAUDE.md`, `.agents/product-context.md`, `package.json#description`, `pyproject.toml`, `Cargo.toml`. Read all available context before scanning code.
+| Agent | File | Focus |
+|-------|------|-------|
+| scanner-agent | `agents/scanner-agent.md` | Maps project structure, file importance ranking, existing docs inventory |
+| concept-extractor-agent | `agents/concept-extractor-agent.md` | Reads key files, extracts features, setup requirements, error patterns |
+| audience-profiler-agent | `agents/audience-profiler-agent.md` | Identifies audience, calibrates vocabulary and depth |
+| writer-agent | `agents/writer-agent.md` | Writes the documentation from extracted concepts for the profiled audience |
+| staleness-checker-agent | `agents/staleness-checker-agent.md` | Compares documentation against current codebase for accuracy |
+| critic-agent | `agents/critic-agent.md` | Quality gate review, audience calibration check, staleness integration |
 
-### Required Artifacts
-None — scans project structure directly.
+### Execution Layers
 
-### Optional Artifacts
-| Artifact | Source | Benefit |
-|----------|--------|---------|
-| `product-context.md` | icp-research (from `hungv47/comms-skills`) | Product positioning, audience, and value prop already defined |
-| `system-architecture.md` | system-architecture | Architecture decisions and component relationships pre-mapped |
-| `.agents/design/brand-system.md` | brand-system (from `hungv47/design-skills`) | Brand voice and terminology guidelines for documentation tone consistency |
+```
+Layer 1 (parallel):
+  scanner-agent ──────────────┐
+  concept-extractor-agent ────┤── run simultaneously
+  audience-profiler-agent ────┘
 
-If optional upstream artifacts' `date` fields are older than 30 days, consider re-running their source skills — stale product context or architecture docs produce outdated documentation.
+Layer 2 (sequential):
+  writer-agent ────────────────── writes documentation from all Layer 1 outputs
+    → staleness-checker-agent ─── verifies documentation matches codebase
+      → critic-agent ──────────── final quality review
+```
 
-### Audience Interview
-If the user doesn't specify an audience, interview:
-1. Who reads this documentation? (developers integrating, end-users, ops team, all three?)
-2. What's their technical level? (beginner, intermediate, expert)
-3. What's the single most important thing they need to accomplish?
+### Dispatch Protocol
 
-Audience clarity is necessary because writing for developers vs. end-users produces fundamentally different documents — mixing them confuses both.
+1. **Layer 1 dispatch** — send brief to all three Layer 1 agents in parallel:
+   - `scanner-agent` maps the project and ranks files by importance
+   - `concept-extractor-agent` reads ranked files and extracts documentation content
+   - `audience-profiler-agent` determines who reads the docs and how to write for them
+2. **Writer dispatch** — send all Layer 1 outputs to `writer-agent`. It produces the documentation following `references/doc-template.md`, calibrated for the audience.
+3. **Staleness check** — send writer output + codebase facts to `staleness-checker-agent`. It verifies every claim in the docs matches the current codebase.
+4. **Critic review** — send documentation + staleness results to `critic-agent`.
+5. **Revision loop** — if critic returns FAIL, re-dispatch affected agents. Maximum 2 rounds.
+6. **Save** — write documentation to project root or specified location.
+
+### Routing Rules
+
+| Condition | Route |
+|-----------|-------|
+| User specifies audience | audience-profiler-agent uses it directly (no inference needed) |
+| User says "document this" (no type) | audience-profiler defaults to User Guide (developers) or README (library) |
+| User says "audit docs" | Skip writer-agent; run scanner → staleness-checker → critic directly |
+| Monorepo detected | scanner-agent identifies package boundaries; writer produces per-package docs |
+| Critic PASS | Save and deliver |
+| Critic FAIL | Re-dispatch cited agents with feedback |
+
+---
+
+## Critical Gates
+
+Before delivering, the critic-agent verifies ALL of these pass:
+
+- [ ] Every user-facing feature has a documentation section
+- [ ] Setup steps are numbered with expected outcomes after each step
+- [ ] A new user could follow Getting Started independently without reading source code
+- [ ] Code examples compile/run — no pseudocode unless explicitly labeled
+- [ ] Configuration options list defaults and valid values
+- [ ] Troubleshooting covers errors visible in the codebase's error handling
+
+**If any gate fails:** the critic identifies which agent must fix it and the orchestrator re-dispatches.
+
+---
+
+## Single-Agent Fallback
+
+When context window is constrained or the project is small (fewer than 20 files):
+
+1. Skip multi-agent dispatch
+2. Scan project structure and identify key files using the 7-rank importance system
+3. Read 5-10 highest-ranked files
+4. Determine audience (developer, end-user, operator)
+5. Write documentation following `references/doc-template.md`
+6. Cross-check env vars, setup steps, and API endpoints against code
+7. Run Critical Gates as self-review
+8. Save to project root or specified location
 
 ---
 
 ## Documentation Types
-
-Choose the type based on audience and project needs. A project may need multiple types.
 
 | Type | Audience | Focus | Length |
 |------|----------|-------|--------|
@@ -84,87 +127,23 @@ Default to **User Guide** if the user says "document this" without specifying ty
 
 ---
 
-## Step 1: Scan Project Structure
+## File Importance Ranking (7 Ranks)
 
-Map the project to understand scope and architecture.
-
-**Small projects (<50 files):**
-```bash
-find . -type f \( -name "*.js" -o -name "*.ts" -o -name "*.tsx" -o -name "*.jsx" -o -name "*.py" -o -name "*.go" -o -name "*.rs" -o -name "*.swift" -o -name "*.kt" \) | head -100
-```
-
-**Monorepos and large codebases (>50 files):**
-1. Start with the top-level directory listing — identify packages, services, and apps
-2. Read the root `package.json`, `workspace` config, or build manifest to understand project boundaries
-3. Scan each package/service entry point separately
-4. Treat each package as a documentation unit — decide which ones need docs vs. which are internal utilities
-
-**Check for context files in this order:**
-1. `package.json` / `pyproject.toml` / `Cargo.toml` / `go.mod` — dependencies and project metadata
-2. `README.md` — existing documentation to build on, not duplicate
-3. `.env.example`, `config/`, `settings/` — configuration surface
-4. `Dockerfile`, `docker-compose.yml` — deployment context
-5. `openapi.yaml`, `swagger.json` — API contracts already defined
-6. CI/CD configs (`.github/workflows/`, `Jenkinsfile`) — build and deploy patterns
-
----
-
-## Step 2: Identify Key Files
-
-Rank files by documentation value. Read 5-10 highest-ranked files.
-
-**File importance ranking (highest to lowest):**
+The scanner-agent ranks files by documentation value:
 
 | Rank | File Type | What It Reveals | Priority |
 |------|-----------|-----------------|----------|
-| 1 | Entry points (`main.*`, `index.*`, `app.*`) | App initialization, core structure, dependency wiring | Read first |
-| 2 | Route/endpoint definitions | Feature surface area and user-facing capabilities | Read second |
-| 3 | Config/env files | Setup requirements, feature flags, environment needs | Read third |
-| 4 | Models/Types/Schemas | Core data entities, relationships, validation rules | Read for depth |
-| 5 | Components/Views | UI structure, user interactions, state management | Read for UX docs |
-| 6 | Middleware/Interceptors | Auth, logging, error handling patterns | Read for ops docs |
+| 1 | Entry points (`main.*`, `index.*`, `app.*`) | App initialization, core structure | Read first |
+| 2 | Route/endpoint definitions | Feature surface area | Read second |
+| 3 | Config/env files | Setup requirements, feature flags | Read third |
+| 4 | Models/Types/Schemas | Core data entities, relationships | Read for depth |
+| 5 | Components/Views | UI structure, user interactions | Read for UX docs |
+| 6 | Middleware/Interceptors | Auth, logging, error handling | Read for ops docs |
 | 7 | Migration files | Data model evolution, schema requirements | Skim for setup |
 
-**Skip:** Generated files, `node_modules`, `vendor/`, `.git/`, build output, lock files. Skip test files unless documenting testing patterns.
-
 ---
 
-## Step 3: Extract Core Concepts
-
-Read each key file and extract documentation content using these specific techniques.
-
-**Product Identity — scan entry points and README:**
-- What problem does this solve? (look for comments, package description, CLI help text)
-- Who is the target user? (look for onboarding flows, permission models, pricing tiers)
-- What's the core value proposition? (look for the primary workflow — what does the happy path do?)
-
-**Features and Capabilities — scan routes, components, and handlers:**
-- List every user-facing endpoint or UI component
-- Trace the primary workflow start-to-finish: entry → processing → output
-- Identify input/output patterns: what goes in, what comes out, what format?
-
-**Setup Requirements — scan config, env, and infrastructure files:**
-- Extract every environment variable with its purpose and default
-- List external service dependencies (databases, APIs, queues)
-- Identify required vs. optional configuration
-
-**Error Patterns — scan error handlers, validators, and catch blocks:**
-- Catalog user-facing error messages
-- Map each error to its cause and resolution
-- Note validation rules that users need to satisfy
-
-**Architecture Decisions — scan dependency graph and patterns:**
-- Why was this tech stack chosen? (infer from dependencies and patterns)
-- What design patterns are used? (MVC, event-driven, microservices)
-- What are the system boundaries?
-
----
-
-## Step 4: Generate Documentation
-
-### Audience Calibration
-
-Adjust language and depth based on the target audience:
+## 3 Audience Types
 
 | Audience | Vocabulary | Code Examples | Assumed Knowledge |
 |----------|-----------|---------------|-------------------|
@@ -172,64 +151,66 @@ Adjust language and depth based on the target audience:
 | **Developer** | Technical terms, API vocabulary | Request/response samples, code snippets | Can read code, use package managers |
 | **Operator** | Infrastructure terminology | Config files, deployment commands | Understands networking, servers, CI/CD |
 
-### Writing Principles
-- Write for someone who has never seen the code
-- Explain the "why" before the "how"
-- Use concrete examples over abstract descriptions
-- Include screenshots or diagrams when describing UI flows
-- Keep technical jargon to a minimum — define it in a glossary when unavoidable
-- Number every setup step and include the expected outcome
-
-### Structure
-Follow the template in `references/doc-template.md`. Adapt sections based on what the codebase reveals — omit sections with no content rather than writing placeholder text.
-
 ---
 
 ## Documentation Audit Mode
 
-Documentation rots faster than code — setup steps reference old versions, env vars get added without updating docs, and architecture diagrams describe last quarter's design. Stale docs are worse than no docs because they actively mislead.
+Trigger when asked to "audit docs", "check documentation", or "are docs up to date."
 
-Trigger this mode when asked to "audit docs", "check documentation", or "are docs up to date." Also recommend running it after any PR that modifies environment variables, API routes, or configuration — these are the changes most likely to make docs stale.
+In audit mode, the orchestrator skips the writer-agent and runs:
+1. `scanner-agent` — inventory all documentation files
+2. `staleness-checker-agent` — compare each doc against current codebase
+3. `critic-agent` — report findings with priority (security-relevant > setup > architecture > everything else)
 
-### Step 1: Inventory
-List all documentation files: README.md, CONTRIBUTING.md, CHANGELOG.md, ARCHITECTURE.md, docs/, and any .md files referenced in code.
-
-### Step 2: Staleness Check
-For each doc file, compare against current codebase:
-- [ ] Setup steps match actual dependencies (check package.json/requirements.txt versions)
-- [ ] Environment variables listed match .env.example or code references
-- [ ] API endpoints documented match actual route definitions
-- [ ] Configuration options match current defaults and valid values
-- [ ] Architecture descriptions match current file/folder structure
-- [ ] Links and cross-references resolve (no 404s within docs)
-
-### Step 3: Consistency Check
-- [ ] No contradictions between documents (README says X, CONTRIBUTING says Y)
-- [ ] Terminology is consistent (same feature isn't called different names)
-- [ ] Code examples compile/run against current codebase
-
-### Step 4: Staleness Report
-For each finding:
-- **What's stale:** specific text or section
-- **What's current:** actual state from codebase
-- **Fix:** exact replacement text or "remove section"
-
-Prioritize: Security-relevant docs (auth, env vars) > Setup docs > Architecture > Everything else.
+Prioritize: auth docs and env var docs being stale is a security risk.
 
 ---
 
 ## Anti-Patterns
 
-Avoid these — they produce documentation that users ignore.
+| Anti-Pattern | Problem | INSTEAD |
+|--------------|---------|---------|
+| Restating code as prose | "handleSubmit handles form submission" adds nothing | writer-agent describes user experience, not internal code |
+| Missing prerequisites | User stuck at step 3 because step 0 was assumed | concept-extractor lists every dependency and version |
+| Wall of text | Users scan, not read — long paragraphs get skipped | writer-agent uses tables, numbered lists, headers |
+| Outdated screenshots | Screenshots rot faster than text | writer-agent prefers text descriptions of UI elements |
+| Documenting internals | Users don't care about ORM layer | writer-agent documents behavior and interfaces |
+| "See code for details" | Defeats purpose of documentation | concept-extractor extracts the relevant detail |
+| Stale docs shipped as current | Actively mislead users | staleness-checker verifies every claim against codebase |
 
-| Anti-Pattern | Problem | Fix |
-|--------------|---------|-----|
-| **Restating code as prose** | "The `handleSubmit` function handles form submission" adds nothing | Describe what the user experiences, not what the code does internally |
-| **Missing prerequisites** | User gets stuck at step 3 because step 0 was assumed | List every dependency, version, and account needed before step 1 |
-| **Wall of text** | Users scan, not read — long paragraphs get skipped | Use tables, numbered lists, and headers. One idea per paragraph |
-| **Outdated screenshots** | Screenshots rot faster than text | Prefer text descriptions of UI elements. Use screenshots only for complex layouts |
-| **Documenting internals** | Users don't care about your ORM layer | Document behavior and interfaces, not implementation |
-| **"See code for details"** | Defeats the purpose of documentation | Extract the relevant detail into the doc |
+---
+
+## Worked Example
+
+**User:** "Document this project" (a Node.js REST API for task management)
+
+**Layer 1 (parallel):**
+- `scanner-agent` → maps project: src/index.ts, src/routes/, src/models/, prisma/schema.prisma, package.json, .env.example. Existing README is stale (references Node 16, project uses Node 18).
+- `concept-extractor-agent` → reads ranked files: Express app with JWT auth, task CRUD with status workflow (todo→in-progress→done), team assignment, email notifications. Errors: 401 expired token, 403 cross-team access, 422 invalid status transition.
+- `audience-profiler-agent` → Developer audience (API consumers). Recommended type: README + API Reference.
+
+**Layer 2 (sequential):**
+- `writer-agent` → writes README with Getting Started (5 numbered steps), API Reference, Configuration table, Troubleshooting section
+- `staleness-checker-agent` → flags: Node version in setup (docs say 16, code needs 18), missing SMTP_PORT env var (in code but not documented)
+- `critic-agent` → FAIL: 2 staleness issues must be fixed
+
+**Revision:** writer-agent updates Node version and adds SMTP_PORT. Critic → PASS.
+
+**Artifact saved to `README.md`.**
+
+---
+
+## Before Starting
+
+### Step 0: Product Context
+Check for existing context files: `README.md`, `CLAUDE.md`, `.agents/product-context.md`, `package.json#description`. Read all available context before scanning code.
+
+### Optional Artifacts
+| Artifact | Source | Benefit |
+|----------|--------|---------|
+| `product-context.md` | icp-research (from `hungv47/comms-skills`) | Product positioning and audience already defined |
+| `system-architecture.md` | system-architecture | Architecture decisions pre-mapped |
+| `.agents/design/brand-system.md` | brand-system (from `hungv47/design-skills`) | Brand voice and terminology guidelines |
 
 ---
 
@@ -246,131 +227,6 @@ status: draft
 audience: [end-user | developer | operator | mixed]
 doc-type: [readme | user-guide | api-reference | config-guide | tutorial]
 ---
-```
-
-Generate a single markdown file with all documentation. See `references/doc-template.md` for the full structure.
-
-If the project is large, split into multiple focused guides:
-- Getting Started Guide
-- Feature Reference
-- User Workflows
-- Configuration Guide
-- API Reference
-
----
-
-## Worked Example
-
-**User:** "Document this project" (a Node.js REST API for task management)
-
-**Step 1 — Scan:** Found `src/index.ts`, `src/routes/`, `src/models/`, `prisma/schema.prisma`, `package.json`, `.env.example`
-
-**Step 2 — Key files read:**
-1. `src/index.ts` — Express app with JWT auth middleware
-2. `src/routes/tasks.ts` — CRUD endpoints for tasks with status transitions
-3. `src/routes/auth.ts` — Login/register with email verification
-4. `prisma/schema.prisma` — User, Task, Team models
-5. `.env.example` — DATABASE_URL, JWT_SECRET, SMTP_HOST
-
-**Step 3 — Extracted:**
-- Product: Team task management API
-- Features: Task CRUD, status workflow (todo→in-progress→done), team assignment, email notifications
-- Setup: PostgreSQL, SMTP server, JWT secret
-- Errors: 401 on expired token, 403 on cross-team access, 422 on invalid status transition
-
-**Step 4 — Audience:** Developer (API consumers). **Type:** README + API Reference.
-
-**Artifact saved to `README.md`:**
-
-```markdown
----
-skill: technical-writer
-version: 1
-date: 2026-03-17
-status: draft
-audience: developer
-doc-type: readme
----
-
-# TaskFlow API
-
-REST API for team task management with status workflows and email notifications.
-
-## What It Does
-
-TaskFlow lets teams create, assign, and track tasks through a defined workflow:
-todo → in-progress → done. Each status transition triggers email notifications
-to assigned team members.
-
-### Core Capabilities
-
-- **Task Management** — Create, update, delete, and list tasks with filtering by status and assignee
-- **Status Workflows** — Enforced transitions prevent skipping steps (e.g., can't go from todo → done)
-- **Team Collaboration** — Users belong to teams; tasks are team-scoped with role-based access
-- **Email Notifications** — Automatic alerts on assignment and status changes
-
-## Getting Started
-
-### Requirements
-
-- Node.js 18+
-- PostgreSQL 14+
-- SMTP server (or Mailtrap for development)
-
-### First-Time Setup
-
-1. Clone and install dependencies
-   ```bash
-   git clone https://github.com/example/taskflow-api.git
-   cd taskflow-api && npm install
-   ```
-   Expected result: No errors in console
-
-2. Copy environment config
-   ```bash
-   cp .env.example .env
-   ```
-   Expected result: `.env` file created
-
-3. Set required variables in `.env`
-
-   | Variable | Purpose | Example |
-   |----------|---------|---------|
-   | DATABASE_URL | PostgreSQL connection | postgresql://user:pass@localhost:5432/taskflow |
-   | JWT_SECRET | Token signing key | any-random-string-32-chars |
-   | SMTP_HOST | Email server | smtp.mailtrap.io |
-
-4. Run database migrations
-   ```bash
-   npx prisma migrate deploy
-   ```
-   Expected result: "All migrations applied"
-
-5. Start the server
-   ```bash
-   npm start
-   ```
-   Expected result: "Server listening on port 3000"
-
-## Configuration Options
-
-| Setting | Purpose | Default | Valid Values |
-|---------|---------|---------|--------------|
-| PORT | Server port | 3000 | 1024-65535 |
-| DATABASE_URL | PostgreSQL connection | — (required) | PostgreSQL connection string |
-| JWT_SECRET | Token signing | — (required) | String, min 32 characters |
-| JWT_EXPIRY | Token lifetime | 24h | Duration string (1h, 7d) |
-| SMTP_HOST | Email server | — (required) | Hostname |
-
-## Troubleshooting
-
-### "Invalid status transition"
-**Cause:** Attempted to move a task to a status that isn't the next step in the workflow.
-**Solution:** Tasks must follow todo → in-progress → done. Check current status before updating.
-
-### "403 Forbidden" on task endpoints
-**Cause:** Accessing a task belonging to a different team.
-**Solution:** Verify the authenticated user belongs to the same team as the task.
 ```
 
 ---
