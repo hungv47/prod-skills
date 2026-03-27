@@ -5,12 +5,12 @@ argument-hint: "[spec or architecture to decompose]"
 license: MIT
 metadata:
   author: hungv47
-  version: "1.1.2"
+  version: "2.0.0"
 ---
 
 # Task Breakdown
 
-*Productivity — Standalone skill. Break architecture into executable tasks and build them one at a time with AI agents.*
+*Productivity — Multi-agent orchestration. Break architecture into executable tasks and build them one at a time with AI agents.*
 
 **Core Question:** "Can an engineer pick up any single task and ship it independently?"
 
@@ -20,15 +20,6 @@ metadata:
 
 ## Output
 - `.agents/tasks.md`
-
-## Quality Gate
-Before delivering, verify:
-- [ ] Every task has exactly ONE acceptance test
-- [ ] No task depends on something not yet defined
-- [ ] Risky/uncertain work is front-loaded
-- [ ] All external config is in Prerequisites, not buried in tasks
-- [ ] A junior dev could verify each acceptance criterion
-- [ ] No task requires unstated knowledge to complete
 
 ## Chain Position
 Previous: `system-architecture` or `plan-interviewer` | Next: task execution (Phase 2)
@@ -42,13 +33,87 @@ Previous: `system-architecture` or `plan-interviewer` | Next: task execution (Ph
 | `spec.md` | plan-interviewer | Feature specification with decided requirements |
 | `.agents/design/user-flow.md` | user-flow (from `hungv47/design-skills`) | User flow diagrams for feature decomposition and acceptance criteria |
 
-If upstream artifacts' `date` fields are older than 30 days, recommend re-running the source skill before proceeding — stale architecture or specs produce misaligned tasks.
+If upstream artifacts' `date` fields are older than 30 days, recommend re-running the source skill before proceeding.
 
 ---
 
-## Step 0: Scope Mode
+## Multi-Agent Architecture
 
-Before decomposing, confirm the user's scope intent. This prevents mismatch between decomposition behavior and expectations.
+### Agent Roster
+
+| Agent | File | Focus |
+|-------|------|-------|
+| decomposer-agent | `agents/decomposer-agent.md` | Splits features into atomic, right-sized tasks |
+| dependency-mapper-agent | `agents/dependency-mapper-agent.md` | Maps dependency graph, finds hidden dependencies |
+| ordering-agent | `agents/ordering-agent.md` | Merges tasks + deps into risk-first ordered list |
+| acceptance-agent | `agents/acceptance-agent.md` | Writes precise, verifiable acceptance criteria |
+| critic-agent | `agents/critic-agent.md` | Quality gate review, sizing check, coverage trace |
+
+### Execution Layers
+
+```
+Layer 1 (parallel):
+  decomposer-agent ────────┐
+  dependency-mapper-agent ──┘── run simultaneously
+
+Layer 2 (sequential):
+  ordering-agent ──────────── merges task list + dependency graph
+    → acceptance-agent ────── writes criteria for ordered tasks
+      → critic-agent ─────── final quality review
+```
+
+### Dispatch Protocol
+
+1. **Confirm scope mode** — ask the user: "Are we decomposing everything (FULL), building exactly what's spec'd (LOCKED), or cutting to minimum (MINIMAL)?" Default to LOCKED if finished spec provided, MINIMAL if MVP mentioned.
+2. **Layer 1 dispatch** — send brief + scope mode to `decomposer-agent` and `dependency-mapper-agent` in parallel.
+3. **Layer 2 sequential chain** — pass both outputs to `ordering-agent`, then ordered list to `acceptance-agent`, then complete breakdown to `critic-agent`.
+4. **Revision loop** — if critic returns NEEDS REVISION, re-dispatch affected agents with feedback. Maximum 2 rounds.
+5. **Assembly** — merge into the task artifact format. Save to `.agents/tasks.md`.
+
+### Routing Rules
+
+| Condition | Route |
+|-----------|-------|
+| Scope mode MINIMAL | decomposer-agent actively cuts features before decomposing |
+| Scope mode FULL | decomposer-agent captures everything; defer cuts to after |
+| Scope mode LOCKED | decomposer-agent follows spec exactly; flags gaps but doesn't add |
+| Critic APPROVED | Assemble and deliver |
+| Critic NEEDS REVISION | Re-dispatch cited agents with feedback |
+| Revision round > 2 | Deliver with critic's remaining issues noted |
+
+---
+
+## Critical Gates
+
+Before delivering, the critic-agent verifies ALL of these pass:
+
+- [ ] Every task has exactly ONE acceptance test
+- [ ] No task depends on something not yet defined
+- [ ] Risky/uncertain work is front-loaded
+- [ ] All external config is in Prerequisites, not buried in tasks
+- [ ] A junior dev could verify each acceptance criterion
+- [ ] No task requires unstated knowledge to complete
+
+**If any gate fails:** the critic identifies which agent must fix it and the orchestrator re-dispatches with specific feedback.
+
+---
+
+## Single-Agent Fallback
+
+When context window is constrained or the decomposition is simple (fewer than 10 tasks expected):
+
+1. Skip multi-agent dispatch
+2. Confirm scope mode with the user
+3. Decompose using the Task Format and Sizing Rules below
+4. Map dependencies inline
+5. Order risk-first
+6. Write acceptance criteria for each task
+7. Run the Critical Gates checklist as self-review
+8. Save to `.agents/tasks.md`
+
+---
+
+## Scope Modes
 
 | Mode | When | Behavior |
 |------|------|----------|
@@ -56,15 +121,11 @@ Before decomposing, confirm the user's scope intent. This prevents mismatch betw
 | **LOCKED SCOPE** | Spec is final, ready to build | Decompose exactly what's written — flag gaps but don't add |
 | **MINIMAL SCOPE** | Too much on the plate, need an MVP | Actively cut before decomposing — ask "can we ship without this?" for each feature |
 
-Ask: *"Are we decomposing everything (full scope), building exactly what's spec'd (locked), or cutting to minimum (minimal)?"*
-
-Default to LOCKED SCOPE if the user provides a finished spec. Default to MINIMAL SCOPE if the user mentions MVP, prototype, or time pressure. If arriving from `plan-interviewer`, check the spec for scope signals before asking — the user may have already decided.
+Default to LOCKED SCOPE if the user provides a finished spec. Default to MINIMAL SCOPE if the user mentions MVP, prototype, or time pressure.
 
 ---
 
-## Phase 1: Task Decomposition
-
-### Task Format
+## Task Format
 
 ```markdown
 ## Task [N]: [Title]
@@ -99,51 +160,11 @@ Split if:
 Bad: "Create users table with id, email, created_at using Prisma"
 Good: "Database stores user records with unique emails and timestamps"
 
-Bad: "Install React Query and create useUser hook"
-Good: "User data fetches efficiently with caching"
-
-The agent knows their tools. Define success, not steps.
-
 **Risk-first ordering.**
-
-Put uncertain/complex tasks early. Fail fast on hard problems. Don't save integrations and edge cases for the end.
-
-Typical flow: setup > risky core logic > database > API > UI > integration
+Put uncertain/complex tasks early. Fail fast on hard problems.
 
 **Dependencies explicit.**
-
 Every task lists what it needs. Enables parallel work and failure impact analysis.
-
-### Output Structure
-
-```markdown
-# [Project] Tasks
-
-## Prerequisites
-[External setup: accounts, keys, env vars]
-
-## Tasks
-[Ordered task list with dependencies]
-
-## Out of Scope
-[What's NOT in this MVP]
-```
-
-### Pre-Execution Gate
-
-Before starting execution, run the Quality Gate checklist at the top of this skill.
-
-### Anti-Patterns
-
-**Too big:** "Build the auth system" - This is 5+ tasks disguised as one.
-
-**Too small:** "Create the Button component" then "Add onClick to Button" - Combine unless genuinely separate concerns.
-
-**Hidden dependency:** Task 8 needs an API key not mentioned until Task 8. Put it in Prerequisites.
-
-**Vague acceptance:** "User flow works correctly" - Works how? What's the test?
-
-**Implementation-as-outcome:** "Use Redux for state management" - That's a how, not a what.
 
 ---
 
@@ -190,8 +211,6 @@ Before starting execution, run the Quality Gate checklist at the top of this ski
 2. Propose smallest modification to unblock
 3. Wait for approval
 
-Avoid silently skipping acceptance criteria — it masks failures. Avoid reinterpreting the task — flag ambiguity instead.
-
 ### Scope Change Protocol
 
 If you discover a missing requirement:
@@ -202,7 +221,37 @@ If you discover a missing requirement:
 4. Wait for PM to update task list
 5. Resume only after task list is updated
 
-Avoid improvising new requirements into existing tasks — it creates untested scope.
+---
+
+## Anti-Patterns
+
+| Anti-Pattern | Problem | INSTEAD |
+|--------------|---------|---------|
+| "Build the auth system" | 5+ tasks disguised as one | decomposer-agent splits into registration, login, middleware, reset, verification |
+| "Create the Button component" | Not independently testable | Combine with click handling and visual states |
+| Hidden dependency | Task 8 needs API key not mentioned until Task 8 | dependency-mapper-agent surfaces it; goes in Prerequisites |
+| "User flow works correctly" | Vague acceptance — means different things to everyone | acceptance-agent writes specific action + input + expected result |
+| Implementation-as-outcome | "Use Redux for state management" dictates HOW | decomposer-agent writes WHAT: "User data fetches efficiently with caching" |
+| Saving integrations for the end | Integration issues discovered late cause the most rework | ordering-agent front-loads risky integration work |
+
+---
+
+## Worked Example
+
+**User:** "Break down a Todo app with Supabase auth and email notifications."
+
+**Orchestrator confirms:** LOCKED SCOPE (spec is clear).
+
+**Layer 1 dispatch (parallel):**
+- `decomposer-agent` → produces 7 tasks: scaffold, signup, login + protected routes, tasks table + RLS, create task, email notification, end-to-end test
+- `dependency-mapper-agent` → identifies fan-out from scaffold (signup, login, tasks table are parallel), fan-in at create task (needs auth + schema), hidden dep: Resend API key missing from prerequisites
+
+**Layer 2 chain:**
+- `ordering-agent` → merges: moves Resend API key to Prerequisites, orders risk-first (auth before CRUD), identifies parallelism (signup and tasks table can run simultaneously)
+- `acceptance-agent` → writes: "Submit signup form → user appears in Supabase Auth → confirmation email sent" for Task 2
+- `critic-agent` → APPROVED, all 6 gates pass
+
+**Artifact saved to `.agents/tasks.md`.**
 
 ---
 
@@ -217,69 +266,18 @@ Task [N]: PASS | FAIL | BLOCKED
 [If BLOCKED]: What's preventing test
 ```
 
-Keep it tight. Agent needs signal, not narrative.
-
----
-
-## Example
-
-```markdown
-# Todo App Tasks
-
-## Prerequisites
-- Supabase project with URL + anon key in .env.local
-- Resend API key in .env.local
-
-## Tasks
-
-## Task 1: Scaffold
-**Depends on:** None
-**Outcome:** Next.js app runs with Supabase client configured
-**Why:** Foundation for all features
-**Acceptance:** `npm run dev` shows page, console logs "Supabase connected"
-
-## Task 2: Signup
-**Depends on:** 1
-**Outcome:** Users create accounts via email/password
-**Why:** Unblocks all authenticated features
-**Acceptance:** Submit signup form → user appears in Supabase Auth → confirmation email sent
-
-## Task 3: Login + Protected Routes
-**Depends on:** 2
-**Outcome:** Users log in and access protected pages
-**Why:** Unblocks task management UI
-**Acceptance:** Login → redirect to /dashboard. Visit /dashboard logged out → redirect to /login
-
-## Task 4: Tasks Table + RLS
-**Depends on:** 1
-**Outcome:** Database stores tasks per user
-**Why:** Unblocks task CRUD
-**Acceptance:** Insert task via Supabase dashboard with user_id, title, due_date, completed. Query as different user returns empty.
-
-## Task 5: Create Task
-**Depends on:** 3, 4
-**Outcome:** Users create tasks from UI
-**Why:** Core feature
-**Acceptance:** Submit form → task in DB → appears in list without refresh
-
-## Out of Scope
-- Social auth
-- Task sharing
-- Mobile app
-```
-
----
-
-## References
-
-- [references/sizing-examples.md](references/sizing-examples.md) -- Right-sized vs wrong-sized tasks with split/combine guidance
-- [references/dependency-patterns.md](references/dependency-patterns.md) -- Common dependency patterns, visualization, and hidden dependency detection
-- [references/acceptance-criteria.md](references/acceptance-criteria.md) -- Acceptance criteria templates by task type
-
 ---
 
 ## Artifact Template
 
 On re-run: rename existing artifact to `tasks.v[N].md` and create new with incremented version.
 
-Save to `.agents/tasks.md` using the Output Structure format from Phase 1.
+Save to `.agents/tasks.md` using the Task Format above.
+
+---
+
+## References
+
+- [references/sizing-examples.md](references/sizing-examples.md) — Right-sized vs wrong-sized tasks with split/combine guidance
+- [references/dependency-patterns.md](references/dependency-patterns.md) — Common dependency patterns, visualization, and hidden dependency detection
+- [references/acceptance-criteria.md](references/acceptance-criteria.md) — Acceptance criteria templates by task type

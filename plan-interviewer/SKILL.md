@@ -5,12 +5,12 @@ argument-hint: "[idea or feature to specify]"
 license: MIT
 metadata:
   author: hungv47
-  version: "1.2.0"
+  version: "2.0.0"
 ---
 
 # Plan Interviewer
 
-*Productivity — Standalone skill. Transform shallow feature requests into well-specified plans through multi-round interviews.*
+*Productivity — Multi-agent orchestration. Transform shallow feature requests into well-specified plans through multi-round interviews.*
 
 **Core Question:** "What haven't we thought of yet?"
 
@@ -21,167 +21,148 @@ metadata:
 ## Output
 - Spec file at user-designated path (default: `.agents/spec.md`)
 
-## Quality Gate
-Before delivering, verify:
-- [ ] All 5 interview dimensions explored (Technical, UX, Business Logic, Architecture, Security)
-- [ ] Spec contains concrete decisions, not open-ended options
-- [ ] Edge cases documented with explicit handling strategies
-- [ ] Open questions list is empty or explicitly deferred with rationale
-
 ## Chain Position
 Previous: none | Next: `task-breakdown` or `system-architecture`
 
 ### Skill Deference
 - **Have a FEATURE or PRODUCT to specify?** → Use this skill.
-- **Have a declining METRIC to diagnose** (X is at Y, should be Z)? → Use `problem-analysis` (from strategy-skills) instead — it structures metric diagnosis with hypothesis testing, not feature specification.
+- **Have a declining METRIC to diagnose** (X is at Y, should be Z)? → Use `problem-analysis` (from strategy-skills) instead.
 
 **Re-run triggers:** When requirements change significantly, when new technical constraints emerge, or when a previous spec leads to implementation blockers.
 
 ---
 
-## Before Starting
+## Multi-Agent Architecture
 
-### Step 0: Product Context
-Check for `.agents/product-context.md`. If available, read for product and audience context before interviewing — it prevents asking questions already answered. If missing, this is fine — plan-interviewer can work standalone.
+### Agent Roster
 
-If `.agents/product-context.md` has a `date` field older than 30 days, recommend re-running `icp-research` (from comms-skills) to refresh it.
+| Agent | File | Focus |
+|-------|------|-------|
+| codebase-scanner-agent | `agents/codebase-scanner-agent.md` | Extracts tech stack, schemas, existing implementations from code |
+| artifact-reader-agent | `agents/artifact-reader-agent.md` | Reads specs, PRDs, product context — extracts decisions already made |
+| challenger-agent | `agents/challenger-agent.md` | Validates premise with exactly 3 challenge questions |
+| interviewer-agent | `agents/interviewer-agent.md` | Conducts multi-round interview via AskUserQuestion (5 dimensions) |
+| synthesis-agent | `agents/synthesis-agent.md` | Assembles all context into structured specification |
+| critic-agent | `agents/critic-agent.md` | Quality gate review, dimension coverage, decision completeness |
 
-### Optional Artifacts
-| Artifact | Source | Benefit |
-|----------|--------|---------|
-| `.agents/product-context.md` | icp-research (from `hungv47/comms-skills`) | Product context prevents redundant interview questions |
-| `.agents/problem-analysis.md` | problem-analysis (from `hungv47/strategy-skills`) | Root cause context when the feature being spec'd is a solution to a diagnosed problem |
+### Execution Layers
+
+```
+Layer 1 (parallel):
+  codebase-scanner-agent ──┐
+  artifact-reader-agent ───┘── run simultaneously
+
+Layer 2 (sequential):
+  challenger-agent ─────────── uses Layer 1 context to validate premise
+    → interviewer-agent ────── conducts interview (INTERACTIVE — uses AskUserQuestion)
+      → synthesis-agent ────── writes the specification
+        → critic-agent ─────── final quality review
+```
+
+### Dispatch Protocol
+
+1. **Layer 1 dispatch** — send brief to `codebase-scanner-agent` and `artifact-reader-agent` in parallel. They extract what the codebase and existing artifacts already answer.
+2. **Challenger dispatch** — send brief + Layer 1 outputs to `challenger-agent`. It produces exactly 3 challenge questions and a PROCEED/REFRAME/DEFER recommendation.
+3. **User confirmation** — present challenger's questions to the user. If REFRAME, present the alternative framing. If user confirms proceed, continue. If DEFER, stop and explain.
+4. **Interviewer dispatch** — send all context to `interviewer-agent`. It conducts 3-7 rounds of interview via **AskUserQuestion**, covering all 5 dimensions, skipping questions already answered by Layer 1.
+5. **Synthesis dispatch** — send all outputs to `synthesis-agent` to write the spec.
+6. **Critic review** — send spec to `critic-agent`.
+7. **Revision loop** — if critic returns NEEDS REVISION, re-dispatch affected agents. Maximum 2 rounds.
+8. **Save** — write spec to user-designated path (default: `.agents/spec.md`).
+
+### Routing Rules
+
+| Condition | Route |
+|-----------|-------|
+| No codebase exists (greenfield) | codebase-scanner-agent returns NO CODEBASE; all questions valid |
+| No artifacts exist | artifact-reader-agent returns NO ARTIFACTS; interview from scratch |
+| Challenger recommends REFRAME | Present reframing to user; proceed on confirmation |
+| Challenger recommends DEFER | Stop; explain what should happen instead |
+| User says "skip the questions, just write it" | Use Layer 1 context + challenger only; synthesize without interview |
+| Critic APPROVED | Save and deliver |
+| Critic NEEDS REVISION | Re-dispatch cited agents with feedback |
 
 ---
 
-## Core Process
+## Critical Gates
 
-### Phase 0: Problem Validation
+Before delivering, the critic-agent verifies ALL of these pass:
 
-Before diving into details, challenge the premise. Detailed specs for the wrong feature waste more time than vague specs for the right one.
+- [ ] All 5 interview dimensions explored (Technical, UX, Business Logic, Architecture, Security)
+- [ ] Spec contains concrete decisions, not open-ended options
+- [ ] Edge cases documented with explicit handling strategies
+- [ ] Open questions list is empty or explicitly deferred with rationale
 
-1. **Right problem?** — Is this the most direct path to the user/business outcome, or are we solving a proxy problem? Restate the actual outcome in one sentence.
-2. **What if we did nothing?** — Is there real, measurable pain today, or is this hypothetical? If nobody is complaining, probe why this surfaced now.
-3. **What already exists?** — Does existing code, tooling, or process already partially solve this? Map each sub-problem to what's already in place before designing net-new solutions.
+**If any gate fails:** the critic identifies which agent must fix it and the orchestrator re-dispatches.
 
-If any answer reveals the request is misdirected, recommend the right framing before continuing. If the user confirms they want to proceed anyway, note the concern in the artifact and continue — don't block. One round of "are we building the right thing?" saves multiple rounds of detailed spec work on the wrong thing.
+---
 
-### Phase 1: Context Gathering
+## Single-Agent Fallback
 
-1. **Read existing artifacts**: If a plan file or spec file exists (or is mentioned), read it first to understand current state
-2. **Explore the codebase**: Before each question, check whether the codebase already answers it — read configs, schemas, existing implementations, and tests. If the codebase provides the answer, state what you found and move on instead of asking the user. This applies throughout the interview, not just in this phase.
-3. **Identify the domain**: Determine whether this is frontend, backend, full-stack, infrastructure, data, etc.
-4. **Assess complexity**: Estimate how many rounds of questioning are needed
+When context window is constrained or the feature is simple:
 
-### Phase 2: Multi-Round Interview
+1. Skip multi-agent dispatch
+2. Check for existing codebase context and artifacts
+3. Challenge the premise (3 questions: right problem? what if nothing? what exists?)
+4. Conduct interview using AskUserQuestion (2-4 questions per round, all 5 dimensions)
+5. Write specification using the Spec File Format below
+6. Run Critical Gates as self-review
+7. Save to `.agents/spec.md`
 
-Conduct interviews using **AskUserQuestion** tool. Each round explores a different dimension. Avoid obvious questions like "what framework?" or "what language?" when context already provides this — they waste interview rounds and erode trust.
-
-**Decision dependency awareness:** Some decisions unlock or constrain others. Before asking the next question, check whether an earlier answer already narrows the options or answers it outright. Resolve upstream decisions first — e.g., "local-first vs server-first" must be resolved before asking about conflict resolution strategy. When you notice a dependency, say so: "This depends on your answer to X, so let me ask that first."
-
-**Interview Dimensions (cycle through these):**
-
-#### Technical Implementation
-- Data flow edge cases (What happens when X fails mid-operation?)
-- State management boundaries (Where does this state live? Who owns it?)
-- Concurrency considerations (What if two users do this simultaneously?)
-- Migration paths (How do we get from current state to this without breaking things?)
-- Performance cliffs (At what scale does this approach break down?)
-
-#### UX & Interaction Design
-- Error recovery flows (User does X wrong—then what?)
-- Loading/empty/error states (What does the user see during transitions?)
-- Undo/redo expectations (Should this be reversible? How far back?)
-- Accessibility edge cases (How does a screen reader announce this state change?)
-- Mobile-first considerations (Does this gesture conflict with system gestures?)
-
-#### Business Logic & Domain
-- Edge case ownership (Who decides what happens when rules conflict?)
-- Audit/compliance needs (Does this action need to be logged? For how long?)
-- Multi-tenancy implications (How does this behave across different accounts/orgs?)
-- Internationalization (Does this text expand 40% in German? RTL support?)
-
-#### Architecture & Tradeoffs
-- Consistency vs availability (What's acceptable during network partition?)
-- Coupling concerns (Does this create a dependency we'll regret?)
-- Testability (How do we verify this works without manual testing?)
-- Observability (How do we know this is broken in production?)
-- Implementation foresight (What decisions will need to be made mid-build that should be resolved now? What will surprise the implementer? Example: "If enrichment APIs partially fail, do we degrade gracefully or block the whole flow?" — resolve this now, not at 2am during implementation.)
-
-#### Security & Privacy
-- Trust boundaries (What if this input comes from an attacker?)
-- Data exposure (What PII touches this flow? Who can see it?)
-- Rate limiting (What happens if someone calls this 10,000 times?)
-
-### Phase 3: Synthesis & Specification
-
-After sufficient interview rounds (typically 3-7 depending on complexity):
-
-1. **Summarize findings**: Recap the key decisions made during interview
-2. **Write specification**: Create or update the spec/plan file with:
-   - Clear problem statement
-   - Decided approach with rationale
-   - Edge cases and their handling
-   - Open questions (if any remain)
-   - Implementation notes
-
-## Interview Technique Guidelines
-
-### Question Quality Rules
-
-**Avoid obvious questions — they waste rounds and erode credibility:**
-- "What tech stack?" (look at the codebase)
-- "What should the button say?" (context usually provides this)
-- "Should we use TypeScript?" (check existing code)
-
-**Ask revealing questions:**
-- "If the webhook fails after the database write succeeds, should we retry, rollback, or alert?"
-- "When the cache is stale but the origin is down, do we serve stale or error?"
-- "If a user is mid-edit and their session expires, do we save their work or lose it?"
-
-### Question Framing
-
-Frame questions to surface hidden assumptions:
-- "What's the worst thing that could happen if..."
-- "When you say X, do you mean A or B? Because they have different implications for..."
-- "I notice the current system does Y—should we preserve that behavior or is this a chance to fix it?"
-- "Who's the angriest user for this feature and what would make them happy?"
-
-### Pacing
-
-- Ask 2-4 questions per round maximum
-- Group related questions together
-- After each round, briefly acknowledge answers before next questions
-- **Resolve each branch before moving on** — when a question opens a sub-topic (e.g., "yes we need offline support"), exhaust the follow-up decisions for that sub-topic (sync strategy, conflict resolution, storage limits) before switching dimensions. Partially resolved branches create ambiguity in the spec.
-- Stop when answers start repeating or user indicates completion
+---
 
 ## AskUserQuestion Tool Usage
 
-Structure questions for maximum clarity:
+**This skill is interactive.** The interviewer-agent uses AskUserQuestion for every question round.
 
-```
-Use AskUserQuestion with:
+Structure questions for maximum clarity:
 - 2-4 questions per invocation
 - Each question has 2-4 concrete options
-- Options should represent real tradeoffs, not obvious choices
+- Options represent real tradeoffs, not obvious choices
 - Include brief description explaining implications of each option
-- State which option you recommend and why — let users confirm good defaults instead of evaluating from scratch
-```
+- State which option you recommend and why
 
-**Example question structure:**
+**Example:**
 ```
 Question: "When a background sync fails, how should we handle it?"
 Options:
-1. Silent retry (3x with backoff) - User unaware, but may see stale data
-2. Toast notification - User informed but may be annoyed
-3. Badge indicator - Subtle, user can investigate when ready
-4. Block UI until resolved - Safest but worst UX
-Recommended: Option 1 — most sync failures are transient and resolve on retry; alerting the user for infra hiccups creates unnecessary anxiety. Fall back to option 2 if retries exhaust.
+1. Silent retry (3x with backoff) — User unaware, but may see stale data
+2. Toast notification — User informed but may be annoyed
+3. Badge indicator — Subtle, user can investigate when ready
+4. Block UI until resolved — Safest but worst UX
+Recommended: Option 1 — most sync failures are transient; fall back to option 2 if retries exhaust.
 ```
 
-## Spec File Format
+---
 
-When writing the specification, use this structure:
+## Interview Dimensions (all 5 required)
+
+### Technical Implementation
+- Data flow edge cases (What happens when X fails mid-operation?)
+- State management boundaries (Where does this state live?)
+- Concurrency considerations (What if two users do this simultaneously?)
+- Migration paths, performance cliffs
+
+### UX & Interaction Design
+- Error recovery flows, loading/empty/error states
+- Undo/redo expectations, accessibility edge cases
+- Mobile-first considerations
+
+### Business Logic & Domain
+- Edge case ownership, audit/compliance needs
+- Multi-tenancy implications, internationalization
+
+### Architecture & Tradeoffs
+- Consistency vs availability, coupling concerns
+- Testability, observability
+- Implementation foresight (decisions to resolve NOW, not at 2am during build)
+
+### Security & Privacy
+- Trust boundaries, data exposure, rate limiting
+
+---
+
+## Spec File Format
 
 ```markdown
 # [Feature Name] Specification
@@ -210,15 +191,59 @@ When writing the specification, use this structure:
 [Technical details, gotchas, dependencies]
 ```
 
-## Completion Criteria
+---
 
-Stop interviewing when:
-- All 5 interview dimensions have been covered
-- User indicates readiness to proceed
-- Answers are becoming repetitive
-- Core architecture and edge cases are documented
+## Anti-Patterns
 
-Write the spec to the designated file and confirm with user.
+| Anti-Pattern | Problem | INSTEAD |
+|--------------|---------|---------|
+| Leading questions | "Don't you think we should use WebSockets?" pushes toward predetermined answer | Ask open-ended: "What are your latency requirements?" |
+| Accepting the first answer | Surface-level answers miss hidden constraints | Probe deeper: "Why that approach?" and "What would change your mind?" |
+| Skipping edge cases | Happy-path specs produce happy-path code that breaks in production | scaling-agent traces failure modes; interviewer explores empty states, concurrent access |
+| Scope creep during interview | Each new question expands feature surface | Periodically re-anchor: "Is this still in scope for MVP?" |
+| Asking questions the codebase answers | "What framework?" when package.json is right there | codebase-scanner-agent extracts facts first; interviewer skips answered questions |
+| Options instead of decisions | Spec says "could use X or Y" | synthesis-agent writes concrete decisions only; undecided items go to Open Questions |
+
+---
+
+## Worked Example
+
+**User:** "I want to build a habit tracker app."
+
+**Layer 1 (parallel):**
+- `codebase-scanner-agent` → NO CODEBASE (greenfield)
+- `artifact-reader-agent` → NO ARTIFACTS
+
+**Challenger (3 questions):**
+1. Right problem? "Outcome: users build consistent habits. A habit tracker is the most direct path."
+2. What if nothing? "Users currently use spreadsheets — friction causes abandonment."
+3. What exists? "Greenfield — no existing code." → Recommendation: PROCEED
+
+**Interviewer (5 rounds, AskUserQuestion):**
+- Round 1 (Scope): Personal only, mobile-first PWA, 4-week MVP
+- Round 2 (Users): Health-conscious 25-35, switching from spreadsheets
+- Round 3 (Features): Add habit → check off → see streak. Configurable reminders.
+- Round 4 (Edge cases): Streak resets on miss (history preserved), user's local timezone
+- Round 5 (Technical): Email magic link auth, offline sync on reconnect
+
+**Synthesis:** Spec with 14 concrete decisions and 3 deferred items.
+
+**Critic:** APPROVED — all 4 gates pass, all 5 dimensions covered.
+
+**Artifact saved to `.agents/spec.md`.**
+
+---
+
+## Before Starting
+
+### Step 0: Product Context
+Check for `.agents/product-context.md`. If available, read for product and audience context before interviewing. If missing, plan-interviewer works standalone.
+
+### Optional Artifacts
+| Artifact | Source | Benefit |
+|----------|--------|---------|
+| `.agents/product-context.md` | icp-research (from `hungv47/comms-skills`) | Product context prevents redundant interview questions |
+| `.agents/problem-analysis.md` | problem-analysis (from `hungv47/strategy-skills`) | Root cause context when feature solves a diagnosed problem |
 
 ---
 
@@ -227,54 +252,6 @@ Write the spec to the designated file and confirm with user.
 On re-run: rename existing artifact to `spec.v[N].md` and create new with incremented version.
 
 Save to user-designated path (default: `.agents/spec.md`) using the Spec File Format above.
-
----
-
-## Worked Example
-
-**User:** "I want to build a habit tracker app."
-
-**Round 1 — Scope:** "What habits? Just personal, or team/org habits too?" → Personal only. "Mobile, web, or both?" → Mobile-first PWA. "What's your timeline?" → MVP in 4 weeks.
-
-**Round 2 — Users:** "Who's the primary user?" → Health-conscious 25-35 year olds. "What's their current solution?" → Spreadsheets and reminder apps. "What makes them switch?" → Visual streaks and simplicity.
-
-**Round 3 — Features:** "What's the core loop?" → Add habit → check off daily → see streak. "Notifications?" → Yes, configurable reminders. "Social features?" → Not for MVP.
-
-**Round 4 — Edge cases:** "What happens when a user misses a day?" → Streak resets but history preserved. "Timezone handling?" → User's local timezone, no server-side conversion. "Data export?" → Post-MVP.
-
-**Round 5 — Technical:** "Auth method?" → Email magic link. "Offline support?" → Yes, sync on reconnect. "Analytics?" → Basic usage metrics, no PII.
-
-**Spec saved to `.agents/spec.md` with 14 concrete decisions and 3 deferred items.**
-
-**Excerpt from `.agents/spec.md`:**
-
-```markdown
-## Key Decisions
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| Auth method | Email magic link | No password management needed; target audience (25-35 health-conscious) prefers frictionless login |
-| Streak reset policy | Full reset on miss, history preserved | Users in research respond to loss aversion; seeing "Day 0" motivates more than partial credit |
-| Offline support | Local-first with sync on reconnect | Habit check-ins happen at gym/outdoors where connectivity is poor; blocking on network kills the core loop |
-
-## Edge Cases
-- **Timezone travel**: If user crosses timezone, use the timezone where they checked in most recently. No server-side conversion — all logic runs on device clock.
-- **Missed day notification**: Send a single "Don't break the streak" push at user's configured reminder time +2 hours. No guilt-tripping — one nudge only.
-- **Concurrent devices**: Last-write-wins with conflict resolution on sync. Display "synced" indicator so user knows state is current.
-```
-
----
-
-## Anti-Patterns
-
-**Leading questions** — "Don't you think we should use WebSockets here?" pushes toward a predetermined answer. Ask open-ended questions that surface the user's actual constraints: "What are your latency requirements?"
-
-**Accepting the first answer** — The first answer is often the surface-level one. Probe deeper: "Why that approach?" and "What would change your mind?" reveal hidden assumptions and constraints.
-
-**Skipping edge cases** — Happy-path specs produce happy-path code that breaks in production. Systematically explore failure modes, concurrent access, empty states, and boundary conditions in every interview round.
-
-**Scope creep during interview** — Each new question expands the feature surface area. Periodically re-anchor to the original problem: "Is this still in scope for the MVP, or should we defer it?"
-
-**Asking questions the codebase answers** — "What framework are you using?" when `package.json` is right there. Before asking any factual question, explore the codebase first: read configs, schemas, existing implementations, and tests. If you find the answer, state what you found and your interpretation — don't ask the user to confirm what the code already proves. Redundant questions waste rounds and erode trust.
 
 ---
 
