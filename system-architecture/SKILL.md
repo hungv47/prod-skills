@@ -6,6 +6,31 @@ license: MIT
 metadata:
   author: hungv47
   version: "3.0.0"
+routing:
+  intent-tags:
+    - tech-stack
+    - database-schema
+    - api-design
+    - deployment-plan
+    - system-design
+    - infrastructure
+  position: pipeline
+  produces:
+    - system-architecture.md
+  consumes:
+    - product-context.md
+    - spec.md
+    - solution-design.md
+    - design/user-flow.md
+  requires: []
+  defers-to:
+    - skill: plan-interviewer
+      when: "requirements are unclear, need to interview first"
+    - skill: task-breakdown
+      when: "architecture is done, need to decompose into tasks"
+  parallel-with: []
+  interactive: false
+  estimated-complexity: heavy
 ---
 
 # System Architecture Designer — Orchestrator

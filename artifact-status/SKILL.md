@@ -7,6 +7,20 @@ license: MIT
 metadata:
   author: hungv47
   version: "1.0.0"
+routing:
+  intent-tags:
+    - artifact-scan
+    - staleness-check
+    - next-action
+    - project-status
+  position: utility
+  produces: []
+  consumes: []
+  requires: []
+  defers-to: []
+  parallel-with: []
+  interactive: false
+  estimated-complexity: light
 ---
 
 # Artifact Status

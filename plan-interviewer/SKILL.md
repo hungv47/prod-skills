@@ -6,6 +6,28 @@ license: MIT
 metadata:
   author: hungv47
   version: "2.0.0"
+routing:
+  intent-tags:
+    - requirements
+    - interview
+    - spec-writing
+    - idea-clarification
+    - scope-definition
+  position: pipeline
+  produces:
+    - spec.md
+  consumes:
+    - product-context.md
+    - design/user-flow.md
+  requires: []
+  defers-to:
+    - skill: problem-analysis
+      when: "diagnosing a metric decline, not clarifying a build spec"
+    - skill: system-architecture
+      when: "spec is clear, need technical design"
+  parallel-with: []
+  interactive: true
+  estimated-complexity: medium
 ---
 
 # Plan Interviewer — Orchestrator

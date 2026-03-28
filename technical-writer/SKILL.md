@@ -6,6 +6,27 @@ license: MIT
 metadata:
   author: hungv47
   version: "3.0.0"
+routing:
+  intent-tags:
+    - documentation
+    - readme
+    - api-reference
+    - setup-guide
+    - runbook
+  position: horizontal
+  produces: []
+  consumes:
+    - product-context.md
+  requires: []
+  defers-to:
+    - skill: plan-interviewer
+      when: "need a spec for what to build, not docs for what exists"
+    - skill: code-cleanup
+      when: "need code quality improvements, not documentation"
+  parallel-with:
+    - code-cleanup
+  interactive: false
+  estimated-complexity: medium
 ---
 
 # Technical Writer — Orchestrator
