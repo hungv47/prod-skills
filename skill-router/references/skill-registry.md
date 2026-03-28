@@ -128,7 +128,7 @@ Phase 10 — Validate:
 Phase 1: /icp-research → product-context.md
 Phase 2: /imc-plan → mkt/imc-plan.md
 Phase 3: /content-create → mkt/content/*.md
-Phase 4: /copywriting → key line annotations
+Phase 4: /copywriting → mkt/content/[slug].copy.md
 Phase 5: /humanize → mkt/content/*.humanized.md
 Phase 6: /seo ai → mkt/seo-ai.md (if organic channel)
 Phase 7: /attribution → mkt/attribution.md
@@ -203,11 +203,11 @@ These mappings are encoded in each skill's `routing.parallel-with` frontmatter f
 | icp-research | foundation | heavy | no | product-context.md, mkt/icp-research.md |
 | imc-plan | pipeline | heavy | no | mkt/imc-plan.md |
 | content-create | pipeline | heavy | no | mkt/content/[slug].md |
-| copywriting | horizontal | medium | no | mkt/content/[slug].copy.md |
+| copywriting | horizontal | heavy | no | mkt/content/[slug].copy.md |
 | attribution | pipeline | medium | no | mkt/attribution.md |
 | lp-optimization | horizontal | medium | no | mkt/lp-optimization.md |
 | seo | horizontal | heavy | no | mkt/seo-[mode].md |
-| humanize | horizontal | light | no | mkt/content/[slug].humanized.md |
+| humanize | horizontal | medium | no | mkt/content/[slug].humanized.md |
 
 ### Design (2 skills)
 | Skill | Position | Complexity | Interactive | Produces |
