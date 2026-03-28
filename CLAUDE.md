@@ -6,6 +6,7 @@ Engineering productivity: code cleanup, architecture, task breakdown, documentat
 - plan-interviewer → task-breakdown or system-architecture
 - system-architecture ↔ task-breakdown
 - code-cleanup, technical-writer: standalone
+- artifact-status: cross-stack artifact scanner (run anytime to see what exists/what's stale)
 
 ## Artifacts
 Skills write to `.agents/`:
