@@ -1,12 +1,13 @@
 # Productivity Skills
 
-Engineering productivity: code cleanup, architecture, task breakdown, documentation, planning.
+Engineering productivity: code cleanup, architecture, task breakdown, documentation, planning, skill routing.
 
 ## Workflows
 - plan-interviewer → task-breakdown or system-architecture
 - system-architecture ↔ task-breakdown
 - code-cleanup, technical-writer: standalone
 - artifact-status: cross-stack artifact scanner (run anytime to see what exists/what's stale)
+- skill-router: goal analysis → skill team suggestion → multi-phase workflow orchestration
 
 ## Artifacts
 Skills write to `.agents/`:
@@ -14,6 +15,7 @@ Skills write to `.agents/`:
 - `.agents/system-architecture.md`
 - `.agents/tasks.md`
 - `.agents/spec.md`
+- `.agents/workflow-plan.md` (skill-router orchestrate mode)
 
 ## Cross-Stack (Optional)
 system-architecture and technical-writer can read `.agents/product-context.md`.
@@ -28,7 +30,7 @@ Run `system-architecture` BEFORE `task-breakdown`. Architecture defines WHAT to 
 
 ## Multi-Agent Skills
 
-All 5 skills use multi-agent orchestration with a shared pattern:
+All 6 multi-agent skills use orchestration with a shared pattern:
 - **Layer 1 agents** run in parallel (scanners, extractors, profilers)
 - **Layer 2 agents** run sequentially (each depends on prior output)
 - **Critic agent** reviews the final output against a quality gate
@@ -43,6 +45,7 @@ All 5 skills use multi-agent orchestration with a shared pattern:
 | plan-interviewer | 6 | codebase-scanner, artifact-reader | challenger → interviewer → synthesis → critic |
 | code-cleanup | 7 | structural-scanner, code-scanner, dependency-scanner | safe-removal → refactoring → validation → critic |
 | technical-writer | 6 | scanner, concept-extractor, audience-profiler | writer → staleness-checker → critic |
+| skill-router | 3 | intent-classifier, artifact-scanner | team-composer (no critic — advisory only) |
 
 ### Orchestrator Responsibilities
 1. **Dispatch** — route to correct agents based on user intent and routing rules

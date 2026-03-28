@@ -6,6 +6,30 @@ license: MIT
 metadata:
   author: hungv47
   version: "2.0.0"
+routing:
+  intent-tags:
+    - task-decomposition
+    - dependency-mapping
+    - acceptance-criteria
+    - sprint-planning
+    - work-breakdown
+  position: pipeline
+  produces:
+    - tasks.md
+  consumes:
+    - system-architecture.md
+    - spec.md
+    - design/user-flow.md
+  requires:
+    - system-architecture.md
+  defers-to:
+    - skill: plan-interviewer
+      when: "spec is unclear, need to clarify requirements first"
+    - skill: system-architecture
+      when: "architecture undefined, need technical design first"
+  parallel-with: []
+  interactive: false
+  estimated-complexity: medium
 ---
 
 # Task Breakdown — Orchestrator
