@@ -53,7 +53,7 @@ Don't list every missing artifact — focus on the **one or two skills that unbl
 
 - Report must cover ALL `.md` files found in `.agents/` — no silent omissions
 - Recommendation must trace the dependency graph, not just match the priority table
-- Never recommend a skill the user hasn't installed (check which slash commands are available)
+- When recommending a skill from another stack (strategy, comms, design), flag it so the user knows they may need to install that stack
 
 ## Anti-Patterns
 
