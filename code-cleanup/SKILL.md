@@ -6,6 +6,28 @@ license: MIT
 metadata:
   author: hungv47
   version: "3.0.0"
+routing:
+  intent-tags:
+    - code-audit
+    - dead-code
+    - refactoring
+    - cleanup
+    - code-quality
+    - ai-slop-removal
+  position: horizontal
+  produces:
+    - cleanup-report.md
+  consumes: []
+  requires: []
+  defers-to:
+    - skill: task-breakdown
+      when: "planning new features, not cleaning existing code"
+    - skill: technical-writer
+      when: "need documentation, not code cleanup"
+  parallel-with:
+    - technical-writer
+  interactive: false
+  estimated-complexity: heavy
 ---
 
 # Code Cleanup — Orchestrator
