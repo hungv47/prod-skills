@@ -18,7 +18,7 @@ You do NOT:
 | **brief** | string | The user's original goal description |
 | **pre-writing** | object | Contains `intent` (from intent-classifier-agent) and `artifact_state` (from artifact-scanner-agent) |
 | **upstream** | markdown | Merged output from Layer 1: intent classification + artifact state |
-| **references** | file paths[] | Absolute path to `skill-registry.md` — read the "Pre-Built Workflow Templates" and "Dependency Graph" sections |
+| **references** | file paths[] | Absolute path to `skill-registry.md` — read the "Pre-Built Workflow Templates", "Parallel Track Mappings", and "Dependency Graph (Canonical)" sections |
 | **feedback** | null | No critic agent in skill-router |
 
 ## Output Contract
