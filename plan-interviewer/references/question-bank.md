@@ -208,3 +208,51 @@ Extended collection of non-obvious, probing questions organized by domain. Use t
 - Can viewers become editors? Can they change others' permissions?
 - What happens to shared resources when owner leaves?
 - How do we handle "view as user X" for debugging?
+
+## Intent Alignment & Should-Want Detection
+
+Questions designed to surface the gap between what users say they want and what they actually need. Use these when you detect should-want framing or when confidence in a dimension plateaus.
+
+### Past Behavior & Failed Attempts
+- What are you/your users doing today to solve this problem?
+- What specifically frustrates you about the current approach?
+- Have you tried to build this before? What happened?
+- Have you used an existing tool for this? What was wrong with it?
+- What manual workaround exists today? How often is it used?
+- When did this problem first bother you enough to want to fix it?
+
+### Daily Use Visualization
+- Walk me through a typical day where you'd use this feature.
+- What triggers you to open this? What are you doing right before?
+- After using this, what do you do next?
+- How often would you realistically use this? Daily? Weekly? When something breaks?
+- If this feature had a usage counter, what number would disappoint you after a month?
+
+### Forced Tradeoffs
+- If you could only keep 2 of these features, which 2 and why?
+- Would you rather have this fast and simple, or complete and complex?
+- If building this takes twice as long as expected, what do you cut first?
+- What's the one thing this absolutely must do on day one?
+- If you had to launch with half the features, which half?
+
+### Success Criteria Grounding
+- If this ships and works perfectly, what's the first thing you'd notice is different?
+- How would you know this is working without looking at analytics?
+- What does your user do differently after this exists?
+- What complaint or request stops coming in once this ships?
+- Six months after launch, what makes you glad you built this?
+
+### The "Why" Chain
+- Why this approach specifically? (Then ask "why" to the answer)
+- Why now? What changed that makes this urgent?
+- Why build vs buy? What's unique about your situation?
+- Why this scope? What would a version with half the scope miss?
+- Why this audience first? Who else could benefit and why not them?
+
+### Depth Probes
+Use when answers feel rehearsed, buzzword-heavy, or disconnected from specific experiences.
+- Can you give me a specific example of when this problem happened?
+- Who specifically complained about this? What did they say?
+- If I asked your users directly, would they describe the problem the same way?
+- What's the most embarrassing version of this feature that would still solve the problem?
+- Forget best practices for a moment — what do YOU actually want this to do?
