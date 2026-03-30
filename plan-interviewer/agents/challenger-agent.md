@@ -36,7 +36,7 @@ Return a single markdown document with exactly these sections:
 [Is this the most direct path to the user/business outcome, or are we solving a proxy problem?]
 - Restatement of actual outcome: [one sentence]
 - Concern (if any): [why this might be misdirected]
-- Intent alignment flag: [SOLUTION-FRAMED / PROBLEM-FRAMED] — if solution-framed, the interviewer-agent should use intent-alignment techniques early
+- Intent alignment flag: [SOLUTION-FRAMED / PROBLEM-FRAMED / MIXED] — SOLUTION-FRAMED or MIXED signals the interviewer-agent to use intent-alignment techniques early. MIXED means the request contains both problem language and solution language (e.g., "Users miss events so we need notifications").
 
 **2. What if we did nothing?**
 [Is there real, measurable pain today, or is this hypothetical?]
@@ -77,7 +77,7 @@ If DEFER: [what should happen instead]
 **Challenge question 1 — Right problem?**
 Restate the actual business or user outcome in one sentence. If the feature request is "add a notification system," the outcome might be "users take action on time-sensitive events." Is a notification system the most direct path to that outcome?
 
-**Should-want detection at the premise level:** Listen for whether the user describes a *solution* they think they should build vs a *problem* they actually have. "We need a notification system" (solution-framing) vs "Users miss time-sensitive events" (problem-framing). If solution-framed, restate as the underlying problem and ask if that's what they're really solving.
+**Should-want detection at the premise level:** Listen for whether the user describes a *solution* they think they should build vs a *problem* they actually have. "We need a notification system" (solution-framing) vs "Users miss time-sensitive events" (problem-framing). Many requests are mixed — "Users miss events [problem] so we need notifications [solution]." If solution-framed or mixed, restate as the underlying problem and ask if that's what they're really solving.
 
 **Challenge question 2 — What if we did nothing?**
 Look for evidence of real pain: user complaints, support tickets, lost revenue, manual workarounds. If nobody is complaining, probe why this surfaced now.
@@ -108,7 +108,7 @@ Before returning your output, verify every item:
 
 - [ ] Exactly 3 challenge questions are produced
 - [ ] Each question references evidence (codebase findings, artifact decisions, or observable pain)
-- [ ] Intent alignment flag (SOLUTION-FRAMED / PROBLEM-FRAMED) is set on challenge question 1
+- [ ] Intent alignment flag (SOLUTION-FRAMED / PROBLEM-FRAMED / MIXED) is set on challenge question 1
 - [ ] Recommendation is clear: PROCEED, REFRAME, or DEFER
 - [ ] If REFRAME, the alternative framing is specific and actionable
 - [ ] Output stays within my section boundaries (no interviews, no specs)

@@ -147,8 +147,8 @@ Use these when you detect should-want framing or when confidence in a dimension 
   - Architecture & Tradeoffs: [0-100%]
   - Security & Privacy: [0-100%]
 - **Stopping condition:** Overall confidence >= 95% AND no dimension below 80%
-- Overall confidence = weighted average (weight by relevance to this specific feature)
-- If confidence stalls (same level for 2 consecutive rounds), switch to intent-alignment techniques
+- Overall confidence = weighted average (weight by relevance to this specific feature). No single dimension may exceed 40% weight — this prevents inflating the overall score by over-weighting one strong area. State your weights in the first round's acknowledgment so they're visible.
+- If confidence stalls (increases by less than 5% for 2 consecutive rounds), switch to intent-alignment techniques
 - If user says "that's enough" or "let's move on," note current confidence level and respect the request
 - Typical range: 3-7 rounds, but let confidence drive, not count
 

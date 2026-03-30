@@ -249,7 +249,7 @@ Questions designed to surface the gap between what users say they want and what 
 - Why this scope? What would a version with half the scope miss?
 - Why this audience first? Who else could benefit and why not them?
 
-### Performative Answer Detection
+### Depth Probes
 Use when answers feel rehearsed, buzzword-heavy, or disconnected from specific experiences.
 - Can you give me a specific example of when this problem happened?
 - Who specifically complained about this? What did they say?

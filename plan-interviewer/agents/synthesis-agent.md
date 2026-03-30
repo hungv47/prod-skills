@@ -68,6 +68,8 @@ Return a single markdown document with exactly these sections:
 | Security & Privacy | [%] | [primary evidence] |
 | **Overall** | **[%]** | |
 
+If user requested early stop: note "User-requested early stop at X%" and list under-explored dimensions in the Open Questions section with rationale for why they remain below threshold.
+
 ### Intent Alignment Summary
 [Brief summary of where stated requirements differed from actual needs, if applicable. "User initially described X but probing revealed the actual need was Y." If no gaps detected, state "No intent gaps detected — stated requirements aligned with probed needs."]
 

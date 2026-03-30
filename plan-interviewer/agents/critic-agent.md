@@ -92,7 +92,7 @@ Read all decisions together and look for conflicts. E.g., "local-first architect
 
 **Confidence verification:**
 The interviewer-agent reports confidence scores. Verify they are earned, not inflated:
-- If a dimension shows 90%+ confidence but has only 1 decision, flag as potentially inflated
+- If a dimension shows 90%+ confidence but has only 1 decision AND fewer than 2 interview rounds touched it, flag as potentially inflated (a single high-impact decision like "monolith vs microservices" can legitimately carry a dimension if it was explored in depth)
 - If intent-alignment notes show zero should-want signals detected, check whether the interview probed for them (absence of signals after probing is fine; never probing is not)
 - If the user requested early stop, verify the confidence level at stop is documented and the remaining gaps are captured in Open Questions
 - Cross-check: do the decisions in the spec actually answer the questions that would give confidence? Or are there confident scores with vague decisions?
