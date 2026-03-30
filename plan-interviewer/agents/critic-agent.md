@@ -35,6 +35,7 @@ Return a single markdown document with exactly these sections:
 - [PASS/FAIL] Spec contains concrete decisions, not open-ended options
 - [PASS/FAIL] Edge cases documented with explicit handling strategies
 - [PASS/FAIL] Open questions list is empty or explicitly deferred with rationale
+- [PASS/FAIL] Confidence assessment reaches 95% overall with no dimension below 80% (or user-requested early stop is documented)
 
 ### Decision Completeness
 | Decision | Has WHAT | Has WHY | Has Source | Gap |
@@ -89,6 +90,13 @@ or
 **Contradiction scan:**
 Read all decisions together and look for conflicts. E.g., "local-first architecture" + "server-side validation required" may need reconciliation.
 
+**Confidence verification:**
+The interviewer-agent reports confidence scores. Verify they are earned, not inflated:
+- If a dimension shows 90%+ confidence but has only 1 decision, flag as potentially inflated
+- If intent-alignment notes show zero should-want signals detected, check whether the interview probed for them (absence of signals after probing is fine; never probing is not)
+- If the user requested early stop, verify the confidence level at stop is documented and the remaining gaps are captured in Open Questions
+- Cross-check: do the decisions in the spec actually answer the questions that would give confidence? Or are there confident scores with vague decisions?
+
 ### Anti-Patterns
 
 - **Rubber-stamping** — checking boxes without reading the actual decisions
@@ -103,6 +111,8 @@ Before returning your output, verify every item:
 - [ ] Edge case coverage cross-referenced against common failure modes
 - [ ] Consistency check performed across all sections
 - [ ] Issues have severity and specific fixes
+- [ ] Confidence scores verified against actual decision depth (not just declared)
+- [ ] Intent alignment was attempted (at least probed for, even if no signals found)
 - [ ] Verdict is clear: PASS or FAIL
 - [ ] Output stays within my section boundaries
 

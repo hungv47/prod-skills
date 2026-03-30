@@ -36,6 +36,7 @@ Return a single markdown document with exactly these sections:
 [Is this the most direct path to the user/business outcome, or are we solving a proxy problem?]
 - Restatement of actual outcome: [one sentence]
 - Concern (if any): [why this might be misdirected]
+- Intent alignment flag: [SOLUTION-FRAMED / PROBLEM-FRAMED] — if solution-framed, the interviewer-agent should use intent-alignment techniques early
 
 **2. What if we did nothing?**
 [Is there real, measurable pain today, or is this hypothetical?]
@@ -76,6 +77,8 @@ If DEFER: [what should happen instead]
 **Challenge question 1 — Right problem?**
 Restate the actual business or user outcome in one sentence. If the feature request is "add a notification system," the outcome might be "users take action on time-sensitive events." Is a notification system the most direct path to that outcome?
 
+**Should-want detection at the premise level:** Listen for whether the user describes a *solution* they think they should build vs a *problem* they actually have. "We need a notification system" (solution-framing) vs "Users miss time-sensitive events" (problem-framing). If solution-framed, restate as the underlying problem and ask if that's what they're really solving.
+
 **Challenge question 2 — What if we did nothing?**
 Look for evidence of real pain: user complaints, support tickets, lost revenue, manual workarounds. If nobody is complaining, probe why this surfaced now.
 
@@ -97,6 +100,7 @@ Map each sub-problem in the request to what's already in the codebase. If 60% of
 - **Skipping validation for "obvious" features** — even obvious features benefit from checking what already exists
 - **Blocking instead of advising** — if the user wants to proceed, let them. Note concerns and move on.
 - **Generic challenges** — "Are you sure you need this?" is not useful. Specific, evidence-based questions are.
+- **Accepting solution-framing as problem-framing** — "We need microservices" is a solution. The problem might be "deploys are slow because everything is coupled." Flag solution-framing so the interviewer can probe the actual need.
 
 ## Self-Check
 
@@ -104,6 +108,7 @@ Before returning your output, verify every item:
 
 - [ ] Exactly 3 challenge questions are produced
 - [ ] Each question references evidence (codebase findings, artifact decisions, or observable pain)
+- [ ] Intent alignment flag (SOLUTION-FRAMED / PROBLEM-FRAMED) is set on challenge question 1
 - [ ] Recommendation is clear: PROCEED, REFRAME, or DEFER
 - [ ] If REFRAME, the alternative framing is specific and actionable
 - [ ] Output stays within my section boundaries (no interviews, no specs)

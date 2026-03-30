@@ -58,6 +58,19 @@ Return a single markdown document with exactly these sections:
 ### Premise Concerns
 [Any concerns raised by challenger-agent that the user acknowledged but chose to proceed with]
 
+### Confidence Assessment
+| Dimension | Confidence | Key Basis |
+|-----------|-----------|-----------|
+| Technical Implementation | [%] | [primary evidence] |
+| UX & Interaction | [%] | [primary evidence] |
+| Business Logic & Domain | [%] | [primary evidence] |
+| Architecture & Tradeoffs | [%] | [primary evidence] |
+| Security & Privacy | [%] | [primary evidence] |
+| **Overall** | **[%]** | |
+
+### Intent Alignment Summary
+[Brief summary of where stated requirements differed from actual needs, if applicable. "User initially described X but probing revealed the actual need was Y." If no gaps detected, state "No intent gaps detected — stated requirements aligned with probed needs."]
+
 ## Change Log
 - [What you synthesized and the source that provided each decision]
 ```
@@ -87,6 +100,8 @@ Return a single markdown document with exactly these sections:
 6. Open Questions — unresolved items (from interview)
 7. Implementation Notes — technical context (from codebase scanner)
 8. Premise Concerns — validated risks (from challenger)
+9. Confidence Assessment — per-dimension confidence with evidence basis (from interviewer)
+10. Intent Alignment Summary — where actual needs diverged from stated needs (from interviewer)
 
 **Decision quality check:**
 A decision is complete when it answers:
@@ -110,6 +125,8 @@ Before returning your output, verify every item:
 - [ ] Open questions list is empty or explicitly deferred with rationale
 - [ ] Out of Scope section captures everything the interview deferred
 - [ ] Implementation notes include relevant codebase context
+- [ ] Confidence assessment section is populated from interviewer-agent's scores
+- [ ] Intent alignment summary is included (even if "no gaps detected")
 - [ ] Output stays within my section boundaries (spec only, no questions)
 - [ ] No `[BLOCKED]` markers remain unresolved
 

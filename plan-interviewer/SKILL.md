@@ -36,6 +36,14 @@ routing:
 
 **Core Question:** "What haven't we thought of yet?"
 
+**Core Philosophy:** "Interview until you have 95% confidence about what the user actually wants, not what they think they should want."
+
+The gap between stated requirements and true needs is where most failed projects begin. Every agent in this skill contributes to closing that gap:
+- **challenger-agent** detects should-want framing at the premise level
+- **interviewer-agent** tracks confidence and uses intent-alignment techniques to surface actual needs
+- **synthesis-agent** includes a confidence assessment in the spec
+- **critic-agent** verifies confidence was genuinely achieved, not just declared
+
 ## Inputs Required
 - A feature request, problem description, or existing plan/spec file to refine
 - Access to AskUserQuestion tool for multi-round interviews
@@ -86,7 +94,7 @@ Layer 2 (sequential):
 1. **Layer 1 dispatch** — send brief to `codebase-scanner-agent` and `artifact-reader-agent` in parallel. They extract what the codebase and existing artifacts already answer.
 2. **Challenger dispatch** — send brief + Layer 1 outputs to `challenger-agent`. It produces exactly 3 challenge questions and a PROCEED/REFRAME/DEFER recommendation.
 3. **User confirmation** — present challenger's questions to the user. If REFRAME, present the alternative framing. If user confirms proceed, continue. If DEFER, stop and explain.
-4. **Interviewer dispatch** — send all context to `interviewer-agent`. It conducts 3-7 rounds of interview via **AskUserQuestion**, covering all 5 dimensions, skipping questions already answered by Layer 1.
+4. **Interviewer dispatch** — send all context to `interviewer-agent`. It conducts interview rounds via **AskUserQuestion**, covering all 5 dimensions, skipping questions already answered by Layer 1. Rounds continue until the interviewer-agent reaches 95% confidence (typically 3-7 rounds). Confidence is tracked per-dimension and drives the stopping condition — not round count.
 5. **Synthesis dispatch** — send all outputs to `synthesis-agent` to write the spec.
 6. **Critic review** — send spec to `critic-agent`.
 7. **Revision loop** — if critic returns FAIL, re-dispatch affected agents. Maximum 2 rounds.
@@ -114,6 +122,7 @@ Before delivering, the critic-agent verifies ALL of these pass:
 - [ ] Spec contains concrete decisions, not open-ended options
 - [ ] Edge cases documented with explicit handling strategies
 - [ ] Open questions list is empty or explicitly deferred with rationale
+- [ ] Confidence assessment reaches 95% overall (no dimension below 80%)
 
 **If any gate fails:** the critic identifies which agent must fix it and the orchestrator re-dispatches.
 
@@ -126,7 +135,7 @@ When context window is constrained or the feature is simple:
 1. Skip multi-agent dispatch
 2. Check for existing codebase context and artifacts
 3. Challenge the premise (3 questions: right problem? what if nothing? what exists?)
-4. Conduct interview using AskUserQuestion (2-4 questions per round, all 5 dimensions)
+4. Conduct interview using AskUserQuestion (2-4 questions per round, all 5 dimensions, tracking confidence per dimension until 95% overall)
 5. Write specification using the Spec File Format below
 6. Run Critical Gates as self-review
 7. Save to `.agents/spec.md`
@@ -211,6 +220,14 @@ Recommended: Option 1 — most sync failures are transient; fall back to option 
 
 ## Implementation Notes
 [Technical details, gotchas, dependencies]
+
+## Confidence Assessment
+| Dimension | Confidence | Key Basis |
+|-----------|-----------|-----------|
+| [dimension] | [%] | [primary evidence] |
+
+## Intent Alignment Summary
+[Where stated requirements differed from actual needs, or "No intent gaps detected"]
 ```
 
 ---
@@ -225,6 +242,7 @@ Recommended: Option 1 — most sync failures are transient; fall back to option 
 | Scope creep during interview | Each new question expands feature surface | Periodically re-anchor: "Is this still in scope for MVP?" |
 | Asking questions the codebase answers | "What framework?" when package.json is right there | codebase-scanner-agent extracts facts first; interviewer skips answered questions |
 | Options instead of decisions | Spec says "could use X or Y" | synthesis-agent writes concrete decisions only; undecided items go to Open Questions |
+| Accepting should-want answers at face value | User says what sounds "correct" rather than what they actually need | Probe intent: "Walk me through how you'd use this on a typical day" and "What have you tried before?" |
 
 ---
 
@@ -241,16 +259,16 @@ Recommended: Option 1 — most sync failures are transient; fall back to option 
 2. What if nothing? "Users currently use spreadsheets — friction causes abandonment."
 3. What exists? "Greenfield — no existing code." → Recommendation: PROCEED
 
-**Interviewer (5 rounds, AskUserQuestion):**
-- Round 1 (Scope): Personal only, mobile-first PWA, 4-week MVP
-- Round 2 (Users): Health-conscious 25-35, switching from spreadsheets
-- Round 3 (Features): Add habit → check off → see streak. Configurable reminders.
-- Round 4 (Edge cases): Streak resets on miss (history preserved), user's local timezone
-- Round 5 (Technical): Email magic link auth, offline sync on reconnect
+**Interviewer (5 rounds, AskUserQuestion, confidence: 40%→55%→75%→88%→96%):**
+- Round 1 (Scope): Personal only, mobile-first PWA, 4-week MVP [confidence: 40% — broad strokes only]
+- Round 2 (Users): Health-conscious 25-35, switching from spreadsheets [55% — but "switching from spreadsheets" triggered intent probe: "What specifically frustrates you about spreadsheets?" → revealed real need is VISUAL PROGRESS, not tracking per se]
+- Round 3 (Features): Add habit → check off → see streak. Configurable reminders. [75% — intent aligned: progress visualization is core, not just checkboxes]
+- Round 4 (Edge cases): Streak resets on miss (history preserved), user's local timezone [88%]
+- Round 5 (Technical): Email magic link auth, offline sync on reconnect [96% — stopping]
 
-**Synthesis:** Spec with 14 concrete decisions and 3 deferred items.
+**Synthesis:** Spec with 14 concrete decisions, 3 deferred items, and intent alignment note: "User initially framed as 'habit tracker' but probing revealed the core need is visual progress feedback — tracking is the mechanism, not the value."
 
-**Critic:** PASS — all 4 gates pass, all 5 dimensions covered.
+**Critic:** PASS — all 5 gates pass, all 5 dimensions covered.
 
 **Artifact saved to `.agents/spec.md`.**
 
