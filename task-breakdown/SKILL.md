@@ -152,6 +152,13 @@ Default to LOCKED SCOPE if the user provides a finished spec. Default to MINIMAL
 ## Task Format
 
 ```markdown
+---
+skill: task-breakdown
+version: 1
+date: {{today}}
+status: draft
+---
+
 ## Task [N]: [Title]
 
 **Depends on:** [Task numbers this requires, or "None"]

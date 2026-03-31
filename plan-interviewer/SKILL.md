@@ -196,6 +196,13 @@ Recommended: Option 1 — most sync failures are transient; fall back to option 
 ## Spec File Format
 
 ```markdown
+---
+skill: plan-interviewer
+version: 1
+date: {{today}}
+status: draft
+---
+
 # [Feature Name] Specification
 
 ## Problem Statement
