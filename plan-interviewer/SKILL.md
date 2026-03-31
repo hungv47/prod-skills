@@ -13,6 +13,10 @@ routing:
     - spec-writing
     - idea-clarification
     - scope-definition
+    - clarify
+    - assumptions
+    - contract
+    - scope
   position: pipeline
   produces:
     - spec.md
@@ -55,7 +59,8 @@ The gap between stated requirements and true needs is where most failed projects
 Previous: none | Next: `task-breakdown` or `system-architecture`
 
 ### Skill Deference
-- **Have a FEATURE or PRODUCT to specify?** → Use this skill.
+- **Have a FEATURE or PRODUCT to specify?** → Use this skill (Route A/B).
+- **Have a clear task but need to lock scope before building?** → Use Route C (Quick Scope) — 5 questions + contract, no full interview.
 - **Have a declining METRIC to diagnose** (X is at Y, should be Z)? → Use `problem-analysis` (from strategy-skills) instead.
 
 **Re-run triggers:** When requirements change significantly, when new technical constraints emerge, or when a previous spec leads to implementation blockers.
@@ -74,6 +79,7 @@ Previous: none | Next: `task-breakdown` or `system-architecture`
 | interviewer-agent | `agents/interviewer-agent.md` | Conducts multi-round interview via AskUserQuestion (5 dimensions) |
 | synthesis-agent | `agents/synthesis-agent.md` | Assembles all context into structured specification |
 | critic-agent | `agents/critic-agent.md` | Quality gate review, dimension coverage, decision completeness |
+| scope-contract-agent | `agents/scope-contract-agent.md` | Generates 4-part contract (GOAL/CONSTRAINTS/FORMAT/FAILURE) for Route C |
 
 ### Execution Layers
 
@@ -111,6 +117,67 @@ Layer 2 (sequential):
 | User says "skip the questions, just write it" | Use Layer 1 context + challenger only; synthesize without interview |
 | Critic PASS | Save and deliver |
 | Critic FAIL | Re-dispatch cited agents with feedback |
+| Task is well-defined, user says "scope"/"preflight" | **Route C: Quick Scope** (see below) |
+
+---
+
+## Route C: Quick Scope
+
+*Lightweight scope-locking for clear tasks. Produces a 4-part contract instead of a full spec.*
+
+**When to use:** The task is well-defined (not a vague idea), but the implementer needs to surface hidden assumptions and lock down success criteria before building. Triggered by "scope this", "preflight", "lock scope", or when estimated-complexity is light.
+
+**Core Question:** "What would I silently get wrong if I just started coding?"
+
+### Execution
+
+```
+1. LAYER 1 — Dispatch IN PARALLEL:
+   - codebase-scanner-agent (reuse) ──┐
+   - artifact-reader-agent (reuse) ───┘── extract existing context
+
+2. EXPERIENCE CHECK:
+   - Read `.agents/experience/{domain}.md` if it exists
+   - Narrow questions to things NOT already answered
+
+3. CLARIFYING QUESTIONS (INTERACTIVE):
+   - Generate 5 questions ranked by impact
+   - Pick from highest-impact categories for THIS task:
+     Scope, Tech choices, Edge cases, Performance, Integration, UX, Existing patterns
+   - For each: state the default assumption, ask the question, explain why it matters
+   - Use AskUserQuestion — wait for answers
+   - If user skips a question, use default assumption and note it
+
+4. DISPATCH:
+   - scope-contract-agent → 4-part contract (GOAL/CONSTRAINTS/FORMAT/FAILURE)
+   - Includes verification template for the implementing agent
+
+5. EXPERIENCE FLYWHEEL:
+   - Append Q&A to `.agents/experience/{domain}.md`
+   - Format: ## {Task Name} — Decisions ({date})
+   - Each entry: Q, A, Rationale (why this matters for future tasks)
+   - Effect: each run adds context → future runs need fewer questions
+
+6. RETURN:
+   - Inline contract + verification template (no spec.md artifact)
+   - Hand off to next skill with contract as scope lock
+```
+
+### Route C Configuration
+
+| Parameter | Default | Override example |
+|-----------|---------|-----------------|
+| question_count | 5 | "ask 3 questions" (range: 3-7) |
+| contract_template | standard | "minimal contract" (GOAL + FAILURE only) |
+| strict | true | "soft mode — report failures but don't block" |
+
+### Route C Edge Cases
+
+- **User says "just do it"**: List assumptions as a comment and proceed. Skip questions, optionally do a minimal contract (GOAL + FAILURE only).
+- **All questions answered by context**: Skip to contract generation. Note that context was sufficient.
+- **FAILURE conditions conflict with GOAL**: Flag the contradiction and ask which takes priority.
+- **Task is trivial**: Say so. Suggest skipping the contract or using minimal template.
+- **Experience doc already has answers**: Only ask questions NOT already answered. May reduce to 1-2 new questions.
 
 ---
 

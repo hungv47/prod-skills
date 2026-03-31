@@ -79,6 +79,41 @@ Return a single markdown document with exactly these sections:
 | 60+ days | STALE | Strongly recommend re-running |
 | No date field | — | Report as "no date" — likely manually created |
 
+#### Recommendation Priority Table
+
+When no user goal is provided, use this table to recommend the most impactful next skill based on what's missing or stale. Focus on the **one or two skills that unblock the most** — don't list every missing artifact.
+
+| If this is missing/stale | Run this | Because |
+|--------------------------|----------|---------|
+| `product-context.md` | `/icp-research` | 12+ downstream skills depend on it |
+| `market-research.md` or `problem-analysis.md` | `/market-research` or `/problem-analysis` | Feed into `/solution-design` |
+| `solution-design.md` | `/solution-design` | Architecture, funnel, and comms need it |
+| `targets.md` | `/funnel-planner` | Attribution and experiments need targets |
+| `spec.md` | `/plan-interviewer` | Can't architect without a spec |
+| `system-architecture.md` | `/system-architecture` | Can't break down tasks without architecture |
+| `tasks.md` | `/task-breakdown` | Needs architecture first |
+| `mkt/imc-plan.md` | `/imc-plan` | Content needs channel strategy |
+| `design/brand-system.md` | `/brand-system` | Visual decisions need brand identity |
+| `design/user-flow.md` | `/user-flow` | Architecture and tasks need flow context |
+
+#### Dependency Graph
+
+Trace from the user's goal back through this graph to find the first gap:
+
+```
+product-context.md ← /icp-research
+├→ market-research.md ← /market-research ─┐
+├→ problem-analysis.md ← /problem-analysis ┤
+│                                           ├→ solution-design.md ← /solution-design
+│                                           │   ├→ targets.md ← /funnel-planner → experiment-*.md
+│                                           │   ├→ mkt/imc-plan.md ← /imc-plan → mkt/content/ → mkt/*.humanized.md
+│                                           │   └→ system-architecture.md ← /system-architecture
+│                                           │       └→ tasks.md ← /task-breakdown
+├→ spec.md ← /plan-interviewer ────────────→┘
+├→ design/brand-system.md ← /brand-system
+└→ design/user-flow.md ← /user-flow ──→ system-architecture.md, tasks.md
+```
+
 #### Canonical Artifact List
 
 These are the key artifacts in the dependency graph. Report which exist and which are missing:

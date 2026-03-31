@@ -28,7 +28,7 @@ routing:
 
 # Skill Router — Orchestrator
 
-*Productivity — Utility. Analyzes user goals, recommends optimal skill teams, and coordinates multi-phase workflows across the 21-skill ecosystem.*
+*Productivity — Utility. Analyzes user goals, recommends optimal skill teams, and coordinates multi-phase workflows across the skill ecosystem.*
 
 **Core Question:** "Given this goal and the current artifact state, what's the fastest path to the outcome?"
 
@@ -45,7 +45,7 @@ routing:
 - **Mode** (string, optional): `status` | `suggest` (default) | `orchestrate`
 
 ## Output
-- **Status mode:** Artifact state table + next action recommendation (same as `/artifact-status`)
+- **Status mode:** Artifact state table + next action recommendation
 - **Suggest mode:** Goal analysis + recommended skill team with phases and parallel tracks
 - **Orchestrate mode:** `workflow-plan.md` artifact with phases, checkpoints, and progress tracking
 
@@ -62,7 +62,7 @@ Utility — can run at any time. Typically run first in a session to decide what
 **Re-run triggers:** New goal, after completing a workflow phase, when confused about next steps.
 
 ### Skill Deference
-- **Need to scan artifacts only?** → Use `/artifact-status` (simpler, same output for status mode)
+- **Need to scan artifacts only?** → Use `/skill-router status` — Mode A is the canonical artifact scanner for the ecosystem
 - **Already know which skill to run?** → Run it directly — the router adds value when the path is unclear
 
 ---
@@ -89,7 +89,7 @@ No critic agent — the router is advisory (recommends), not generative (produce
 2. Return the artifact state table + next action recommendation
 ```
 
-Behavior is identical to `/artifact-status`. This mode exists for users who prefer a single entry point.
+This is the canonical artifact scanning entry point for the ecosystem.
 
 ### Mode B: Suggest (default)
 **When:** Argument is a goal description (anything that isn't `status` or `orchestrate ...`)
@@ -280,7 +280,7 @@ Next action: Run `/[first-skill] [context]`
 
 ### Status Mode Output
 
-Same format as `/artifact-status`:
+Status mode output format:
 
 ```markdown
 | Artifact | Skill | Date | Age | Status |
