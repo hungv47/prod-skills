@@ -98,9 +98,45 @@ Layer 2 (sequential):
 | User specifies audience | audience-profiler-agent uses it directly (no inference needed) |
 | User says "document this" (no type) | audience-profiler defaults to User Guide (developers) or README (library) |
 | User says "audit docs" | Skip writer-agent; run scanner → staleness-checker → critic directly |
+| User says "sync docs", "update docs", or `--sync` | **Route C: Post-Change Sync** (see below) |
 | Monorepo detected | scanner-agent identifies package boundaries; writer produces per-package docs |
 | Critic PASS | Save and deliver |
 | Critic FAIL | Re-dispatch cited agents with feedback |
+
+### Route C: Post-Change Sync
+
+Triggered by: `/technical-writer --sync`, "update the docs after this change", "sync docs", or "docs are stale after that PR."
+
+This route cross-references the git diff against ALL existing documentation and makes targeted updates — not a full rewrite. It's the documentation equivalent of a patch, not a rebuild.
+
+**Execution flow:**
+```
+scanner-agent ──────────────── inventory existing docs + read git diff
+  → staleness-checker-agent ── compare diff against docs, find stale content
+    → writer-agent ──────────── make targeted updates only (not full rewrite)
+      → critic-agent ────────── verify factual accuracy of updates
+```
+
+**What's different from the full route:**
+- `concept-extractor-agent` and `audience-profiler-agent` are SKIPPED — the docs already exist with established audience and structure
+- `scanner-agent` reads the git diff (not the full codebase) to scope changes
+- `writer-agent` receives a list of stale sections and makes MINIMAL targeted edits — it does NOT rewrite sections that aren't affected by the diff
+- `staleness-checker-agent` focuses on the diff's blast radius: changed API routes, modified env vars, renamed files, updated config
+
+**What the staleness-checker looks for in sync mode:**
+1. **File paths** — did any documented paths change? (renamed, moved, deleted files)
+2. **API routes** — did any endpoints change signature, parameters, or response shape?
+3. **Environment variables** — were any added, removed, or renamed?
+4. **Configuration** — did defaults, valid values, or required settings change?
+5. **Version numbers** — did package.json version, Node/runtime version, or dependency versions change?
+6. **Feature descriptions** — did any documented behavior change?
+7. **Setup steps** — did installation or getting-started steps change?
+
+**What the writer-agent does in sync mode:**
+- For factual updates (paths, versions, env vars): auto-fix directly
+- For narrative updates (feature descriptions, architecture explanations): flag for user approval before changing
+- Never rewrite sections unaffected by the diff
+- Add a `<!-- synced: YYYY-MM-DD -->` comment to updated sections for traceability
 
 ---
 
