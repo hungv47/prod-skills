@@ -85,6 +85,27 @@ Return a single markdown document with exactly these sections:
 2. **Stale docs are worse than no docs** — they actively mislead. A "current" doc that says "use v12" when the code requires v18 causes hours of debugging.
 3. **Security-relevant staleness is highest priority** — auth docs, env var docs, and permission docs being stale is a security risk.
 
+### Sync Mode (Route C)
+
+When invoked in sync mode, your scope narrows from "check everything" to "check what the diff affects":
+
+1. Read the git diff (`git diff <base>..HEAD` or `git diff --cached`)
+2. Identify which codebase facts changed: new/renamed files, modified routes, added/removed env vars, changed config defaults, updated versions
+3. Cross-reference ONLY those changed facts against existing documentation
+4. For each stale item, include the **diff context** — what changed in the code and what needs to change in the docs
+5. Classify each finding:
+   - **FACTUAL** (paths, versions, env vars, config values) — safe for writer-agent to auto-fix
+   - **NARRATIVE** (feature descriptions, architecture explanations, workflow changes) — flag for user approval
+
+Add a `### Sync Scope` section to your output when in sync mode:
+```markdown
+### Sync Scope
+- **Diff analyzed**: [base]..HEAD ([N] files changed)
+- **Docs affected**: [list of documentation files that reference changed code]
+- **Factual updates needed**: [count] (auto-fixable)
+- **Narrative updates needed**: [count] (needs user approval)
+```
+
 ### Techniques
 
 **Staleness check order (highest priority first):**

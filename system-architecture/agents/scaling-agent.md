@@ -20,7 +20,7 @@ You will receive from the orchestrator:
 | **brief** | string | Product description with scale expectations |
 | **pre-writing** | object | Expected concurrent users, data volume, burst patterns, SLA requirements |
 | **upstream** | markdown | All upstream agent outputs combined (stack + schema + API + integration) |
-| **references** | file paths[] | Paths to `failure-modes.md`, `interaction-edge-cases.md` |
+| **references** | file paths[] | Paths to `failure-modes.md`, `interaction-edge-cases.md`, `security-patterns.md` |
 | **feedback** | string \| null | Rewrite instructions from critic agent. Null on first run. |
 
 ## Output Contract
@@ -51,6 +51,42 @@ Return a single markdown document with exactly these sections:
 | [flow] | Nil | [scenario] | [handling] | [gap if any] |
 | [flow] | Empty | [scenario] | [handling] | [gap if any] |
 | [flow] | Upstream error | [scenario] | [handling] | [gap if any] |
+
+### Security Review
+
+#### 12a. Threat Model (STRIDE)
+For each critical data flow, evaluate the 6 STRIDE categories.
+See `references/security-patterns.md` for the template.
+
+| Data Flow | Spoofing | Tampering | Repudiation | Info Disclosure | DoS | Elevation |
+|-----------|----------|-----------|-------------|-----------------|-----|-----------|
+| [flow] | [MITIGATED/UNMITIGATED: detail] | ... | ... | ... | ... | ... |
+
+#### 12b. OWASP Top 10 Scan
+Architecture-level check — does the system design address each OWASP category?
+
+| # | Category | Status | Notes |
+|---|----------|--------|-------|
+| A01 | Broken Access Control | [ADDRESSED/GAP] | [how] |
+| A02 | Cryptographic Failures | [ADDRESSED/GAP] | [how] |
+| ... | ... | ... | ... |
+
+#### 12c. LLM/AI Security (include only if system uses AI/LLM)
+| Risk Area | Status | Notes |
+|-----------|--------|-------|
+| Prompt injection (direct) | [ADDRESSED/GAP/N/A] | [detail] |
+| Prompt injection (indirect) | [ADDRESSED/GAP/N/A] | [detail] |
+| Unsafe output rendering | [ADDRESSED/GAP/N/A] | [detail] |
+| Tool call validation | [ADDRESSED/GAP/N/A] | [detail] |
+| Cost amplification | [ADDRESSED/GAP/N/A] | [detail] |
+
+#### 12d. Not Flagged
+[Patterns excluded per false-positive rules in `references/security-patterns.md`]
+
+**Confidence rules for security findings:**
+- 8-10/10: Include with full detail and concrete attack scenario
+- 5-7/10: Include with caveat "UNCERTAIN"
+- 1-4/10: Suppress — do not include
 
 ### Open Questions
 [Gaps or decisions that need user input to resolve]
@@ -109,6 +145,11 @@ Before returning your output, verify every item:
 - [ ] Every critical operation has failure modes traced (not just happy path)
 - [ ] Shadow paths (nil, empty, upstream error) are traced for critical flows
 - [ ] Silent failures (no handling + no user message) are flagged
+- [ ] STRIDE threat model completed for critical data flows
+- [ ] OWASP Top 10 architecture-level check completed
+- [ ] LLM/AI security section included (if system uses AI) or explicitly marked N/A
+- [ ] Security findings include confidence scores and concrete attack scenarios
+- [ ] False-positive exclusion rules applied (from `references/security-patterns.md`)
 - [ ] Open questions list captures unresolved gaps
 - [ ] Output stays within my section boundaries (validation only, no redesign)
 - [ ] No `[BLOCKED]` markers remain unresolved

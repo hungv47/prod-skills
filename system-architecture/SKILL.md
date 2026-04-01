@@ -242,7 +242,25 @@ status: draft
 ## 9. Key Features Implementation
 ## 10. Deployment & Infrastructure
 ## 11. Monitoring & Debugging
-## 12. Security Checklist
+## 12. Security Review
+
+### 12a. Threat Model (STRIDE)
+For each critical data flow, evaluate: Spoofing, Tampering, Repudiation, Information Disclosure, Denial of Service, Elevation of Privilege.
+See `references/security-patterns.md` for the STRIDE template.
+
+### 12b. OWASP Top 10 Scan
+Architecture-level check against OWASP Top 10 categories. Focus on design decisions, not code patterns.
+See `references/security-patterns.md` for the checklist.
+
+### 12c. LLM/AI Security (conditional — include only if system uses AI/LLM)
+Prompt injection vectors, output sanitization, tool validation, cost amplification.
+See `references/security-patterns.md` for the LLM security checklist.
+
+### 12d. Not Flagged (false-positive exclusions applied)
+List any patterns that were checked but excluded per the false-positive exclusion rules.
+
+## Not Included
+[Explicitly excluded items with rationale — what this architecture intentionally does NOT cover]
 
 ## Open Questions
 ## Next Step
@@ -262,3 +280,4 @@ Run `task-breakdown` to decompose this architecture into implementable tasks.
 - [references/deployment-patterns.md](references/deployment-patterns.md) — CI/CD and infrastructure patterns
 - [references/failure-modes.md](references/failure-modes.md) — Failure mode criticality, error tracing table, shadow path analysis
 - [references/interaction-edge-cases.md](references/interaction-edge-cases.md) — UI and interaction edge case categories
+- [references/security-patterns.md](references/security-patterns.md) — STRIDE threat model, OWASP Top 10 architecture checks, LLM/AI security, false-positive exclusions
