@@ -2,57 +2,85 @@
 
 UX design, technical architecture, code cleanup, and documentation — the skills for designing and building software.
 
-## Installation
+## Install
 
 ```bash
 npx skills add hungv47/product-skills
 ```
 
+## Pipeline
+
+<picture>
+  <img src="./assets/pipeline.svg" alt="Product pipeline: user-flow → system-architecture, plus horizontal code-cleanup and technical-writer" width="100%">
+</picture>
+
 ## Skills
 
-| Skill | Description |
-|-------|-------------|
-| `user-flow` | Map screens, decisions, transitions, edge cases, and error states |
-| `system-architecture` | Technical blueprints — tech stack, database schema, API design, file structure, deployment plan |
-| `code-cleanup` | Structural cleanup, AI slop removal, refactoring |
-| `technical-writer` | Generate clear product documentation and user guides from codebases |
+### `user-flow` — map the screens
 
-## Workflows
+Maps multi-step in-product flows — screens, decisions, transitions, edge cases, and error states for features or user journeys.
 
-```
-user-flow → system-architecture → (execution)
-code-cleanup, technical-writer: standalone
-```
+**Use when:**
+- You're designing a new feature and need to think through every screen and user path
+- You want to catch edge cases (errors, empty states, permissions) before building
+- You need a visual reference that developers can implement from
 
-## Cross-Stack DAG
+**Not for:** visual brand design (use `brand-system`) or single-page conversion (use `lp-optimization`)
 
-```
-research:   icp-research → product-context.md
-            market-research + problem-analysis → solution-design
+**Produces:** `.agents/design/user-flow.md`
 
-marketing:  brand-system, imc-plan → content-create → attribution
+---
 
-product:    user-flow → system-architecture → (execution)
-            code-cleanup, technical-writer (horizontal)
+### `system-architecture` — design the technical system
 
-meta:       preflight → plan-interviewer → task-breakdown (before builds)
-            multi-lens (decisions), review-chain (verification)
-```
+Technical blueprints — tech stack selection, database schema, API design, file structure, and deployment plan.
 
-`system-architecture` can read `.agents/solution-design.md` (from research-skills) and `.agents/design/user-flow.md` for cross-stack context.
+**Use when:**
+- You know what to build and need to decide *how* — the technical design
+- You want a database schema, API contracts, and deployment plan before writing code
+- You need to evaluate tech stack trade-offs for a specific product
 
-Artifacts save to `.agents/`.
+**Not for:** unclear requirements (use `plan-interviewer`) or task decomposition (use `task-breakdown`)
 
-## Cross-Stack Workflow
+**Produces:** `.agents/system-architecture.md`
 
-`system-architecture` and `technical-writer` can read `.agents/product-context.md`, created by `icp-research` from [research-skills](https://github.com/hungv47/research-skills).
+---
 
-## Usage
+### `code-cleanup` — audit and refactor existing code
 
-- "Map user flows" → `user-flow`
-- "Design system architecture" → `system-architecture`
-- "Clean up the codebase" → `code-cleanup`
-- "Write documentation" → `technical-writer`
+Structural audit, AI slop removal, dead code detection, and refactoring — without changing behavior.
+
+**Use when:**
+- Your codebase has accumulated cruft and needs a quality pass
+- You want to remove AI-generated patterns that hurt readability
+- You need to identify dead code, unused dependencies, or structural issues
+
+**Not for:** diagnosing business problems (use `problem-analysis`) or writing documentation (use `technical-writer`)
+
+**Produces:** `.agents/cleanup-report.md` + in-place fixes
+
+---
+
+### `technical-writer` — generate documentation from code
+
+READMEs, API references, setup guides, runbooks, and architecture docs with consistent structure and terminology.
+
+**Use when:**
+- You have a codebase and need documentation generated from it
+- You want API references, setup guides, or runbooks that stay accurate to the code
+- You need contributor documentation for an open-source project
+
+**Not for:** specifying what to build (use `plan-interviewer`) or restructuring code (use `code-cleanup`)
+
+**Produces:** Documentation files directly in the project (README.md, docs/)
+
+---
+
+## Cross-Stack
+
+- `system-architecture` reads `.agents/solution-design.md` (from [research-skills](https://github.com/hungv47/research-skills)) and `.agents/design/user-flow.md` for cross-stack context
+- `system-architecture` and `technical-writer` read `.agents/product-context.md` from research-skills
+- `user-flow` output feeds into `system-architecture` and `task-breakdown` (from [meta-skills](https://github.com/hungv47/meta-skills))
 
 ## License
 
