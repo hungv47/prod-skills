@@ -229,9 +229,9 @@ Check for existing context files: `README.md`, `CLAUDE.md`, `.agents/product-con
 ### Optional Artifacts
 | Artifact | Source | Benefit |
 |----------|--------|---------|
-| `product-context.md` | icp-research (from `hungv47/comms-skills`) | Product positioning and audience already defined |
+| `product-context.md` | icp-research (from `hungv47/marketing-skills`) | Product positioning and audience already defined |
 | `system-architecture.md` | system-architecture | Architecture decisions pre-mapped |
-| `.agents/design/brand-system.md` | brand-system (from `hungv47/design-skills`) | Brand voice and terminology guidelines |
+| `.agents/design/brand-system.md` | brand-system (from `hungv47/marketing-skills`) | Brand voice and terminology guidelines |
 
 ---
 
