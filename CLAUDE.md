@@ -12,6 +12,7 @@ Skills write to `.agents/`:
 - `.agents/system-architecture.md`
 - `.agents/cleanup-report.md`
 - `.agents/ship-report.md`
+- `.agents/deploy-verify-report.md` + `.agents/deploy-verify-baseline.json`
 - `technical-writer` writes directly to the project (README.md, docs/)
 
 ## Cross-Stack (Optional)

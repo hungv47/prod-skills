@@ -181,6 +181,8 @@ The organizer:
 
 If all changes are already committed with good messages, skip this step.
 
+If existing commits have bad messages (e.g., "wip", "fix", "asdf") but the code is correct, the commit-organizer cannot fix these — interactive rebase requires manual intervention. Tell the user: "Commits X and Y have unclear messages. Run `git rebase -i <base>` to clean them up, then re-run `/ship`." Do NOT force-push or rewrite history automatically.
+
 ### Step 4: Generate PR
 
 Dispatch `pr-writer-agent`. It reads:
