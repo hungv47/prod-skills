@@ -1,9 +1,9 @@
 # Product Skills
 
-UX design, technical architecture, code cleanup, and documentation.
+UX design, technical architecture, code cleanup, documentation, and shipping.
 
 ## Workflows
-- user-flow → system-architecture → (execution)
+- user-flow → system-architecture → (execution) → review-chain → ship
 - code-cleanup, technical-writer: standalone
 
 ## Artifacts
@@ -11,6 +11,7 @@ Skills write to `.agents/`:
 - `.agents/design/user-flow.md`
 - `.agents/system-architecture.md`
 - `.agents/cleanup-report.md`
+- `.agents/ship-report.md`
 - `technical-writer` writes directly to the project (README.md, docs/)
 
 ## Cross-Stack (Optional)
@@ -26,7 +27,7 @@ Run `user-flow` BEFORE `system-architecture`. User flows define WHAT screens and
 
 ## Multi-Agent Skills
 
-All 4 skills use a two-layer multi-agent orchestration pattern:
+5 of 6 skills use a multi-agent orchestration pattern (`deploy-verify` is single-agent):
 
 ### Agent Inventory
 
@@ -36,6 +37,8 @@ All 4 skills use a two-layer multi-agent orchestration pattern:
 | system-architecture | 7 | stack-selection, infrastructure | schema → api → integration → scaling → critic |
 | code-cleanup | 7 | structural-scanner, code-scanner, dependency-scanner | safe-removal → refactoring → validation → critic |
 | technical-writer | 6 | scanner, concept-extractor, audience-profiler | writer → staleness-checker → critic |
+| ship | 4 | test-runner (gate) | commit-organizer → pr-writer → critic |
+| deploy-verify | 0 | — | — (single-agent methodology) |
 
 ### Key Constraints
 - **code-cleanup enforces 5 golden rules**: preserve behavior, small steps, check conventions, test after each change, rollback awareness.
