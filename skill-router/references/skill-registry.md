@@ -293,4 +293,4 @@ product-context.md ← /icp-research
 
 Horizontal skills (copywriting, lp-optimization, seo, humanize, attribution, code-cleanup, technical-writer, multi-lens, review-chain) can be called at any point — they read upstream artifacts but don't block downstream skills.
 
-> **Note:** Meta-skills (multi-lens, review-chain) now live in Prod skills. `preflight` scope-locking is `/plan-interviewer scope` (Route C).
+> **Note:** multi-lens and review-chain are domain-agnostic process wrappers that compose with any skill in any stack. `preflight` scope-locking is `/plan-interviewer scope` (Route C).
