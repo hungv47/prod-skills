@@ -1,13 +1,14 @@
 # Productivity Skills
 
-Engineering productivity: code cleanup, architecture, task breakdown, documentation, planning, skill routing.
+Engineering productivity, process quality, and workflow orchestration: code cleanup, architecture, task breakdown, documentation, planning, skill routing, multi-perspective analysis, and post-implementation review.
 
 ## Workflows
 - plan-interviewer → task-breakdown or system-architecture
 - system-architecture ↔ task-breakdown
 - code-cleanup, technical-writer: standalone
-- artifact-status: cross-stack artifact scanner (run anytime to see what exists/what's stale)
-- skill-router: goal analysis → skill team suggestion → multi-phase workflow orchestration
+- skill-router: goal analysis → skill team suggestion → multi-phase workflow orchestration (includes artifact scanning via `status` mode)
+- multi-lens: multi-agent debate or consensus polling for decisions (domain-agnostic, composes with any skill)
+- review-chain: fresh-eyes review → resolve chain for post-implementation quality (domain-agnostic, composes with any skill)
 
 ## Artifacts
 Skills write to `.agents/`:
@@ -16,6 +17,10 @@ Skills write to `.agents/`:
 - `.agents/tasks.md`
 - `.agents/spec.md`
 - `.agents/workflow-plan.md` (skill-router orchestrate mode)
+- `.agents/meta/multi-lens-report.md` (+ `multi-lens-transcript.json` for debate mode)
+- `.agents/meta/review-chain-report.md`
+
+Meta-artifacts in `.agents/meta/` are ephemeral — overwritten on each run.
 
 ## Cross-Stack (Optional)
 system-architecture and technical-writer can read `.agents/product-context.md`.
@@ -30,7 +35,9 @@ Run `system-architecture` BEFORE `task-breakdown`. Architecture defines WHAT to 
 
 ## Multi-Agent Skills
 
-All 6 multi-agent skills use orchestration with a shared pattern:
+### Static Two-Layer Pattern (6 skills)
+
+The following multi-agent skills use orchestration with a shared pattern:
 - **Layer 1 agents** run in parallel (scanners, extractors, profilers)
 - **Layer 2 agents** run sequentially (each depends on prior output)
 - **Critic agent** reviews the final output against a quality gate
@@ -42,7 +49,7 @@ All 6 multi-agent skills use orchestration with a shared pattern:
 |-------|--------|-------------------|---------------------|
 | system-architecture | 7 | stack-selection, infrastructure | schema → api → integration → scaling → critic |
 | task-breakdown | 5 | decomposer, dependency-mapper | ordering → acceptance → critic |
-| plan-interviewer | 6 | codebase-scanner, artifact-reader | challenger → interviewer → synthesis → critic |
+| plan-interviewer | 7 | codebase-scanner, artifact-reader | challenger → interviewer → synthesis → critic (Route A/B); scope-contract (Route C) |
 | code-cleanup | 7 | structural-scanner, code-scanner, dependency-scanner | safe-removal → refactoring → validation → critic |
 | technical-writer | 6 | scanner, concept-extractor, audience-profiler | writer → staleness-checker → critic |
 | skill-router | 3 | intent-classifier, artifact-scanner | team-composer (no critic — advisory only) |
@@ -61,6 +68,17 @@ Agent definitions live in `[skill-name]/agents/[agent-name].md`. Each follows th
 - Output Contract (what it returns)
 - Domain Instructions (craft knowledge, techniques, examples)
 - Self-Check (quality criteria before returning)
+
+### Dynamic Spawning Pattern (2 skills)
+
+`multi-lens` and `review-chain` use a different pattern: agent count, roles, and instructions are defined at **runtime** based on the problem. There is no `agents/` directory — prompts are inline templates in SKILL.md.
+
+- **multi-lens:** Spawns N agents (debate mode: argue in rounds; poll mode: independent analysis with varied framings). Agent roles/count/instructions defined per-invocation.
+- **review-chain:** Spawns a reviewer agent (fresh eyes, no access to implementation reasoning) then a resolver agent if issues found. Max 2 verification loops.
+
+These are domain-agnostic process wrappers — they compose with any skill in any stack:
+- `multi-lens` for architecture decisions, strategic choices, or design trade-offs
+- `review-chain` after `system-architecture`, `code-cleanup`, or any critical artifact
 
 ### Key Constraints
 - **plan-interviewer is interactive**: the interviewer-agent uses AskUserQuestion tool for multi-round interviews. The orchestrator must relay questions to the user.

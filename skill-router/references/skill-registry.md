@@ -26,7 +26,11 @@
 | Break work into buildable tasks | `/task-breakdown` | `/system-architecture` (that designs, not decomposes) |
 | Clean up messy code | `/code-cleanup` | `/task-breakdown` (that plans new work, not cleans) |
 | Generate docs from code | `/technical-writer` | `/plan-interviewer` (that writes specs, not docs) |
-| See what artifacts exist | `/skill-router status` | — |
+| Scope a task before building | `/plan-interviewer scope` (Route C) | `/plan-interviewer` full (that discovers requirements from scratch) |
+| Have agents debate a decision | `/multi-lens` (debate mode) | `/multi-lens` poll (that polls independently, not debates) |
+| Get consensus from multiple perspectives | `/multi-lens` (poll mode) | `/multi-lens` debate (that debates, not polls) |
+| Verify code/output quality | `/review-chain` | `/code-cleanup` (that refactors, not reviews) |
+| See what artifacts exist / what's stale | `/skill-router status` | — |
 | Figure out what to do next | `/skill-router [your goal]` | — |
 
 ---
@@ -72,6 +76,23 @@
 - **attribution:** MEASURE what marketing is working (map activities to outcomes)
 - **funnel-planner:** SET targets (model funnel stages, define success metrics)
 - **Rule:** "What should our conversion targets be?" → funnel-planner. "Which channels are driving conversions?" → attribution.
+
+### plan-interviewer Route C vs. Route A/B
+- **Route C (Quick Scope):** SCOPE an existing task — 5 assumption-surfacing questions + 4-part success contract (GOAL/CONSTRAINTS/FORMAT/FAILURE). Lightweight, ~5 min.
+- **Route A/B (Full Interview):** DISCOVER what to build — multi-round interviews to produce a full spec from scratch. ~30 min.
+- **Rule:** Task exists but approach unclear → Route C. Vague idea needs a full spec → Route A/B.
+- **Together:** Route A/B first (produce spec.md), then Route C on individual features within the spec.
+
+### multi-lens debate vs. multi-lens poll
+- **debate:** Agents READ each other's responses and ARGUE across rounds. Produces convergence through disagreement.
+- **poll:** Agents work INDEPENDENTLY with varied framings. Produces consensus through aggregation.
+- **Rule:** Trade-off decision with no clear answer → debate. Need to filter hallucinations / find the mode → poll.
+
+### review-chain vs. code-cleanup
+- **review-chain:** CHECK quality — spawn a fresh-eyes reviewer, then resolve issues found. Does not restructure.
+- **code-cleanup:** RESTRUCTURE code — refactor for readability, remove dead code, simplify. Changes structure.
+- **Rule:** "Is this code correct?" → review-chain. "Make this code cleaner." → code-cleanup.
+- **Together:** code-cleanup first (restructure), then review-chain (verify the restructuring didn't break anything).
 
 ---
 
@@ -145,6 +166,29 @@ Phase 4: (execution — build the tasks)
 Phase 5: /code-cleanup + /technical-writer (parallel)
 ```
 
+### Template 3b: Rigorous Technical Build
+**Trigger phrases:** "build carefully", "high-quality build", "production-ready", "rigorous"
+**Skills (8 steps):**
+```
+Phase 1: /plan-interviewer scope → surface assumptions, define contract
+Phase 2: /plan-interviewer → spec.md (interactive)
+Phase 3: /system-architecture → system-architecture.md
+Phase 4: /review-chain → verify architecture
+Phase 5: /task-breakdown → tasks.md
+Phase 6: (execution — build the tasks, /review-chain after each critical task)
+Phase 7: /code-cleanup + /technical-writer (parallel)
+Phase 8: /review-chain → final verification
+```
+
+### Template 3c: Architecture Decision
+**Trigger phrases:** "debate the tech stack", "which approach", "compare options", "agents debate"
+**Skills (3 steps):**
+```
+Phase 1: /plan-interviewer scope → scope the decision
+Phase 2: /multi-lens debate → multi-lens-report.md
+Phase 3: /system-architecture → system-architecture.md (informed by debate)
+```
+
 ### Template 4: Strategy Sprint
 **Trigger phrases:** "strategy", "what should we build", "prioritize", "diagnose"
 **Skills (5 steps):**
@@ -215,7 +259,7 @@ These mappings are encoded in each skill's `routing.parallel-with` frontmatter f
 | brand-system | pipeline | heavy | no | design/brand-system.md |
 | user-flow | pipeline | medium | no | design/user-flow.md |
 
-### Prod (7 skills)
+### Prod (8 skills)
 | Skill | Position | Complexity | Interactive | Produces |
 |-------|----------|------------|-------------|----------|
 | plan-interviewer | pipeline | medium | **yes** | spec.md |
@@ -223,8 +267,11 @@ These mappings are encoded in each skill's `routing.parallel-with` frontmatter f
 | task-breakdown | pipeline | medium | no | tasks.md |
 | code-cleanup | horizontal | heavy | no | cleanup-report.md |
 | technical-writer | horizontal | medium | no | (writes to project) |
-| artifact-status | utility | light | no | (console output) |
-| skill-router | utility | medium | no | workflow-plan.md |
+| skill-router | utility | medium | no | workflow-plan.md (+ artifact scanning via `status` mode) |
+| multi-lens | horizontal | heavy | no | meta/multi-lens-report.md |
+| review-chain | horizontal | medium | no | meta/review-chain-report.md |
+
+multi-lens and review-chain are domain-agnostic process wrappers — they compose with any skill in any stack.
 
 ---
 
@@ -244,4 +291,6 @@ product-context.md ← /icp-research
 └→ design/user-flow.md ← /user-flow ──→ system-architecture.md, tasks.md
 ```
 
-Horizontal skills (copywriting, lp-optimization, seo, humanize, attribution, code-cleanup, technical-writer) can be called at any point — they read upstream artifacts but don't block downstream skills.
+Horizontal skills (copywriting, lp-optimization, seo, humanize, attribution, code-cleanup, technical-writer, multi-lens, review-chain) can be called at any point — they read upstream artifacts but don't block downstream skills.
+
+> **Note:** multi-lens and review-chain are domain-agnostic process wrappers that compose with any skill in any stack. `preflight` scope-locking is `/plan-interviewer scope` (Route C).
