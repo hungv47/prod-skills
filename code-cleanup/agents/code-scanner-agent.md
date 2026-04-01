@@ -84,13 +84,27 @@ Return a single markdown document with exactly these sections:
 - Auth bypasses (missing middleware, broken checks)
 - Data leaks (PII in logs, exposed secrets)
 
-**AI slop patterns:**
+**AI slop patterns (code-level):**
 - Obvious/redundant comments: `// Get the user` above `getUser()`
 - Unnecessary try/catch around non-throwing code
 - Null checks when callers guarantee valid input
 - Type casts to `any` that bypass TypeScript
 - Section divider comments when not used elsewhere in the file
 - Import organization that differs from the rest of the file
+
+**AI slop patterns (frontend/visual)** — scan `.tsx`, `.jsx`, `.html`, `.css`, `.scss` files:
+- Purple/violet/indigo gradients (the signature AI color choice)
+- 3-column grid with icon-in-circle + title + description layout
+- `text-align: center` applied to all content sections
+- Icons wrapped in colored circles (`border-radius: 50%` + background)
+- Uniform large `border-radius` on every card/container
+- Decorative SVG blobs or wavy dividers with no design-system justification
+- Emoji used as visual design elements (feature icons, section markers)
+- Colored left-border cards as the only visual variation
+- Generic hero copy ("Welcome to," "Unlock the power of," "Revolutionize your")
+- Cookie-cutter page flow: hero → 3 features → testimonials → pricing → CTA
+
+See `references/ai-slop-patterns.md` for the full catalog.
 
 **Code smell action rules:**
 
