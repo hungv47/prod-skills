@@ -5,7 +5,7 @@ Engineering productivity, process quality, and workflow orchestration — code c
 ## Installation
 
 ```bash
-npx skills add hungv47/prod-skills
+npx skills add hungv47/product-skills
 ```
 
 ## Skills
@@ -46,13 +46,13 @@ prod:     plan-interviewer → system-architecture ↔ task-breakdown
           multi-lens, review-chain (horizontal — compose with any skill)
 ```
 
-`system-architecture` can read `.agents/solution-design.md` (from strategy-skills) and `.agents/design/user-flow.md` (from design-skills) for cross-stack context.
+`system-architecture` can read `.agents/solution-design.md` (from research-skills) and `.agents/design/user-flow.md` (from product-skills) for cross-stack context.
 
 Artifacts save to `.agents/`.
 
 ## Cross-Stack Workflow
 
-`system-architecture` and `technical-writer` can read `.agents/product-context.md`, created by `icp-research` from [comms-skills](https://github.com/hungv47/comms-skills).
+`system-architecture` and `technical-writer` can read `.agents/product-context.md`, created by `icp-research` from [marketing-skills](https://github.com/hungv47/marketing-skills).
 
 ## Usage
 

@@ -48,7 +48,7 @@ routing:
 - `.agents/system-architecture.md`
 
 ## Chain Position
-Previous: `plan-interviewer` or `task-breakdown` (optional) | Next: `task-breakdown` (optional) | Cross-stack: reads `solution-design.md` (from strategy-skills), `user-flow.md` (from design-skills)
+Previous: `plan-interviewer` or `task-breakdown` (optional) | Next: `task-breakdown` (optional) | Cross-stack: reads `solution-design.md` (from research-skills), `user-flow.md` (from product-skills)
 
 **Re-run triggers:** When product spec changes significantly, when scale requirements change (10x growth), when migrating core infrastructure, or when adding major new integrations.
 
@@ -139,9 +139,9 @@ When context window is constrained or the product is simple (fewer than 3 user t
 
 ### Step 0: Product Context
 
-Check for `.agents/product-context.md`. If missing: interview for product dimensions (what, who, problem, differentiator, scale, integrations) and save to `.agents/product-context.md`. Or recommend running `icp-research` (from `hungv47/comms-skills`) to bootstrap it.
+Check for `.agents/product-context.md`. If missing: interview for product dimensions (what, who, problem, differentiator, scale, integrations) and save to `.agents/product-context.md`. Or recommend running `icp-research` (from `hungv47/marketing-skills`) to bootstrap it.
 
-If `.agents/product-context.md` has a `date` field older than 30 days, recommend re-running `icp-research` (from comms-skills) to refresh it.
+If `.agents/product-context.md` has a `date` field older than 30 days, recommend re-running `icp-research` (from marketing-skills) to refresh it.
 
 ### Required Artifacts
 None — this skill can run standalone.
@@ -149,10 +149,10 @@ None — this skill can run standalone.
 ### Optional Artifacts
 | Artifact | Source | Benefit |
 |----------|--------|---------|
-| `product-context.md` | icp-research (from `hungv47/comms-skills`) | Industry context, user personas, and constraints |
+| `product-context.md` | icp-research (from `hungv47/marketing-skills`) | Industry context, user personas, and constraints |
 | `task-breakdown.md` | task-breakdown | Feature list already decomposed into buildable units |
-| `solution-design.md` | solution-design (from `hungv47/strategy-skills`) | Business initiatives and constraints from strategy track |
-| `.agents/design/user-flow.md` | user-flow (from `hungv47/design-skills`) | User flow diagrams for API endpoint design and feature scoping |
+| `solution-design.md` | solution-design (from `hungv47/research-skills`) | Business initiatives and constraints from strategy track |
+| `.agents/design/user-flow.md` | user-flow (from `hungv47/product-skills`) | User flow diagrams for API endpoint design and feature scoping |
 
 ### Two Modes of Operation
 

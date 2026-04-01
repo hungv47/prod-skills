@@ -24,14 +24,14 @@ Meta-artifacts in `.agents/meta/` are ephemeral — overwritten on each run.
 
 ## Cross-Stack (Optional)
 system-architecture and technical-writer can read `.agents/product-context.md`.
-Created by `icp-research`: `npx skills add hungv47/comms-skills`
+Created by `icp-research`: `npx skills add hungv47/marketing-skills`
 
 ## Recommended Order
 Run `system-architecture` BEFORE `task-breakdown`. Architecture defines WHAT to build; tasks define HOW to build it. Running task-breakdown before architecture produces tasks without structural context.
 
 ## Cross-Stack Connections
-- `.agents/solution-design.md` (from strategy-skills) → `system-architecture`: Business initiatives inform what to build
-- `.agents/design/user-flow.md` (from design-skills) → `system-architecture` and `task-breakdown`: User flows inform API design and feature decomposition
+- `.agents/solution-design.md` (from research-skills) → `system-architecture`: Business initiatives inform what to build
+- `.agents/design/user-flow.md` (from product-skills) → `system-architecture` and `task-breakdown`: User flows inform API design and feature decomposition
 
 ## Multi-Agent Skills
 
