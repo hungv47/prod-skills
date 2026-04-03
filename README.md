@@ -40,7 +40,7 @@ Technical blueprints — tech stack selection, database schema, API design, file
 - You want a database schema, API contracts, and deployment plan before writing code
 - You need to evaluate tech stack trade-offs for a specific product
 
-**Not for:** unclear requirements (use `plan-interviewer`) or task decomposition (use `task-breakdown`)
+**Not for:** unclear requirements (use `discover`) or task decomposition (use `task-breakdown`)
 
 **Produces:** `.agents/system-architecture.md`
 
@@ -70,7 +70,7 @@ READMEs, API references, setup guides, runbooks, and architecture docs with cons
 - You want API references, setup guides, or runbooks that stay accurate to the code
 - You need contributor documentation for an open-source project
 
-**Not for:** specifying what to build (use `plan-interviewer`) or restructuring code (use `code-cleanup`)
+**Not for:** specifying what to build (use `discover`) or restructuring code (use `code-cleanup`)
 
 **Produces:** Documentation files directly in the project (README.md, docs/)
 

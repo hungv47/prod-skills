@@ -69,10 +69,10 @@ Previous: `brand-system` (optional — provides design tokens and component cont
 
 **Re-run triggers:** When product features change significantly, when user research reveals new patterns, after usability testing reveals flow issues, or when adding new user roles.
 
-**Related skills (non-chain):** `system-architecture` (consumes flow diagrams for API design), `task-breakdown` (uses flows for feature decomposition), `plan-interviewer` (generates specs that inform flows)
+**Related skills (non-chain):** `system-architecture` (consumes flow diagrams for API design), `task-breakdown` (uses flows for feature decomposition), `discover` (generates specs that inform flows)
 
 ### Skill Deference
-- **Requirements unclear?** Run `plan-interviewer` first to clarify the spec.
+- **Requirements unclear?** Run `discover` first to clarify the spec.
 - **Need brand context?** Run `brand-system` — it provides design tokens and component context.
 - **Need to break flow into tasks?** Run `task-breakdown` after — it consumes flow diagrams.
 

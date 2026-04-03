@@ -1,6 +1,6 @@
 ---
 name: system-architecture
-description: "Designs technical blueprints — tech stack selection, database schema, API design, file structure, and deployment plan for a defined product or feature. Produces `.agents/system-architecture.md`. Not for unclear requirements (use plan-interviewer) or task decomposition (use task-breakdown)."
+description: "Designs technical blueprints — tech stack selection, database schema, API design, file structure, and deployment plan for a defined product or feature. Produces `.agents/system-architecture.md`. Not for unclear requirements (use discover) or task decomposition (use task-breakdown)."
 argument-hint: "[product or feature to architect]"
 license: MIT
 metadata:
@@ -24,7 +24,7 @@ routing:
     - design/user-flow.md
   requires: []
   defers-to:
-    - skill: plan-interviewer
+    - skill: discover
       when: "requirements are unclear, need to interview first"
     - skill: task-breakdown
       when: "architecture is done, need to decompose into tasks"
@@ -48,7 +48,7 @@ routing:
 - `.agents/system-architecture.md`
 
 ## Chain Position
-Previous: `plan-interviewer` or `task-breakdown` (optional) | Next: `task-breakdown` (optional) | Cross-stack: reads `solution-design.md` (from research-skills), `user-flow.md` (from product-skills)
+Previous: `discover` or `task-breakdown` (optional) | Next: `task-breakdown` (optional) | Cross-stack: reads `solution-design.md` (from research-skills), `user-flow.md` (from product-skills)
 
 **Re-run triggers:** When product spec changes significantly, when scale requirements change (10x growth), when migrating core infrastructure, or when adding major new integrations.
 
