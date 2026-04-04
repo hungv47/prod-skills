@@ -1,6 +1,6 @@
 ---
 name: system-architecture
-description: "Designs technical blueprints — tech stack selection, database schema, API design, file structure, and deployment plan for a defined product or feature. Produces `.agents/system-architecture.md`. Not for unclear requirements (use discover) or task decomposition (use task-breakdown)."
+description: "Designs technical blueprints — tech stack selection, database schema, API design, file structure, and deployment plan for a defined product or feature. Produces `.agents/system-architecture.md`. Not for unclear requirements (use discover) or task decomposition (use task-breakdown). For user journey mapping, see user-flow. For code quality after building, see review-chain."
 argument-hint: "[product or feature to architect]"
 license: MIT
 metadata:

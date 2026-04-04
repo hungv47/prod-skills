@@ -1,6 +1,6 @@
 ---
 name: ship
-description: "Automated pre-merge pipeline — runs tests, checks review gate, organizes commits, generates PR with structured body. Produces `.agents/ship-report.md`. Not for code review (use review-chain) or task decomposition (use task-breakdown)."
+description: "Automated pre-merge pipeline — runs tests, checks review gate, organizes commits, generates PR with structured body. Produces `.agents/ship-report.md`. Not for code review (use review-chain) or task decomposition (use task-breakdown). For code cleanup before shipping, see code-cleanup. For post-deploy health check, see deploy-verify."
 argument-hint: "[optional: PR title or description]"
 user-invocable: true
 license: MIT
