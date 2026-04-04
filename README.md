@@ -1,6 +1,6 @@
 # Product Skills
 
-UX design, technical architecture, code cleanup, and documentation — the skills for designing and building software.
+UX design, technical architecture, code cleanup, documentation, and shipping — the skills for designing and building software.
 
 ## Install
 
@@ -11,7 +11,7 @@ npx skills add hungv47/product-skills
 ## Pipeline
 
 <picture>
-  <img src="./assets/pipeline.svg" alt="Product pipeline: user-flow → system-architecture, plus horizontal code-cleanup and technical-writer" width="100%">
+  <img src="./assets/pipeline.svg" alt="Product pipeline: user-flow → system-architecture → ship → deploy-verify, plus horizontal code-cleanup and technical-writer" width="100%">
 </picture>
 
 ## Skills
@@ -73,6 +73,36 @@ READMEs, API references, setup guides, runbooks, and architecture docs with cons
 **Not for:** specifying what to build (use `discover`) or restructuring code (use `code-cleanup`)
 
 **Produces:** Documentation files directly in the project (README.md, docs/)
+
+---
+
+### `ship` — automated pre-merge pipeline
+
+Runs tests, checks the review gate, organizes commits, and creates a PR with a structured body.
+
+**Use when:**
+- You've built and reviewed something and need to ship it cleanly
+- You want an automated pipeline from tests through PR creation
+- You need commits organized and a well-structured PR body
+
+**Not for:** code review (use `review-chain`) or task decomposition (use `task-breakdown`)
+
+**Produces:** `.agents/ship-report.md` + a pull request on the remote
+
+---
+
+### `deploy-verify` — post-deploy health check
+
+Verifies a production URL is healthy after shipping — page load, console errors, critical paths, response times.
+
+**Use when:**
+- You just deployed and want to verify production is healthy
+- You need evidence-backed health status (HEALTHY / DEGRADED / BROKEN)
+- You want a baseline comparison against prior deploys
+
+**Not for:** pre-merge review (use `review-chain`) or shipping (use `ship`)
+
+**Produces:** `.agents/deploy-verify-report.md`, `.agents/deploy-verify-baseline.json`
 
 ---
 
