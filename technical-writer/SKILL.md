@@ -1,6 +1,6 @@
 ---
 name: technical-writer
-description: "Generates documentation from a codebase — READMEs, API references, setup guides, runbooks, and architecture docs with consistent structure and terminology. Produces documentation files in the project. Not for specifying what to build (use discover) or restructuring code (use code-cleanup)."
+description: "Generates documentation from a codebase — READMEs, API references, setup guides, runbooks, and architecture docs with consistent structure and terminology. Produces documentation files in the project. Not for specifying what to build (use discover) or restructuring code (use code-cleanup). For shipping and PRs, see ship. For task decomposition, see task-breakdown."
 argument-hint: "[codebase or project to document]"
 license: MIT
 metadata:

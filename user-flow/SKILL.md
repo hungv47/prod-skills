@@ -1,6 +1,6 @@
 ---
 name: user-flow
-description: "Maps multi-step in-product flows — screens, decisions, transitions, edge cases, and error states for features or user journeys. Produces `.agents/design/user-flow.md`. Not for visual brand design (use brand-system) or single-page conversion (use lp-optimization)."
+description: "Maps multi-step in-product flows — screens, decisions, transitions, edge cases, and error states for features or user journeys. Produces `.agents/design/user-flow.md`. Not for visual brand design (use brand-system) or single-page conversion (use lp-optimization). For technical architecture, see system-architecture. For task decomposition, see task-breakdown."
 argument-hint: "[feature or flow to map]"
 license: MIT
 metadata:

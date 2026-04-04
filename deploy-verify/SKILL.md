@@ -1,6 +1,6 @@
 ---
 name: deploy-verify
-description: "Post-deploy health check — verifies a production URL is healthy after shipping. Checks page load, console errors, critical flows, and response times. Reports HEALTHY / DEGRADED / BROKEN with evidence. Not for pre-merge review (use review-chain) or shipping (use ship)."
+description: "Post-deploy health check — verifies a production URL is healthy after shipping. Checks page load, console errors, critical flows, and response times. Reports HEALTHY / DEGRADED / BROKEN with evidence. Not for pre-merge review (use review-chain) or shipping (use ship). For code cleanup, see code-cleanup. For architecture decisions, see system-architecture."
 argument-hint: "<production URL to verify>"
 user-invocable: true
 license: MIT
