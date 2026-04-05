@@ -104,6 +104,19 @@ Layer 2 (sequential):
 
 ---
 
+## Dependency Classification
+
+When designing integrations and service boundaries, classify every external dependency into one of four categories. Each category has a different testing strategy:
+
+| Category | What it is | Testing strategy | Example |
+|----------|-----------|-----------------|---------|
+| **In-process** | Pure computation, no I/O | Test directly, no mocks needed | Validation logic, formatters, calculators |
+| **Local-substitutable** | Has a lightweight local stand-in | Use the stand-in in tests | PGLite for Postgres, LocalStack for AWS, MailHog for email |
+| **Remote but owned** | Your own services | Ports & Adapters — define interface, test with in-memory adapter | Your auth service, your billing API |
+| **True external** | Third-party, no stand-in | Mock at the boundary only | Stripe API, Twilio, OpenAI |
+
+Document the category for each dependency in the Service Connections section. This directly informs testing strategy in `task-breakdown` and `review-chain`.
+
 ## Critical Gates
 
 Before delivering, the critic-agent verifies ALL of these pass:
@@ -115,6 +128,7 @@ Before delivering, the critic-agent verifies ALL of these pass:
 - [ ] File structure matches chosen framework conventions
 - [ ] Auth model covers all user roles and permission levels
 - [ ] At least one architectural trade-off is documented with alternatives considered
+- [ ] Every external dependency is classified (in-process / local-substitutable / remote-owned / true-external)
 
 **If any gate fails:** the critic identifies which agent must fix it and the orchestrator re-dispatches with specific feedback.
 
