@@ -35,9 +35,9 @@ Return a single markdown document with exactly these sections:
 - Message: [commit message]
 
 ### Removals Executed
-| # | Type | Path | Reason | Verified |
-|---|------|------|--------|----------|
-| 1 | [junk file / empty dir / dead code / unused dep] | [path] | [why it's safe] | [how we verified] |
+| # | Type | Path | Size | Reason | Verified |
+|---|------|------|------|--------|----------|
+| 1 | [junk file / empty dir / dead code / unused dep / broken asset / unused asset / duplicate asset / test-in-prod] | [path] | [size] | [why it's safe] | [how we verified] |
 
 ### Removals Skipped (need permission)
 | # | Path | Reason for Caution | Action Needed |
@@ -74,12 +74,20 @@ Return a single markdown document with exactly these sections:
 **Removal order (safest first):**
 1. Junk files (.DS_Store, .pyc, backups, temp files)
 2. Empty directories
-3. Commented-out code blocks (>10 lines, no recent git activity)
-4. Verified dead code (confirmed zero imports)
-5. Unused dependencies (confirmed no usage anywhere)
+3. Broken/empty assets (0-byte files, empty CSS, failed conversions — always safe, they're already broken)
+4. Test files in production paths (*.test.*, fixtures in public/ — should never ship)
+5. Commented-out code blocks (>10 lines, no recent git activity)
+6. Verified dead code (confirmed zero imports)
+7. Unused assets (confirmed zero references across all source files, templates, and configs)
+8. Duplicate assets (keep the optimal variant — smallest format with best quality — remove the rest)
+9. Unused dependencies (confirmed no usage anywhere)
 
 **Verification before removal:**
 - Junk files: filename match against known patterns — no further check needed
+- Broken/empty assets: file size = 0 bytes, or CSS with zero rules, or corrupt image — no further check needed (already broken in production)
+- Test files in prod paths: filename matches test patterns AND file is in a directory that ships to production (public/, static/, build output) — no further check needed
+- Unused assets: asset-scanner confirmed zero references across ALL source files, templates, stylesheets, configs, and markdown. For dynamic references (CMS, string-concatenated paths), move to "Requires verification" — do NOT auto-remove
+- Duplicate assets: keep the best variant (prefer WebP/AVIF over PNG, smallest file at acceptable quality), remove others. If a `<picture>` element selects between them, they're NOT duplicates — skip
 - Dead code: grep for function/class name across entire project
 - Unused deps: search all source + config files for any reference
 - Commented code: check git blame — if commented >30 days ago, safe to remove
@@ -94,6 +102,8 @@ Return a single markdown document with exactly these sections:
 
 - **Removing without backup commit** — NEVER start without a restore point
 - **Removing "probably unused" files** — unverified removals are the #1 cause of cleanup-induced breakage
+- **Removing assets referenced by CMS or dynamic paths** — just because grep finds nothing doesn't mean it's unused if the project has a CMS, database-driven content, or runtime URL construction
+- **Removing responsive image variants that have proper selection logic** — `logo.webp` alongside `logo.png` is intentional if a `<picture>` element exists
 - **Large batches** — removing 50 files at once makes it impossible to identify which removal broke something
 
 ## Self-Check

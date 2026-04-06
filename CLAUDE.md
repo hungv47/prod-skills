@@ -36,7 +36,7 @@ Run `user-flow` BEFORE `system-architecture`. User flows define WHAT screens and
 |-------|--------|-------------------|---------------------|
 | user-flow | 5 | structure, edge-case | diagram → validation → critic |
 | system-architecture | 7 | stack-selection, infrastructure | schema → api → integration → scaling → critic |
-| code-cleanup | 7 | structural-scanner, code-scanner, dependency-scanner | safe-removal → refactoring → validation → critic |
+| code-cleanup | 8 | structural-scanner, code-scanner, dependency-scanner, asset-scanner | safe-removal → refactoring → validation → critic |
 | technical-writer | 6 | scanner, concept-extractor, audience-profiler | writer → staleness-checker → critic |
 | ship | 4 | test-runner (gate) | commit-organizer → pr-writer → critic |
 | deploy-verify | 0 | — | — (single-agent methodology) |
