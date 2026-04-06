@@ -14,6 +14,10 @@ routing:
     - cleanup
     - code-quality
     - ai-slop-removal
+    - unused-assets
+    - production-waste
+    - shipping-bloat
+    - dead-assets
   position: horizontal
   produces:
     - cleanup-report.md
@@ -59,6 +63,7 @@ Previous: none | Next: none (standalone)
 | structural-scanner-agent | `agents/structural-scanner-agent.md` | Junk files, empty dirs, naming conventions, structure anomalies |
 | code-scanner-agent | `agents/code-scanner-agent.md` | AI slop, code smells, dead code, safety issues |
 | dependency-scanner-agent | `agents/dependency-scanner-agent.md` | Unused packages, duplicates, security vulnerabilities |
+| asset-scanner-agent | `agents/asset-scanner-agent.md` | Unused/broken/duplicate assets, test files in prod, unoptimized media, dead route-level code |
 | safe-removal-agent | `agents/safe-removal-agent.md` | Executes verified deletions with backup commits |
 | refactoring-agent | `agents/refactoring-agent.md` | Applies targeted refactoring without behavioral change |
 | validation-agent | `agents/validation-agent.md` | Runs tests, types, lint, build — reports pass/fail |
@@ -70,10 +75,11 @@ Previous: none | Next: none (standalone)
 Layer 1 (parallel):
   structural-scanner-agent ───┐
   code-scanner-agent ─────────┤── scan simultaneously
-  dependency-scanner-agent ───┘
+  dependency-scanner-agent ───┤
+  asset-scanner-agent ────────┘
 
 Layer 2 (sequential):
-  safe-removal-agent ──────────── removes verified targets from all 3 scans
+  safe-removal-agent ──────────── removes verified targets from all 4 scans
     → refactoring-agent ───────── applies code-level fixes from code scanner
       → validation-agent ──────── runs all checks
         → critic-agent ─────────── final golden rules review
@@ -84,7 +90,8 @@ Layer 2 (sequential):
 1. **Triage** — determine scope from user intent:
    - "Reorganize files" → structural-scanner only
    - "Remove AI slop" → code-scanner only
-   - "Clean up the codebase" → all three scanners
+   - "Find unused assets" → asset-scanner only
+   - "Clean up the codebase" → all four scanners
 2. **Layer 1 dispatch** — send brief to relevant scanner agents in parallel.
 3. **Safe removal** — pass all scan results to `safe-removal-agent`. It creates a backup commit, then removes verified-safe targets.
 4. **Refactoring** — pass code scanner results + removal results to `refactoring-agent`. It fixes code-level issues.
@@ -99,6 +106,7 @@ Layer 2 (sequential):
 | User says "structural only" | Only dispatch structural-scanner → safe-removal → validation → critic |
 | User says "code-level only" | Only dispatch code-scanner → refactoring → validation → critic |
 | User says "refactor this" | Only dispatch code-scanner → refactoring → validation → critic |
+| User says "unused assets", "production waste", "what's shipping that shouldn't be" | Only dispatch asset-scanner → safe-removal → validation → critic |
 | User says "clean up everything" | All scanners → safe-removal → refactoring → validation → critic |
 | Validation fails | Identify which change broke it; revert that specific change |
 | Critic PASS | Assemble report and deliver |
@@ -146,8 +154,9 @@ Determine scope before starting. Parts can be used independently or combined.
 | "Reorganize files", "remove dead code", "clean up repo structure" | structural-scanner-agent |
 | "Remove AI slop", "clean up PR", "fix code smells" | code-scanner-agent |
 | "Check dependencies", "remove unused packages" | dependency-scanner-agent |
+| "Find unused assets", "production waste", "what's shipping that shouldn't be", "nuke dead assets" | asset-scanner-agent |
 | "Refactor this", "extract this", "redesign this module" | code-scanner-agent → refactoring-agent |
-| "Clean up the codebase" (broad) | All three scanners → safe-removal → refactoring |
+| "Clean up the codebase" (broad) | All four scanners → safe-removal → refactoring |
 
 ---
 
@@ -200,15 +209,16 @@ The refactoring-agent skips these situations:
 
 **User:** "Clean up this Express API project, it's gotten messy after 6 months."
 
-**Triage:** Broad cleanup — dispatch all three scanners.
+**Triage:** Broad cleanup — dispatch all four scanners.
 
 **Layer 1 (parallel):**
 - `structural-scanner-agent` → 4 unused files in /utils, 2 duplicate helpers, naming inconsistency (userController.js vs product-controller.js)
 - `code-scanner-agent` → Pass 1: 0 safety issues. Pass 2: 12 TODO comments, 3 console.log, 2 commented-out blocks (>50 lines each), 5 AI slop instances
 - `dependency-scanner-agent` → 2 unused dependencies (lodash, moment), 1 duplicate (underscore alongside lodash)
+- `asset-scanner-agent` → 1 broken asset (0-byte favicon.avif, failed conversion), 3 test fixtures in public/ (user-fixture.json, seed-data.csv, mock-response.json — 45KB total), 2 unused images (old-hero.png 1.2MB, draft-logo.png 340KB — never referenced), 1 unoptimized (hero-bg.png 2.1MB, should be WebP at ~400KB)
 
 **Layer 2 (sequential):**
-- `safe-removal-agent` → backup commit, removes 4 unused files + 2 commented blocks + lodash + underscore. Tests pass.
+- `safe-removal-agent` → backup commit, removes 4 unused files + 2 commented blocks + lodash + underscore + 0-byte favicon.avif + 3 test fixtures + 2 unused images. Tests pass.
 - `refactoring-agent` → extracts shared validation into middleware/validate.js, normalizes to kebab-case, removes 12 TODOs and 3 console.logs
 - `validation-agent` → bun test: 47/47 pass. tsc --noEmit: clean. Lint: clean.
 - `critic-agent` → PASS. All 5 golden rules pass.
@@ -237,6 +247,7 @@ status: complete
 ## Changes Made
 ### Structural
 ### Code-Level
+### Assets
 ### Refactoring
 
 ## Validation
@@ -253,4 +264,4 @@ status: complete
 
 ## Scripts
 
-- `scripts/analyze_codebase.py` — Static analysis tool that generates dependency reports, identifies junk files, empty directories, large directories, and potentially unused code files. Used by structural-scanner-agent and dependency-scanner-agent.
+- `scripts/analyze_codebase.py` — Static analysis tool that generates dependency reports, identifies junk files, empty directories, large directories, potentially unused code files, unused/broken/duplicate assets, and unoptimized media. Used by structural-scanner-agent, dependency-scanner-agent, and asset-scanner-agent.
