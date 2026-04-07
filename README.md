@@ -33,7 +33,7 @@ Maps multi-step in-product flows — screens, decisions, transitions, edge cases
 
 ### `system-architecture` — design the technical system
 
-Technical blueprints — tech stack selection, database schema, API design, file structure, and deployment plan.
+Technical blueprints — tech stack selection, database schema, API design, file structure, deployment plan, and security review (STRIDE threat model + OWASP Top 10 + LLM security). Classifies every external dependency into four categories (in-process, local-substitutable, remote-owned, true-external) to directly inform testing strategy.
 
 **Use when:**
 - You know what to build and need to decide *how* — the technical design
@@ -48,12 +48,12 @@ Technical blueprints — tech stack selection, database schema, API design, file
 
 ### `code-cleanup` — audit and refactor existing code
 
-Structural audit, AI slop removal, dead code detection, and refactoring — without changing behavior.
+Structural audit, AI slop removal (code-level and frontend/visual), dead code detection, unused/broken/duplicate asset scanning, and refactoring — without changing behavior.
 
 **Use when:**
 - Your codebase has accumulated cruft and needs a quality pass
 - You want to remove AI-generated patterns that hurt readability
-- You need to identify dead code, unused dependencies, or structural issues
+- You need to identify dead code, unused dependencies, unused assets, or structural issues
 
 **Not for:** diagnosing business problems (use `problem-analysis`) or writing documentation (use `technical-writer`)
 
@@ -63,16 +63,17 @@ Structural audit, AI slop removal, dead code detection, and refactoring — with
 
 ### `technical-writer` — generate documentation from code
 
-READMEs, API references, setup guides, runbooks, and architecture docs with consistent structure and terminology.
+READMEs, API references, setup guides, runbooks, and architecture docs with consistent structure and terminology. Ship log mode (`--ship-log`) writes a plain-language product snapshot to `.agents/product-context.md` so agents and humans know what the app does. Sync mode (`--sync`) updates existing docs after code changes.
 
 **Use when:**
 - You have a codebase and need documentation generated from it
 - You want API references, setup guides, or runbooks that stay accurate to the code
+- You need a product snapshot that downstream skills can use as context
 - You need contributor documentation for an open-source project
 
 **Not for:** specifying what to build (use `discover`) or restructuring code (use `code-cleanup`)
 
-**Produces:** Documentation files directly in the project (README.md, docs/)
+**Produces:** Documentation files directly in the project (README.md, docs/) or `.agents/product-context.md` (ship log mode)
 
 ---
 
@@ -110,6 +111,7 @@ Verifies a production URL is healthy after shipping — page load, console error
 
 - `system-architecture` reads `.agents/solution-design.md` (from [research-skills](https://github.com/hungv47/research-skills)) and `.agents/design/user-flow.md` for cross-stack context
 - `system-architecture` and `technical-writer` read `.agents/product-context.md` from research-skills
+- `technical-writer --ship-log` writes `.agents/product-context.md`, the canonical cross-stack artifact consumed by 12+ downstream skills
 - `user-flow` output feeds into `system-architecture` and `task-breakdown` (from [meta-skills](https://github.com/hungv47/meta-skills))
 
 ## License
