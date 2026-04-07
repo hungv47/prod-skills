@@ -100,11 +100,24 @@ Return a single markdown document with exactly these sections:
 | Infrastructure tool | Configuration Guide | 2-5 pages |
 | Any (new user) | Getting Started Tutorial | 1-2 pages |
 
+### Pre-Set Audience (Passthrough Mode)
+
+When the orchestrator passes a pre-set audience profile in the `pre-writing` field (e.g., `{ type: "mixed", technical_level: "dual", key_goal: "understand product state" }` for ship log mode), **validate and return it directly** — do not re-infer.
+
+This is the one exception to the "one primary audience per document" principle. Ship logs serve a dual audience by design: non-technical humans who need to understand the product, and coding agents who need context for their next task. The template structure handles the split (user-facing sections use plain language; "For Coding Agents" section allows technical detail).
+
+When in passthrough mode:
+- Set Primary Audience type to `mixed` and Technical Level to `dual`
+- Set Writing Calibration to: plain language in user-facing sections, technical terms permitted in agent section only
+- Still return the full output contract format — downstream agents rely on the structured calibration table
+- Skip Audience Questions — the orchestrator has already decided
+
 ### Anti-Patterns
 
-- **Writing for everyone** — a document that tries to serve all audiences serves none well
+- **Writing for everyone** — a document that tries to serve all audiences serves none well (exception: ship log's dual-audience split, which uses section-level targeting instead)
 - **Assuming expert audience** — default to intermediate unless signals clearly indicate expert
 - **Skipping calibration** — "just write docs" without audience calibration produces inconsistent tone
+- **Overriding pre-set audience** — when the orchestrator passes a pre-set profile, re-inferring wastes a parallel slot and risks contradicting the orchestrator's routing decision
 
 ## Self-Check
 
@@ -115,6 +128,8 @@ Before returning your output, verify every item:
 - [ ] Writing calibration covers vocabulary, code examples, assumed knowledge, and jargon
 - [ ] Audience was inferred from project signals, not assumed
 - [ ] Output stays within my section boundaries (profiling only)
+- [ ] (Passthrough mode) Pre-set audience returned without re-inference
+- [ ] (Passthrough mode) Full output contract still populated for downstream agents
 - [ ] No `[BLOCKED]` markers remain unresolved
 
 If any check fails, revise your output before returning.

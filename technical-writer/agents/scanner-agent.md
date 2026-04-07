@@ -97,11 +97,45 @@ Return a single markdown document with exactly these sections:
 3. Identify each package/service boundary
 4. Treat each as a documentation unit
 
+### Ship Log Mode
+
+When invoked in ship log mode (Route D), your scan adds **git shipping history** to the standard output:
+
+1. Run the standard project scan (file importance map, existing docs, context files)
+2. Additionally extract shipping history:
+   - `git log --oneline --since="6 months ago"` (or full history if repo is younger than 6 months)
+   - `git tag` for version milestones
+   - `git log --format="%ad %s" --date=short --since="6 months ago" --max-count=100` for date-stamped changes (limit prevents context overflow on long-lived repos)
+3. Filter the git history to user-facing changes:
+   - **Include:** new features, UX changes, bug fixes users would notice, major refactors that changed behavior
+   - **Exclude:** dependency bumps, CI/CD changes, formatting, internal refactors, merge commits
+4. Group changes into a chronological timeline with dates and plain-language descriptions
+5. Also check for `.agents/product-context.md` existence and note its origin (frontmatter `skill:` field) for the merge strategy
+
+Add a `### Shipping History` section to your output when in ship log mode:
+```markdown
+### Shipping History
+| Date | Commit/PR | What Changed (plain language) | User Impact |
+|------|-----------|------------------------------|-------------|
+| [YYYY-MM-DD] | [hash or PR#] | [description] | [what users can now do] |
+
+### Milestones
+| Date | Milestone | Significance |
+|------|-----------|-------------|
+| [YYYY-MM-DD] | [tag or event] | [what this represented] |
+
+### Existing Product Context
+- **File exists:** [yes/no]
+- **Origin skill:** [icp-research / technical-writer / unknown]
+- **Merge action:** [preserve marketing + add ship log / overwrite / rename + create new]
+```
+
 ### Anti-Patterns
 
 - **Scanning everything** — focus on the importance ranking; reading 100 files produces noise, not signal
 - **Ignoring existing docs** — if README exists, the writer should build on it, not start from scratch
 - **Missing monorepo boundaries** — in a monorepo, each package may need separate docs
+- **Raw git log dump** — in ship log mode, don't pass raw commit messages to the writer; translate them to plain-language user-facing changes
 
 ## Self-Check
 
@@ -112,6 +146,9 @@ Before returning your output, verify every item:
 - [ ] Context files (package.json, .env.example, Dockerfile) are listed
 - [ ] Monorepo boundaries identified (if applicable)
 - [ ] Output stays within my section boundaries (scanning only)
+- [ ] (Ship log mode) Shipping history extracted with user-facing changes only
+- [ ] (Ship log mode) Milestones identified from git tags or significant commits
+- [ ] (Ship log mode) Existing product-context.md checked for merge strategy
 - [ ] No `[BLOCKED]` markers remain unresolved
 
 If any check fails, revise your output before returning.
