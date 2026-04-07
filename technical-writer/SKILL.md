@@ -5,7 +5,7 @@ argument-hint: "[codebase or project to document]"
 license: MIT
 metadata:
   author: hungv47
-  version: "3.0.0"
+  version: "3.1.0"
 routing:
   intent-tags:
     - documentation

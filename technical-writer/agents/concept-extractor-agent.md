@@ -105,11 +105,32 @@ Return a single markdown document with exactly these sections:
 3. Trace the primary workflow start to finish
 4. Identify input/output patterns
 
+### Ship Log Mode
+
+When invoked in ship log mode (Route D), adjust your extraction focus:
+
+1. **Prioritize user-facing features and workflows** — extract what users can DO, not how the code is structured internally. For each feature, capture: what it does, how a user interacts with it, and why it matters.
+2. **Product identity is primary** — the ship log leads with "What This App Does." Extract a clear, jargon-free description of the product's purpose and target user.
+3. **Deprioritize internals** — Setup Requirements, Environment Variables, and Architecture Patterns are less important in this mode. Extract them briefly for the "For Coding Agents" section, but spend most effort on Features & Capabilities.
+4. **Adjust the Features table** — replace the "Entry Point" column with "How Users Interact" (e.g., "clicks Create button on dashboard" not "POST /api/tasks"):
+
+| Feature | Description | How Users Interact | Why It Matters |
+|---------|------------|-------------------|----------------|
+| [name] | [plain-language description] | [what the user does] | [problem solved or value provided] |
+
+5. **Extract current state signals** — look for TODO comments, disabled features, feature flags, and recent git activity to populate "What's Working," "In Progress," and "Known Limitations."
+
+Add ship-log self-check items:
+- [ ] (Ship log mode) Features described from user perspective, not developer perspective
+- [ ] (Ship log mode) Product identity is jargon-free and could be understood by a non-technical reader
+- [ ] (Ship log mode) Current state signals extracted (TODOs, disabled features, recent activity)
+
 ### Anti-Patterns
 
 - **Extracting implementation details** — "Uses Prisma ORM" is implementation; "Stores user data in PostgreSQL" is a feature
 - **Missing error patterns** — the codebase's error handlers are the best source of troubleshooting content
 - **Listing code without context** — "Found function getUserById" is not useful; "Users can be looked up by ID via GET /api/users/:id" is
+- **Ship log internals dump** — in ship log mode, extracting middleware chains and ORM patterns instead of user workflows defeats the purpose
 
 ## Self-Check
 
@@ -121,6 +142,9 @@ Before returning your output, verify every item:
 - [ ] Error patterns cataloged with causes and resolutions
 - [ ] Every extraction references a source file
 - [ ] Output stays within my section boundaries (extraction only)
+- [ ] (Ship log mode) Features described from user perspective, not developer perspective
+- [ ] (Ship log mode) Product identity is jargon-free and could be understood by a non-technical reader
+- [ ] (Ship log mode) Current state signals extracted (TODOs, disabled features, recent activity)
 - [ ] No `[BLOCKED]` markers remain unresolved
 
 If any check fails, revise your output before returning.
