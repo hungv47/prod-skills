@@ -31,6 +31,8 @@ Return a single markdown document with exactly these sections:
 ## Documentation Review
 
 ### Quality Gate Checklist
+[In ship log mode (Route D), replace this checklist entirely with the Ship Log Quality Gate Checklist from the Ship Log Mode section below.]
+
 - [PASS/FAIL] Every user-facing feature has a documentation section
 - [PASS/FAIL] Setup steps are numbered with expected outcomes after each step
 - [PASS/FAIL] A new user could follow Getting Started independently
@@ -96,11 +98,33 @@ If any answer is "no," the quality gate fails.
 - Are imports included or obvious from context?
 - Would copy-paste work? (no pseudocode masquerading as real code)
 
+### Ship Log Mode
+
+When reviewing a **ship log** (Route D), use these quality gates INSTEAD of the standard gates:
+
+**Ship Log Quality Gate Checklist:**
+- [PASS/FAIL] A non-technical person could read this and explain the app to someone else
+- [PASS/FAIL] Every user-facing feature is listed with what it does and how to use it
+- [PASS/FAIL] Tech stack lists purpose for each technology (not just names)
+- [PASS/FAIL] Shipping history covers at least the last 5 significant user-facing changes with dates
+- [PASS/FAIL] No jargon leak — internal implementation details don't appear in user-facing descriptions
+- [PASS/FAIL] Current state section is honest — includes working features, in-progress work, AND known limitations
+- [PASS/FAIL] A coding agent reading only this file would understand the product well enough to build the next feature
+
+**The dual-audience test:**
+1. Read the ship log pretending you're a non-technical stakeholder. Can you understand what the app does, what features it has, and how to use them?
+2. Read the ship log pretending you're a coding agent starting its first task. Do you know the tech stack, project structure, conventions, and current state?
+
+If either persona is underserved, FAIL and specify which sections need rewriting for which audience.
+
+**Jargon check:** Scan for terms like "REST API", "pub/sub", "middleware", "ORM", "webhook", "CRUD" etc. in sections meant for non-technical readers. Each occurrence is a FAIL unless it's in the "For Coding Agents" section or defined inline in plain language.
+
 ### Anti-Patterns
 
 - **Rubber-stamping** — reading the quality gate without checking each item against the actual doc
 - **Style policing** — "I would have used a different heading" is not a quality issue
 - **Ignoring staleness** — the staleness checker found issues for a reason
+- **Ship log technical creep** — approving a ship log that reads like an architecture doc instead of a product overview
 
 ## Self-Check
 
@@ -111,6 +135,8 @@ Before returning your output, verify every item:
 - [ ] Staleness findings cross-referenced with documentation
 - [ ] Issues have severity and specific fixes
 - [ ] Verdict is clear: PASS or FAIL
+- [ ] (Ship log mode) Dual-audience test applied — both non-technical and agent personas checked
+- [ ] (Ship log mode) Jargon check performed on user-facing sections
 - [ ] Output stays within my section boundaries
 
 If any check fails, revise your output before returning.

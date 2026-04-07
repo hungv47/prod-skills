@@ -106,6 +106,28 @@ Add a `### Sync Scope` section to your output when in sync mode:
 - **Narrative updates needed**: [count] (needs user approval)
 ```
 
+### Ship Log Mode
+
+When verifying a **ship log** (Route D), adjust your staleness checks:
+
+1. **Feature completeness** — cross-reference the Features section against actual route definitions, page components, and CLI commands in the codebase. Every user-facing feature must be listed.
+2. **Tech stack accuracy** — verify every technology listed actually appears in package.json / config files, and no major dependencies are missing.
+3. **Shipping history accuracy** — spot-check 3-5 entries from the shipping history against `git log` to verify dates and descriptions are correct.
+4. **Current state honesty** — verify "What's Working" items actually exist in the codebase, "In Progress" items match recent uncommitted or branch work, and "Known Limitations" aren't already fixed.
+5. **Merge integrity** — if the ship log was merged with existing icp-research content, verify marketing sections weren't corrupted or duplicated.
+
+Add a `### Ship Log Verification` section to your output when in ship log mode:
+```markdown
+### Ship Log Verification
+| Check | Status | Details |
+|-------|--------|---------|
+| Features vs codebase | [COMPLETE / MISSING: list] | [features found in code but not in doc] |
+| Tech stack vs dependencies | [ACCURATE / STALE: list] | [deps in package.json not in doc] |
+| Shipping history spot-check | [VERIFIED / INACCURATE: list] | [entries checked and result] |
+| Current state accuracy | [HONEST / OUTDATED: list] | [items that don't match reality] |
+| Merge integrity | [CLEAN / CORRUPTED] | [any issues with merged content] |
+```
+
 ### Techniques
 
 **Staleness check order (highest priority first):**
@@ -139,6 +161,10 @@ Before returning your output, verify every item:
 - [ ] Stale items specify what the current value should be
 - [ ] Security-relevant staleness flagged with highest priority
 - [ ] Output stays within my section boundaries (checking only)
+- [ ] (Ship log mode) Features cross-referenced against codebase routes/components
+- [ ] (Ship log mode) Tech stack verified against package.json/config files
+- [ ] (Ship log mode) Shipping history spot-checked against git log
+- [ ] (Ship log mode) Current state verified as honest and current
 - [ ] No `[BLOCKED]` markers remain unresolved
 
 If any check fails, revise your output before returning.

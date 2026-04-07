@@ -13,11 +13,12 @@ Skills write to `.agents/`:
 - `.agents/cleanup-report.md`
 - `.agents/ship-report.md`
 - `.agents/deploy-verify-report.md` + `.agents/deploy-verify-baseline.json`
-- `technical-writer` writes directly to the project (README.md, docs/)
+- `technical-writer` writes directly to the project (README.md, docs/) or `.agents/product-context.md` (ship log mode)
 
 ## Cross-Stack (Optional)
 system-architecture and technical-writer can read `.agents/product-context.md`.
-Created by `icp-research`: `npx skills add hungv47/research-skills`
+Created by `icp-research` (market/audience context) or `technical-writer --ship-log` (product state context).
+Install research-skills: `npx skills add hungv47/research-skills`
 
 ## Cross-Stack Connections
 - `.agents/solution-design.md` (from research-skills) → `system-architecture`: Business initiatives inform what to build

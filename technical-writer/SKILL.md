@@ -1,6 +1,6 @@
 ---
 name: technical-writer
-description: "Generates documentation from a codebase — READMEs, API references, setup guides, runbooks, and architecture docs with consistent structure and terminology. Produces documentation files in the project. Not for specifying what to build (use discover) or restructuring code (use code-cleanup). For shipping and PRs, see ship. For task decomposition, see task-breakdown."
+description: "Generates documentation from a codebase — READMEs, API references, setup guides, runbooks, architecture docs, and ship logs with consistent structure and terminology. Produces documentation files in the project. Ship log mode writes a plain-language product snapshot to .agents/product-context.md so agents and humans know what the app does. Not for specifying what to build (use discover) or restructuring code (use code-cleanup). For shipping and PRs, see ship. For task decomposition, see task-breakdown."
 argument-hint: "[codebase or project to document]"
 license: MIT
 metadata:
@@ -13,8 +13,11 @@ routing:
     - api-reference
     - setup-guide
     - runbook
+    - ship-log
+    - product-context
   position: horizontal
-  produces: []
+  produces:
+    - .agents/product-context.md
   consumes:
     - product-context.md
   requires: []
@@ -85,7 +88,7 @@ Layer 2 (sequential):
    - `scanner-agent` maps the project and ranks files by importance
    - `concept-extractor-agent` reads ranked files and extracts documentation content
    - `audience-profiler-agent` determines who reads the docs and how to write for them
-2. **Writer dispatch** — send all Layer 1 outputs to `writer-agent`. It produces the documentation following `references/doc-template.md`, calibrated for the audience.
+2. **Writer dispatch** — send all Layer 1 outputs to `writer-agent`. It produces the documentation following `references/doc-template.md` (or `references/ship-log-template.md` in Route D), calibrated for the audience.
 3. **Staleness check** — send writer output + codebase facts to `staleness-checker-agent`. It verifies every claim in the docs matches the current codebase.
 4. **Critic review** — send documentation + staleness results to `critic-agent`.
 5. **Revision loop** — if critic returns FAIL, re-dispatch affected agents. Maximum 2 rounds.
@@ -99,6 +102,7 @@ Layer 2 (sequential):
 | User says "document this" (no type) | audience-profiler defaults to User Guide (developers) or README (library) |
 | User says "audit docs" | Skip writer-agent; run scanner → staleness-checker → critic directly |
 | User says "sync docs", "update docs", or `--sync` | **Route C: Post-Change Sync** (see below) |
+| User says "ship log", "product context", "what does this app do", or `--ship-log` | **Route D: Ship Log** (see below) |
 | Monorepo detected | scanner-agent identifies package boundaries; writer produces per-package docs |
 | Critic PASS | Save and deliver |
 | Critic FAIL | Re-dispatch cited agents with feedback |
@@ -138,6 +142,42 @@ scanner-agent ──────────────── inventory existin
 - Never rewrite sections unaffected by the diff
 - Add a `<!-- synced: YYYY-MM-DD -->` comment to updated sections for traceability
 
+### Route D: Ship Log
+
+Triggered by: `/technical-writer --ship-log`, "write a ship log", "product context", "what does this app do", or "document the current state of the app."
+
+This route produces a **plain-language product snapshot** saved to `.agents/product-context.md`. It answers the questions: What does this app do? What's been built? How do you use it? What's the tech stack? What shipped recently? Written so a non-technical person could understand, while still being precise enough for coding agents to use as context.
+
+**Why `.agents/product-context.md`:** This is the canonical cross-stack artifact consumed by 12+ downstream skills (brand-system, content-create, seo, system-architecture, etc.). Writing the ship log here means every skill automatically gets current product context.
+
+**Execution flow:**
+```
+scanner-agent ──────────────┐
+concept-extractor-agent ────┤── Layer 1 (parallel) — scan codebase + git history
+audience-profiler-agent ─────┘── (locked to "mixed: non-technical user + coding agent")
+
+writer-agent ────────────────── writes ship log following references/ship-log-template.md
+  → staleness-checker-agent ── verifies every claim against codebase
+    → critic-agent ──────────── ship-log-specific quality gates
+```
+
+**What's different from the full route:**
+- `audience-profiler-agent` receives a pre-set audience in dispatch: `{ type: "mixed", technical_level: "dual", key_goal: "understand product state" }`. The profiler returns this value directly without inference.
+- `scanner-agent` also extracts **git shipping history** (`git log --oneline --since="6 months ago"` or full history for young repos)
+- `concept-extractor-agent` focuses on **user-facing features and workflows**, not internals
+- `writer-agent` receives `references/ship-log-template.md` in its `references` field (NOT `doc-template.md`)
+- `critic-agent` applies **ship-log-specific quality gates** (see below) — replaces the standard checklist entirely
+
+**Pre-write step (orchestrator responsibility):**
+Before dispatching writer-agent, the orchestrator checks for `.agents/product-context.md`:
+- If it exists with `skill: icp-research` in frontmatter: pass `merge-mode: preserve-marketing` to writer-agent
+- If it exists with `skill: technical-writer` in frontmatter: rename to `product-context.v[N].md`, pass `merge-mode: overwrite` to writer-agent
+- If it exists with unknown origin: rename to `product-context.v[N].md`, pass `merge-mode: overwrite` to writer-agent
+- If it doesn't exist: pass `merge-mode: create` to writer-agent
+
+**Referencing the artifact:**
+After writing, the orchestrator checks if the project's `CLAUDE.md` references `.agents/product-context.md`. If not, suggest the user add: `Read .agents/product-context.md for current product state (features, tech stack, shipping history).`
+
 ---
 
 ## Critical Gates
@@ -152,6 +192,18 @@ Before delivering, the critic-agent verifies ALL of these pass:
 - [ ] Troubleshooting covers errors visible in the codebase's error handling
 
 **If any gate fails:** the critic identifies which agent must fix it and the orchestrator re-dispatches.
+
+### Ship Log Quality Gates
+
+When in ship log mode (Route D), the critic-agent verifies these INSTEAD of the standard gates:
+
+- [ ] A non-technical person could read this and explain what the app does to someone else
+- [ ] Every user-facing feature is listed with a plain-language description of what it does and how to use it
+- [ ] Tech stack is listed with purpose for each choice (not just names)
+- [ ] Shipping history includes at least the last 5 significant changes with dates
+- [ ] No jargon leak in user-facing sections (What This App Does, Features, Shipping History, Current State) — technical terms are permitted in the "For Coding Agents" section only
+- [ ] Current state section accurately reflects what's working, what's in progress, and known limitations
+- [ ] The document works as agent context — a coding agent reading only this file would understand what to build next
 
 ---
 
@@ -179,8 +231,9 @@ When context window is constrained or the project is small (fewer than 20 files)
 | **API Reference** | Developers integrating | Endpoints, parameters, responses, errors | Varies |
 | **Configuration Guide** | Operators deploying | Environment vars, settings, infrastructure | 2-5 pages |
 | **Getting Started Tutorial** | New users of any type | Single workflow, start to finish | 1-2 pages |
+| **Ship Log** | Humans + coding agents | Product snapshot, features, tech stack, shipping history | 2-5 pages |
 
-Default to **User Guide** if the user says "document this" without specifying type.
+Default to **User Guide** if the user says "document this" without specifying type. Default to **Ship Log** if the user says "product context" or "what does this app do."
 
 ---
 
@@ -282,7 +335,7 @@ version: 1
 date: {{today}}
 status: draft
 audience: [end-user | developer | operator | mixed]
-doc-type: [readme | user-guide | api-reference | config-guide | tutorial]
+doc-type: [readme | user-guide | api-reference | config-guide | tutorial | ship-log]
 ---
 ```
 
@@ -291,3 +344,4 @@ doc-type: [readme | user-guide | api-reference | config-guide | tutorial]
 ## References
 
 - [references/doc-template.md](references/doc-template.md) — Full documentation template with writing guidelines and code-to-doc mapping
+- [references/ship-log-template.md](references/ship-log-template.md) — Ship log template for product context snapshots
