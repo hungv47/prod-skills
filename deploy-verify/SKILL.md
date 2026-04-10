@@ -2,6 +2,7 @@
 name: deploy-verify
 description: "Post-deploy health check — verifies a production URL is healthy after shipping. Checks page load, console errors, critical flows, and response times. Reports HEALTHY / DEGRADED / BROKEN with evidence. Not for pre-merge review (use review-chain) or shipping (use ship). For code cleanup, see code-cleanup. For architecture decisions, see system-architecture."
 argument-hint: "<production URL to verify>"
+allowed-tools: Read Grep Glob Bash
 user-invocable: true
 license: MIT
 metadata:
@@ -186,3 +187,7 @@ status: {{HEALTHY | DEGRADED | BROKEN}}
 |------|-------------|
 | `.agents/deploy-verify-report.md` | Health check results with evidence |
 | `.agents/deploy-verify-baseline.json` | Baseline state for future comparisons |
+
+## Next Step
+
+If DEGRADED or BROKEN: investigate and fix. If HEALTHY: deployment is confirmed. Run `attribution` to verify marketing tracking is intact.

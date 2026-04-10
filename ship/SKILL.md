@@ -2,6 +2,7 @@
 name: ship
 description: "Automated pre-merge pipeline — runs tests, checks review gate, organizes commits, generates PR with structured body. Produces `.agents/ship-report.md`. Not for code review (use review-chain) or task decomposition (use task-breakdown). For code cleanup before shipping, see code-cleanup. For post-deploy health check, see deploy-verify."
 argument-hint: "[optional: PR title or description]"
+allowed-tools: Read Grep Glob Bash
 user-invocable: true
 license: MIT
 metadata:
@@ -255,6 +256,10 @@ status: shipped
 
 ## PR Body
 {{The generated PR body for reference}}
+
+## Next Step
+
+After PR is merged, run `deploy-verify` to confirm production health. Run `technical-writer` in ship-log mode to update product context.
 ```
 
 ---
