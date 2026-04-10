@@ -256,11 +256,11 @@ status: shipped
 
 ## PR Body
 {{The generated PR body for reference}}
+```
 
 ## Next Step
 
 After PR is merged, run `deploy-verify` to confirm production health. Run `technical-writer` in ship-log mode to update product context.
-```
 
 ---
 

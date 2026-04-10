@@ -259,11 +259,11 @@ status: complete
 
 ## Manual Verification Needed
 [Features lacking test coverage]
+```
 
 ## Next Step
 
 Run `review-chain` for a fresh-eyes quality review. Run `ship` when ready to create a PR.
-```
 
 ---
 
