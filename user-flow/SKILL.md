@@ -7,6 +7,8 @@ license: MIT
 metadata:
   author: hungv47
   version: "3.0.0"
+  budget: standard
+  estimated-cost: "$0.15-0.40"
 routing:
   intent-tags:
     - user-flow
@@ -19,7 +21,7 @@ routing:
     - design/user-flow.md
   consumes:
     - product-context.md
-    - design/brand-system.md
+    - brand/DESIGN.md
   requires: []
   defers-to:
     - skill: brand-system

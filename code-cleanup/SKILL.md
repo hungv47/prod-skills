@@ -7,6 +7,8 @@ license: MIT
 metadata:
   author: hungv47
   version: "3.0.0"
+  budget: deep
+  estimated-cost: "$1-3"
 routing:
   intent-tags:
     - code-audit
