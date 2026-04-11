@@ -8,6 +8,8 @@ license: MIT
 metadata:
   author: hungv47
   version: "1.0.0"
+  budget: fast
+  estimated-cost: "$0.03-0.05"
 routing:
   intent-tags:
     - deploy
