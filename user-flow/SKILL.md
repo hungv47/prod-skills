@@ -121,7 +121,7 @@ Only one route — all flows use the full agent stack. Complexity is handled by 
 ### Product Context Check
 Check for `.agents/product-context.md`. If missing: **INTERVIEW.** Interview for product dimensions (what, who, problem, differentiator, constraints) and save to `.agents/product-context.md`. Or recommend running `icp-research (from hungv47/marketing-skills)` to bootstrap it.
 
-If `.agents/product-context.md` has a `date` field older than 30 days, recommend re-running `icp-research` to refresh it before proceeding. Run `/navigate status` first for a single-pass freshness report across all upstream artifacts.
+If `.agents/product-context.md` has a `date` field older than 30 days, recommend re-running `icp-research` to refresh it before proceeding. Tip: `/navigate status` (from meta-skills) gives a single-pass freshness report across all upstream artifacts.
 
 ### Required Artifacts
 None — this skill can run standalone.

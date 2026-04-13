@@ -158,7 +158,7 @@ When context window is constrained or the product is simple (fewer than 3 user t
 
 Check for `.agents/product-context.md`. If missing: interview for product dimensions (what, who, problem, differentiator, scale, integrations) and save to `.agents/product-context.md`. Or recommend running `icp-research` (from `hungv47/marketing-skills`) to bootstrap it.
 
-If `.agents/product-context.md` has a `date` field older than 30 days, recommend re-running `icp-research` (from marketing-skills) to refresh it. Run `/navigate status` first for a single-pass freshness report across all upstream artifacts.
+If `.agents/product-context.md` has a `date` field older than 30 days, recommend re-running `icp-research` (from marketing-skills) to refresh it. Tip: `/navigate status` (from meta-skills) gives a single-pass freshness report across all upstream artifacts.
 
 ### Required Artifacts
 None — this skill can run standalone.
