@@ -4,9 +4,28 @@ UX design, technical architecture, code cleanup, documentation, and shipping —
 
 ## Install
 
+Installs via the [`skills` CLI](https://skills.sh). Requires Node.js 18+. Auto-detects Claude Code, Cursor, Codex, Windsurf, Gemini CLI, or VS Code.
+
 ```bash
+# Install the full product stack (6 skills)
 npx skills add hungv47/product-skills
+
+# Cherry-pick a single skill
+npx skills add hungv47/product-skills --skill ship
+npx skills add hungv47/product-skills --skill code-cleanup
+npx skills add hungv47/product-skills --skill system-architecture
+
+# List available skills without installing
+npx skills add hungv47/product-skills --list
+
+# Target a specific editor
+npx skills add hungv47/product-skills --agent claude-code
+
+# Install globally (available in every project)
+npx skills add hungv47/product-skills -g
 ```
+
+See the [root README](https://github.com/hungv47/agent-skills#install) for the full install reference.
 
 ## Pipeline
 
