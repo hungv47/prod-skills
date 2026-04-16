@@ -9,6 +9,29 @@ metadata:
   version: "3.1.0"
   budget: standard
   estimated-cost: "$0.15-0.40"
+promptSignals:
+  phrases:
+    - "write documentation"
+    - "write a readme"
+    - "api reference"
+    - "setup guide"
+    - "runbook"
+    - "document this"
+  allOf:
+    - [write, documentation]
+    - [api, reference]
+  anyOf:
+    - "documentation"
+    - "readme"
+    - "docs"
+    - "guide"
+    - "runbook"
+    - "reference"
+  noneOf:
+    - "code cleanup"
+    - "refactor"
+    - "dead code"
+  minScore: 6
 routing:
   intent-tags:
     - documentation

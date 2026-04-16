@@ -9,6 +9,29 @@ metadata:
   version: "3.0.0"
   budget: standard
   estimated-cost: "$0.15-0.40"
+promptSignals:
+  phrases:
+    - "user flow"
+    - "screen flow"
+    - "journey map"
+    - "ux flow"
+    - "wireframe flow"
+    - "map the screens"
+  allOf:
+    - [user, flow]
+    - [screen, map]
+  anyOf:
+    - "flow"
+    - "journey"
+    - "wireframe"
+    - "screen"
+    - "ux"
+    - "transition"
+  noneOf:
+    - "brand identity"
+    - "api design"
+    - "database schema"
+  minScore: 6
 routing:
   intent-tags:
     - user-flow

@@ -9,6 +9,27 @@ metadata:
   version: "3.0.0"
   budget: deep
   estimated-cost: "$1-3"
+promptSignals:
+  phrases:
+    - "dead code"
+    - "code audit"
+    - "refactor this"
+    - "clean up the code"
+    - "remove unused"
+    - "ai slop in code"
+  allOf:
+    - [code, cleanup]
+    - [dead, code]
+  anyOf:
+    - "refactor"
+    - "cleanup"
+    - "dead code"
+    - "unused"
+    - "bloat"
+  noneOf:
+    - "system design"
+    - "write documentation"
+  minScore: 6
 routing:
   intent-tags:
     - code-audit

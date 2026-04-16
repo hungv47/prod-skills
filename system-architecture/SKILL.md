@@ -9,6 +9,29 @@ metadata:
   version: "3.0.0"
   budget: deep
   estimated-cost: "$1-3"
+promptSignals:
+  phrases:
+    - "system design"
+    - "tech stack"
+    - "database schema"
+    - "api design"
+    - "architecture design"
+    - "infrastructure plan"
+  allOf:
+    - [system, architecture]
+    - [tech, stack]
+  anyOf:
+    - "architecture"
+    - "schema"
+    - "api"
+    - "database"
+    - "infrastructure"
+    - "deployment"
+  noneOf:
+    - "user flow"
+    - "brand identity"
+    - "wireframe"
+  minScore: 6
 routing:
   intent-tags:
     - tech-stack

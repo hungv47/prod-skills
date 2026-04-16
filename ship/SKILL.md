@@ -10,6 +10,30 @@ metadata:
   version: "1.0.0"
   budget: standard
   estimated-cost: "$0.15-0.40"
+promptSignals:
+  phrases:
+    - "ship it"
+    - "create a pr"
+    - "pull request"
+    - "push to main"
+    - "ready to merge"
+    - "open a pr"
+    - "ready to ship"
+    - "let us ship"
+  allOf:
+    - [create, pr]
+    - [pull, request]
+  anyOf:
+    - "ship"
+    - "pr"
+    - "merge"
+    - "push"
+    - "release"
+  noneOf:
+    - "documentation"
+    - "code cleanup"
+    - "refactor"
+  minScore: 6
 routing:
   intent-tags:
     - ship

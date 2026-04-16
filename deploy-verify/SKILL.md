@@ -10,6 +10,28 @@ metadata:
   version: "1.0.0"
   budget: fast
   estimated-cost: "$0.03-0.05"
+promptSignals:
+  phrases:
+    - "is it working"
+    - "health check"
+    - "verify the deploy"
+    - "post deploy check"
+    - "check production"
+    - "is production healthy"
+  allOf:
+    - [verify, deploy]
+    - [health, check]
+  anyOf:
+    - "deploy"
+    - "verify"
+    - "health"
+    - "production"
+    - "canary"
+    - "post-deploy"
+  noneOf:
+    - "create pr"
+    - "pull request"
+  minScore: 6
 routing:
   intent-tags:
     - deploy
