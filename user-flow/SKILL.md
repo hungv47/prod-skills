@@ -6,9 +6,9 @@ allowed-tools: Read Grep Glob Bash
 license: MIT
 metadata:
   author: hungv47
-  version: "3.0.0"
+  version: "3.1.0"
   budget: standard
-  estimated-cost: "$0.15-0.40"
+  estimated-cost: "$0.20-0.50"
 promptSignals:
   phrases:
     - "user flow"
@@ -89,6 +89,9 @@ Before delivering, the **critic agent** verifies:
 - [ ] ≤3 primary actions per screen
 - [ ] Diagram notation correct (5 shapes used properly)
 - [ ] Screen inventory complete with concrete names
+- [ ] ASCII wireframe present for every core screen in the inventory
+- [ ] Wireframe CTAs match the structure-agent's actions column (no drift)
+- [ ] 2-3 critical edge-state variants included (not one per screen, not zero)
 
 ## Chain Position
 Previous: `brand-system` (optional — provides design tokens and component context) | Next: handoff to implementation
@@ -110,9 +113,10 @@ Previous: `brand-system` (optional — provides design tokens and component cont
 |-------|-------|------|-------|
 | Structure Agent | 1 (parallel) | `agents/structure-agent.md` | Entry points, core screens, decision points, exit points, flow type |
 | Edge Case Agent | 1 (parallel) | `agents/edge-case-agent.md` | Error, empty, loading, permission, offline states |
-| Diagram Agent | 2 (sequential) | `agents/diagram-agent.md` | Mermaid flowchart with 5 node shapes, annotations |
-| Validation Agent | 2 (sequential) | `agents/validation-agent.md` | Miller's threshold, ≤3 actions/screen, structural integrity |
-| Critic Agent | 2 (final) | `agents/critic-agent.md` | All edge cases handled, notation correct, screen inventory complete |
+| Diagram Agent | 2 (parallel) | `agents/diagram-agent.md` | Mermaid flowchart with 5 node shapes, annotations |
+| Wireframe Agent | 2 (parallel) | `agents/wireframe-agent.md` | ASCII wireframe per core screen + 2-3 critical edge-state variants |
+| Validation Agent | 2 (sequential) | `agents/validation-agent.md` | Miller's threshold, ≤3 actions/screen, structural integrity, wireframe/structure consistency |
+| Critic Agent | 2 (final) | `agents/critic-agent.md` | All edge cases handled, notation correct, screen inventory complete, wireframe coverage |
 
 ### Shared References (read by agents)
 - `references/research-checklist.md` — Pre-design research: user research methods, information architecture, content strategy
@@ -129,10 +133,12 @@ Only one route — all flows use the full agent stack. Complexity is handled by 
    - structure-agent (maps screens, decisions, transitions)
    - edge-case-agent (maps error, empty, loading, permission, offline states)
 3. MERGE: Combine structure + edge cases into unified flow model
-4. LAYER 2 — Dispatch SEQUENTIALLY:
-   - diagram-agent (receives merged structure + edge cases)
-   - validation-agent (receives structure + edge cases + diagram)
-5. Dispatch: critic-agent (receives complete flow)
+4. LAYER 2a — Dispatch IN PARALLEL (both consume merged structure + edge cases):
+   - diagram-agent (Mermaid flowchart)
+   - wireframe-agent (ASCII wireframe per core screen + critical edge variants)
+5. LAYER 2b — Dispatch SEQUENTIALLY:
+   - validation-agent (receives structure + edge cases + diagram + wireframes)
+   - critic-agent (receives complete flow)
 6. If FAIL → re-dispatch named agent(s) with feedback (max 2 cycles)
 7. Deliver artifact
 ```
@@ -202,7 +208,7 @@ Interview for these dimensions before proceeding:
 
 If multi-agent dispatch is unavailable, execute each agent's instructions sequentially in-context:
 - Layer 1: map flow structure (screens, decisions, entries, exits), then map edge cases (error, empty, loading, permission, offline)
-- Layer 2: create Mermaid diagram from structure + edge cases, then validate against usability thresholds
+- Layer 2: create Mermaid diagram from structure + edge cases, draft ASCII wireframes for every core screen + 2-3 critical edge-state variants, then validate against usability thresholds and wireframe/structure consistency
 - Final: evaluate with critic rubric
 
 ---
@@ -243,15 +249,25 @@ Combine structure-agent and edge-case-agent outputs into a unified flow model:
 
 ---
 
-## Layer 2: Sequential Chain
+## Layer 2a: Parallel Rendering
+
+Spawn **IN PARALLEL** (both consume the same merged Layer 1 output):
+
+| Agent | Instruction File | Pass These Inputs | Reference Files |
+|-------|-----------------|-------------------|-----------------|
+| Diagram Agent | `agents/diagram-agent.md` | brief + merged structure + edge cases | none |
+| Wireframe Agent | `agents/wireframe-agent.md` | brief + platform + merged structure + edge cases | none |
+
+Wait for both to complete before Layer 2b.
+
+## Layer 2b: Sequential Chain
 
 Dispatch **ONE AT A TIME, IN ORDER**:
 
 | Step | Agent | Instruction File | Receives |
 |------|-------|-----------------|----------|
-| 1 | Diagram Agent | `agents/diagram-agent.md` | Merged structure + edge cases |
-| 2 | Validation Agent | `agents/validation-agent.md` | Structure + edge cases + diagram |
-| 3 | Critic Agent | `agents/critic-agent.md` | Complete flow (all outputs merged + validation results) |
+| 1 | Validation Agent | `agents/validation-agent.md` | Structure + edge cases + diagram + wireframes |
+| 2 | Critic Agent | `agents/critic-agent.md` | Complete flow (all outputs merged + validation results) |
 
 ---
 
@@ -298,6 +314,42 @@ graph TD
 | # | Screen | Purpose | Actions | Next States |
 |---|--------|---------|---------|-------------|
 | 1 | [name] | [why it exists] | [user actions] | [where each action leads] |
+
+## Screen Wireframes
+
+*Low-fidelity ASCII layouts — one per core screen. Shows regions and hierarchy, not brand design. Pair with `brand-system` for visual tokens.*
+
+### Screen 1: [Name]
+
+**Primary actions (≤3):** [action 1] · [action 2] · [action 3]
+
+​```
+┌──────────────────────────────────────┐
+│ [ wireframe ]                        │
+└──────────────────────────────────────┘
+​```
+
+[Repeat for every screen in the inventory]
+
+## Critical Edge-State Variants
+
+*2-3 high-stakes edge states across the whole flow — not one per screen.*
+
+**Variant: [Screen — State]**
+
+**Why this variant matters:** [one line]
+
+​```
+┌──────────────────────────────────────┐
+│ [ variant wireframe ]                │
+└──────────────────────────────────────┘
+​```
+
+## Coverage Map
+
+| # | Screen | Wireframed | Edge variant(s) |
+|---|--------|------------|-----------------|
+| 1 | [name] | ✓ | — or [state] |
 
 ## Edge Cases Handled
 
@@ -346,10 +398,13 @@ Both agents dispatched in parallel:
 ### Merge
 Combined into unified flow model. Cross-reference: all 6 screens have edge case coverage. Proceed.
 
-### Layer 2: Sequential Chain
+### Layer 2a: Parallel Rendering
 - **Diagram agent** returns: Mermaid `graph TD` with correct shapes (stadiums for entry/exit, diamonds for decisions, hexagons for payment processing). 3 annotations (MinCheck evaluated on subtotal, ApplePay uses Stripe SDK, Processing 3s timeout).
-- **Validation agent** returns: Happy path 5 steps (PASS ≤7). Max 3 actions per screen (PASS). All paths traced to exits (PASS). 3 error recovery paths (PASS). 0 dead ends. Handoff ready (screen names match dev vocabulary, conditions implementable).
-- **Critic agent** returns: PASS. All quality gate items checked. Scoring: structural integrity 5, edge case coverage 5, diagram correctness 5, usability 5, handoff readiness 4 (one annotation could be more specific). Overall: 4.8.
+- **Wireframe agent** returns: 6 ASCII wireframes (one per core screen), mobile 34-char width, each ≤18 lines. 2 critical edge variants: "Payment Method — Card Declined" (recovery CTAs) and "Order Review — Minimum Not Met" (nudge to add items). Coverage Map ✓ for all 6 screens.
+
+### Layer 2b: Sequential Validation
+- **Validation agent** returns: Happy path 5 steps (PASS ≤7). Max 3 actions per screen (PASS). All paths traced to exits (PASS). 3 error recovery paths (PASS). 0 dead ends. Wireframe CTAs match structure actions column (PASS — no drift). Handoff ready (screen names match dev vocabulary, conditions implementable).
+- **Critic agent** returns: PASS. All quality gate items checked. Scoring: structural integrity 5, edge case coverage 5, diagram correctness 5, wireframe quality 5, usability 5, handoff readiness 4 (one annotation could be more specific). Overall: 4.83.
 
 ### Deliver
 Artifact saved to `.agents/design/user-flow.md`.
@@ -374,6 +429,12 @@ Artifact saved to `.agents/design/user-flow.md`.
 
 **Skipping validation** — Assuming the structure is correct without tracing paths. INSTEAD: Validation-agent traces every path from every entry to an exit, checking for orphans and dead ends.
 
+**Flow tables without wireframes** — A screen inventory is a description, not a screen. Readers can't see layout, hierarchy, or CTA placement. INSTEAD: Wireframe-agent drafts one ASCII wireframe per core screen so every screen is a readable layout, not just a row in a table.
+
+**Wireframing every edge state** — 6 screens × 5 edge states = 30 wireframes of noise. INSTEAD: Wireframe every core screen (always), plus 2-3 critical edge variants picked on impact (payment error, empty-state on core-value screen, permission denied on feature screen).
+
+**Drift between wireframe and structure inventory** — Wireframe shows 5 CTAs when the structure-agent listed 2 actions. INSTEAD: Wireframe CTAs must match the structure actions column exactly. Drift is a FAIL — either update structure or reduce the wireframe.
+
 ---
 
 ## Agent Files
@@ -382,7 +443,8 @@ Artifact saved to `.agents/design/user-flow.md`.
 - [agents/structure-agent.md](agents/structure-agent.md) — Entry points, screens, decisions, exits, flow type
 - [agents/edge-case-agent.md](agents/edge-case-agent.md) — Error, empty, loading, permission, offline states
 - [agents/diagram-agent.md](agents/diagram-agent.md) — Mermaid flowchart, annotations, sub-flow references
-- [agents/validation-agent.md](agents/validation-agent.md) — Usability thresholds, structural integrity, handoff readiness
+- [agents/wireframe-agent.md](agents/wireframe-agent.md) — ASCII wireframes per core screen + critical edge-state variants
+- [agents/validation-agent.md](agents/validation-agent.md) — Usability thresholds, structural integrity, wireframe/structure consistency, handoff readiness
 - [agents/critic-agent.md](agents/critic-agent.md) — Quality scoring, PASS/FAIL
 
 ### Shared References (references/)

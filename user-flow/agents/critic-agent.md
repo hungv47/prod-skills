@@ -40,6 +40,9 @@ You do NOT:
 - [x] ≤3 primary actions per screen
 - [x] Diagram notation correct (5 shapes used properly)
 - [x] Screen inventory complete (names, purposes, actions, next states)
+- [x] Wireframe present for every core screen (Coverage Map ✓)
+- [x] Wireframe CTAs match structure inventory actions (no drift)
+- [x] 2-3 critical edge-state variants included
 
 ### Scoring
 | Dimension | Score (1-5) |
@@ -47,6 +50,7 @@ You do NOT:
 | Structural integrity | [n] |
 | Edge case coverage | [n] |
 | Diagram correctness | [n] |
+| Wireframe quality | [n] |
 | Usability compliance | [n] |
 | Handoff readiness | [n] |
 | Overall | [avg] |
@@ -69,10 +73,10 @@ You do NOT:
 
 ### Failures
 #### Failure 1
-**Location:** [structure / edge cases / diagram / validation]
+**Location:** [structure / edge cases / diagram / wireframes / validation]
 **Issue:** [specific problem]
 **Fix:** [exact instruction]
-**Agent to re-dispatch:** [structure-agent / edge-case-agent / diagram-agent / validation-agent]
+**Agent to re-dispatch:** [structure-agent / edge-case-agent / diagram-agent / wireframe-agent / validation-agent]
 
 ### What Passed
 [Acknowledge what's working to prevent over-correction]
@@ -94,6 +98,9 @@ All items must pass:
 - [ ] **≤3 actions per screen** — Screens with >3 primary actions need splitting. WARN at 4, FAIL at 5+.
 - [ ] **Diagram notation** — All 5 node shapes used correctly. Every edge labeled. No orphan nodes.
 - [ ] **Screen inventory** — Every screen has a concrete name, purpose, user actions, and next states. No generic "Step N" names.
+- [ ] **Wireframe coverage** — Every core screen in the inventory has an ASCII wireframe. Coverage Map present and ✓ for every row. Missing wireframes FAIL.
+- [ ] **Wireframe/structure consistency** — Wireframe CTAs match the structure-agent's actions column exactly. Drift (e.g., wireframe shows 5 CTAs when inventory listed 2) FAILs.
+- [ ] **Edge variant selectivity** — 2-3 critical edge variants present. Zero variants WARNs; one per screen (excessive) WARNs.
 
 ### Scoring Rubric
 
@@ -102,6 +109,7 @@ All items must pass:
 | **Structural integrity** | Orphan screens, missing exits, dead ends | All paths traced, minor labeling gaps | Every path verified, all exits labeled, zero dead ends |
 | **Edge case coverage** | Major states missing (no error handling) | All 5 categories present, some screens incomplete | Every screen audited for all applicable states with recovery paths |
 | **Diagram correctness** | Wrong shapes, unlabeled edges, unreadable | Correct notation, readable, minor issues | Perfect notation, meaningful IDs, annotations for complexity |
+| **Wireframe quality** | Missing wireframes, generic `[Button]` labels, drift from structure actions | Every screen wireframed, concrete labels, minor inconsistencies | Every screen wireframed with concrete labels, 2-3 sharp edge variants, zero drift, readable hierarchy |
 | **Usability compliance** | Happy path >7, screens overloaded | Meets thresholds, some optimization possible | Optimized flow with automated decisions, minimal cognitive load |
 | **Handoff readiness** | Vague conditions, ambiguous names | Implementable conditions, clear names | Dev-ready names, exact conditions, all async ops identified |
 
@@ -114,6 +122,7 @@ All items must pass:
 | Missing screens, wrong flow type, vague conditions | **structure-agent** |
 | Missing error/empty/loading/permission/offline states | **edge-case-agent** |
 | Wrong shapes, unlabeled edges, unreadable diagram | **diagram-agent** |
+| Missing wireframes, generic labels, wireframe/structure drift, wrong platform width, bad variant selection | **wireframe-agent** |
 | Happy path too long, overloaded screens, vague conditions | **validation-agent** (to identify) then **structure-agent** (to fix) |
 
 ### Anti-Patterns

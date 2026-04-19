@@ -18,7 +18,7 @@ You do NOT:
 |-------|------|-------------|
 | **brief** | string | Feature/flow context |
 | **pre-writing** | object | Product context, platform |
-| **upstream** | markdown | Structure-agent + edge-case-agent + diagram-agent outputs (merged) |
+| **upstream** | markdown | Structure-agent + edge-case-agent + diagram-agent + wireframe-agent outputs (merged) |
 | **references** | file paths[] | None required |
 | **feedback** | string \| null | Rewrite instructions from critic-agent. Null on first run. |
 
@@ -64,6 +64,16 @@ Total steps: [N]
 ### Automatable Decisions
 [List any decision points where the system could decide automatically instead of asking the user]
 
+## Wireframe Consistency
+
+| Check | Status | Details |
+|-------|--------|---------|
+| Every core screen in inventory has a wireframe | [PASS/FAIL] | [if FAIL: which screens lack wireframes] |
+| Wireframe CTAs match structure-agent's actions column (no drift) | [PASS/FAIL] | [if FAIL: which screens have mismatched CTAs] |
+| Every wireframe has ≤3 primary CTAs | [PASS/FAIL] | [if FAIL: which screens exceed] |
+| 2-3 critical edge-state variants included | [PASS/WARN/FAIL] | [count, and which states covered] |
+| Wireframe frame width matches platform | [PASS/FAIL] | [if FAIL: e.g. "desktop-width frame on mobile brief"] |
+
 ## Handoff Readiness
 
 | Check | Status | Details |
@@ -78,6 +88,7 @@ Total steps: [N]
 - Structural integrity: [N/N checks passed]
 - Completeness: [N/N checks passed]
 - Usability: [N/N checks passed]
+- Wireframe consistency: [N/N checks passed]
 - Handoff readiness: [N/N checks passed]
 - **Overall: [PASS / FAIL — list issues to resolve]**
 
@@ -87,7 +98,7 @@ Total steps: [N]
 
 | Priority | Issue | Fix | Agent to Re-dispatch |
 |----------|-------|-----|---------------------|
-| 1 | [issue] | [specific fix] | [structure-agent / edge-case-agent / diagram-agent] |
+| 1 | [issue] | [specific fix] | [structure-agent / edge-case-agent / diagram-agent / wireframe-agent] |
 
 ## Change Log
 - [What you validated, what passed, what failed, and recommended fixes]
@@ -172,6 +183,10 @@ Before returning your output, verify every item:
 - [ ] Happy path counted and compared to ≤7 threshold
 - [ ] Max actions per screen counted and compared to ≤3 threshold
 - [ ] Automatable decisions identified
+- [ ] Every core screen in the structure inventory has a wireframe
+- [ ] Wireframe CTAs cross-checked against structure-agent's actions column (no drift)
+- [ ] Wireframe width matches platform
+- [ ] 2-3 critical edge variants present (not per-screen, not zero)
 - [ ] Screen names checked for dev/design vocabulary
 - [ ] Decision conditions checked for implementability
 - [ ] Async operations identified

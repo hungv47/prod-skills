@@ -33,9 +33,9 @@ Run `user-flow` BEFORE `system-architecture`. User flows define WHAT screens and
 
 ### Agent Inventory
 
-| Skill | Agents | Layer 1 (parallel) | Layer 2 (sequential) |
-|-------|--------|-------------------|---------------------|
-| user-flow | 5 | structure, edge-case | diagram → validation → critic |
+| Skill | Agents | Layer 1 (parallel) | Layer 2 |
+|-------|--------|-------------------|---------|
+| user-flow | 6 | structure, edge-case | diagram + wireframe (2a parallel) → validation → critic |
 | system-architecture | 7 | stack-selection, infrastructure | schema → api → integration → scaling → critic |
 | code-cleanup | 8 | structural-scanner, code-scanner, dependency-scanner, asset-scanner | safe-removal → refactoring → validation → critic |
 | technical-writer | 6 | scanner, concept-extractor, audience-profiler | writer → staleness-checker → critic |
