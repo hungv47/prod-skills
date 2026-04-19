@@ -6,7 +6,7 @@ allowed-tools: Read Grep Glob Bash
 license: MIT
 metadata:
   author: hungv47
-  version: "3.1.0"
+  version: "3.2.0"
   budget: standard
   estimated-cost: "$0.20-0.50"
 promptSignals:
@@ -90,6 +90,7 @@ Before delivering, the **critic agent** verifies:
 - [ ] Diagram notation correct (5 shapes used properly)
 - [ ] Screen inventory complete with concrete names
 - [ ] ASCII wireframe present for every core screen in the inventory
+- [ ] Every core screen wireframe includes a 2-4 sentence Description (content/data, visual priority, mood) concrete enough for a designer or design agent to produce visuals from
 - [ ] Wireframe CTAs match the structure-agent's actions column (no drift)
 - [ ] 2-3 critical edge-state variants included (not one per screen, not zero)
 
@@ -322,6 +323,7 @@ graph TD
 ### Screen 1: [Name]
 
 **Primary actions (≤3):** [action 1] · [action 2] · [action 3]
+**Description:** [2-4 sentences — content/data, visual priority, mood. Designer-ready.]
 
 ​```
 ┌──────────────────────────────────────┐
@@ -400,7 +402,7 @@ Combined into unified flow model. Cross-reference: all 6 screens have edge case 
 
 ### Layer 2a: Parallel Rendering
 - **Diagram agent** returns: Mermaid `graph TD` with correct shapes (stadiums for entry/exit, diamonds for decisions, hexagons for payment processing). 3 annotations (MinCheck evaluated on subtotal, ApplePay uses Stripe SDK, Processing 3s timeout).
-- **Wireframe agent** returns: 6 ASCII wireframes (one per core screen), mobile 34-char width, each ≤18 lines. 2 critical edge variants: "Payment Method — Card Declined" (recovery CTAs) and "Order Review — Minimum Not Met" (nudge to add items). Coverage Map ✓ for all 6 screens.
+- **Wireframe agent** returns: 6 ASCII wireframes (one per core screen), mobile 34-char width, each ≤18 lines, each with a 2-4 sentence Description (e.g., Payment Method: "Three options stack vertically; Apple Pay pre-selected when available; selected method uses bold border; calm deliberate tone — commitment step, not excitement"). 2 critical edge variants: "Payment Method — Card Declined" (recovery CTAs) and "Order Review — Minimum Not Met" (nudge to add items). Coverage Map ✓ for all 6 screens.
 
 ### Layer 2b: Sequential Validation
 - **Validation agent** returns: Happy path 5 steps (PASS ≤7). Max 3 actions per screen (PASS). All paths traced to exits (PASS). 3 error recovery paths (PASS). 0 dead ends. Wireframe CTAs match structure actions column (PASS — no drift). Handoff ready (screen names match dev vocabulary, conditions implementable).
@@ -434,6 +436,8 @@ Artifact saved to `.agents/design/user-flow.md`.
 **Wireframing every edge state** — 6 screens × 5 edge states = 30 wireframes of noise. INSTEAD: Wireframe every core screen (always), plus 2-3 critical edge variants picked on impact (payment error, empty-state on core-value screen, permission denied on feature screen).
 
 **Drift between wireframe and structure inventory** — Wireframe shows 5 CTAs when the structure-agent listed 2 actions. INSTEAD: Wireframe CTAs must match the structure actions column exactly. Drift is a FAIL — either update structure or reduce the wireframe.
+
+**Wireframes without descriptions** — An ASCII frame + CTA label gives layout but not intent. A designer or design agent can't infer what copy, data, or feeling belongs without guessing. INSTEAD: Each screen has a 2-4 sentence Description covering content/data, visual priority, and mood. "Shows information" is not a description — name the actual content, the actual hierarchy, the actual mood.
 
 ---
 

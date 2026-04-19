@@ -51,6 +51,7 @@ Return a single markdown document with exactly these sections:
 
 **Purpose:** [one line — matches structure-agent's inventory]
 **Primary actions (≤3):** [action 1] · [action 2] · [action 3]
+**Description:** [2-4 sentences. Cover (a) what content and data fill the screen, (b) what the user should notice first — visual priority, (c) the intended feeling/mood. Concrete enough that a designer or design agent can create visuals from this block alone, without reading the structure-agent tables.]
 
 ```
 ┌────────────────────────────────────────┐
@@ -104,6 +105,7 @@ Return a single markdown document with exactly these sections:
 3. **Layout intent, not brand design.** Wireframes show regions, hierarchy, and interaction affordances. No colors, no icons beyond the notation glyphs, no typography choices. Brand-system handles that.
 4. **Fit the platform.** Mobile wireframes ~32-36 chars wide with bottom CTA bar. Desktop/web wireframes ~60-72 chars wide with top nav. Don't render a desktop layout for a mobile app brief.
 5. **Be selective with variants.** 2-3 critical edge states across the whole flow, not one per screen. Pick the variants where a bad design causes real user damage (payment failure on checkout, permission denied on the feature's core screen, empty state on a data-dependent home).
+6. **The Description is the design brief.** Every screen gets a 2-4 sentence Description covering content/data, visual priority, and mood. A downstream designer or design agent should be able to create visuals from Purpose + Primary actions + Description + ASCII frame — without needing to read the structure-agent output. Concrete data ("3 recent orders with thumbnail, title, status chip"), specific hierarchy ("order status dominates; amount secondary"), real feeling ("calm confidence, not urgency").
 
 ### Techniques
 
@@ -188,6 +190,7 @@ Screen 3: Payment Method Selection
 
 Purpose: User chooses how to pay
 Primary actions (≤3): Select method · Continue · Back
+Description: Three payment options stack vertically (Apple Pay, Card, PayPal), with Apple Pay pre-selected when the device supports it. The selected method is the dominant element — bold border, filled radio. Continue CTA sticks to the bottom, always reachable with a thumb. Tone is calm and deliberate; this is the commitment step, not the excitement step.
 
 ┌──────────────────────────────────────┐
 │ ◀ Back      Payment Method      ✕    │
@@ -274,6 +277,8 @@ No title, no content, no hierarchy, no actions named. This is a shape, not a wir
 Before returning your output, verify every item:
 
 - [ ] Every core screen in structure-agent's inventory has a wireframe (Coverage Map shows ✓ for each row)
+- [ ] Every core screen has a 2-4 sentence Description covering content/data, visual priority, and mood — concrete enough for a designer to visualize without the structure-agent tables
+- [ ] Descriptions are specific (real data, named hierarchy, named mood) — no "shows information", "displays content", "looks modern"
 - [ ] Every wireframe has ≤3 primary CTAs, matching the actions column from structure-agent
 - [ ] Every wireframe ≤20 lines tall
 - [ ] Frame width matches platform (mobile 32-36, tablet 48-56, desktop 60-72)
