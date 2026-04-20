@@ -1,6 +1,6 @@
 ---
 name: system-architecture
-description: "Designs technical blueprints — tech stack selection, database schema, API design, file structure, and deployment plan for a defined product or feature. Produces `.agents/system-architecture.md`. Not for unclear requirements (use discover) or task decomposition (use task-breakdown). For user journey mapping, see user-flow. For code quality after building, see review-chain."
+description: "Designs technical blueprints — tech stack selection, database schema, API design, file structure, and deployment plan for a defined product or feature. Produces `architecture/system-architecture.md`. Not for unclear requirements (use discover) or task decomposition (use task-breakdown). For user journey mapping, see user-flow. For code quality after building, see review-chain."
 argument-hint: "[product or feature to architect]"
 allowed-tools: Read Grep Glob Bash
 license: MIT
@@ -71,7 +71,7 @@ routing:
 - Known constraints (existing stack, compliance, budget, team skills)
 
 ## Output
-- `.agents/system-architecture.md`
+- `architecture/system-architecture.md`
 
 ## Chain Position
 Previous: `discover` or `task-breakdown` (optional) | Next: `task-breakdown` (optional) | Cross-stack: reads `solution-design.md` (from research-skills), `user-flow.md` (from product-skills)
@@ -116,7 +116,7 @@ Layer 2 (sequential):
 3. **Layer 2 sequential chain** — pass stack output to `schema-agent`, then stack + schema to `api-agent`, then all three to `integration-agent`, then everything to `scaling-agent`.
 4. **Critic review** — send assembled document to `critic-agent`.
 5. **Revision loop** — if critic returns FAIL, re-dispatch affected agents with feedback. Maximum 2 revision rounds.
-6. **Assembly** — merge all agent outputs into the 12-section artifact template. Save to `.agents/system-architecture.md`.
+6. **Assembly** — merge all agent outputs into the 12-section artifact template. Save to `architecture/system-architecture.md`.
 
 ### Routing Logic
 
@@ -171,7 +171,7 @@ When context window is constrained or the product is simple (fewer than 3 user t
    - Step 3: Generate all 12 sections of the architecture document
    - Step 4: Validation cross-reference
 3. Run the Critical Gates checklist as self-review
-4. Save to `.agents/system-architecture.md`
+4. Save to `architecture/system-architecture.md`
 
 ---
 
@@ -179,9 +179,9 @@ When context window is constrained or the product is simple (fewer than 3 user t
 
 ### Step 0: Product Context
 
-Check for `.agents/product-context.md`. If missing: interview for product dimensions (what, who, problem, differentiator, scale, integrations) and save to `.agents/product-context.md`. Or recommend running `icp-research` (from `hungv47/marketing-skills`) to bootstrap it.
+Check for `research/product-context.md`. If missing: interview for product dimensions (what, who, problem, differentiator, scale, integrations) and save to `research/product-context.md`. Or recommend running `icp-research` (from `hungv47/research-skills`) to bootstrap it.
 
-If `.agents/product-context.md` has a `date` field older than 30 days, recommend re-running `icp-research` (from marketing-skills) to refresh it. Tip: `/navigate status` (from meta-skills) gives a single-pass freshness report across all upstream artifacts.
+If `research/product-context.md` has a `date` field older than 30 days, recommend re-running `icp-research` (from research-skills) to refresh it. Tip: `/navigate status` (from meta-skills) gives a single-pass freshness report across all upstream artifacts.
 
 ### Required Artifacts
 None — this skill can run standalone.
@@ -189,7 +189,7 @@ None — this skill can run standalone.
 ### Optional Artifacts
 | Artifact | Source | Benefit |
 |----------|--------|---------|
-| `product-context.md` | icp-research (from `hungv47/marketing-skills`) | Industry context, user personas, and constraints |
+| `product-context.md` | icp-research (from `hungv47/research-skills`) | Industry context, user personas, and constraints |
 | `task-breakdown.md` | task-breakdown | Feature list already decomposed into buildable units |
 | `solution-design.md` | solution-design (from `hungv47/research-skills`) | Business initiatives and constraints from strategy track |
 | `.agents/product/flow/*.md` | user-flow (from `hungv47/product-skills`) | Per-flow user flow diagrams + platform-surface matrix; read every file in the directory. Feeds API endpoint design and feature scoping. |
@@ -253,7 +253,7 @@ All 8 answers are necessary before dispatching agents.
 
 **Critic review:** PASS — all 7 quality gates pass.
 
-**Artifact saved to `.agents/system-architecture.md` with all 12 sections.**
+**Artifact saved to `architecture/system-architecture.md` with all 12 sections.**
 
 ---
 

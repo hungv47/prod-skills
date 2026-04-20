@@ -110,7 +110,7 @@ When invoked in ship log mode (Route D), your scan adds **git shipping history**
    - **Include:** new features, UX changes, bug fixes users would notice, major refactors that changed behavior
    - **Exclude:** dependency bumps, CI/CD changes, formatting, internal refactors, merge commits
 4. Group changes into a chronological timeline with dates and plain-language descriptions
-5. Also check for `.agents/product-context.md` existence and note its origin (frontmatter `skill:` field) for the merge strategy
+5. Also check for `research/product-context.md` existence and note its origin (frontmatter `skill:` field) for the merge strategy
 
 Add a `### Shipping History` section to your output when in ship log mode:
 ```markdown

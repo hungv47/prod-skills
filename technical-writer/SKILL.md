@@ -1,6 +1,6 @@
 ---
 name: technical-writer
-description: "Generates documentation from a codebase — READMEs, API references, setup guides, runbooks, architecture docs, and ship logs with consistent structure and terminology. Produces documentation files in the project. Ship log mode writes a plain-language product snapshot to .agents/product-context.md so agents and humans know what the app does. Not for specifying what to build (use discover) or restructuring code (use code-cleanup). For shipping and PRs, see ship. For task decomposition, see task-breakdown."
+description: "Generates documentation from a codebase — READMEs, API references, setup guides, runbooks, architecture docs, and ship logs with consistent structure and terminology. Produces documentation files in the project. Ship log mode writes a plain-language product snapshot to research/product-context.md so agents and humans know what the app does. Not for specifying what to build (use discover) or restructuring code (use code-cleanup). For shipping and PRs, see ship. For task decomposition, see task-breakdown."
 argument-hint: "[codebase or project to document]"
 allowed-tools: Read Grep Glob Bash
 license: MIT
@@ -43,7 +43,7 @@ routing:
     - product-context
   position: horizontal
   produces:
-    - .agents/product-context.md
+    - product-context.md
   consumes:
     - product-context.md
   requires: []
@@ -172,9 +172,9 @@ scanner-agent ──────────────── inventory existin
 
 Triggered by: `/technical-writer --ship-log`, "write a ship log", "product context", "what does this app do", or "document the current state of the app."
 
-This route produces a **plain-language product snapshot** saved to `.agents/product-context.md`. It answers the questions: What does this app do? What's been built? How do you use it? What's the tech stack? What shipped recently? Written so a non-technical person could understand, while still being precise enough for coding agents to use as context.
+This route produces a **plain-language product snapshot** saved to `research/product-context.md`. It answers the questions: What does this app do? What's been built? How do you use it? What's the tech stack? What shipped recently? Written so a non-technical person could understand, while still being precise enough for coding agents to use as context.
 
-**Why `.agents/product-context.md`:** This is the canonical cross-stack artifact consumed by 12+ downstream skills (brand-system, content-create, seo, system-architecture, etc.). Writing the ship log here means every skill automatically gets current product context.
+**Why `research/product-context.md`:** This is the canonical cross-stack artifact consumed by 12+ downstream skills (brand-system, content-create, seo, system-architecture, etc.). Writing the ship log here means every skill automatically gets current product context.
 
 **Execution flow:**
 ```
@@ -195,14 +195,14 @@ writer-agent ────────────────── writes ship 
 - `critic-agent` applies **ship-log-specific quality gates** (see below) — replaces the standard checklist entirely
 
 **Pre-write step (orchestrator responsibility):**
-Before dispatching writer-agent, the orchestrator checks for `.agents/product-context.md`:
+Before dispatching writer-agent, the orchestrator checks for `research/product-context.md`:
 - If it exists with `skill: icp-research` in frontmatter: pass `merge-mode: preserve-marketing` to writer-agent
 - If it exists with `skill: technical-writer` in frontmatter: rename to `product-context.v[N].md`, pass `merge-mode: overwrite` to writer-agent
 - If it exists with unknown origin: rename to `product-context.v[N].md`, pass `merge-mode: overwrite` to writer-agent
 - If it doesn't exist: pass `merge-mode: create` to writer-agent
 
 **Referencing the artifact:**
-After writing, the orchestrator checks if the project's `CLAUDE.md` references `.agents/product-context.md`. If not, suggest the user add: `Read .agents/product-context.md for current product state (features, tech stack, shipping history).`
+After writing, the orchestrator checks if the project's `CLAUDE.md` references `research/product-context.md`. If not, suggest the user add: `Read research/product-context.md for current product state (features, tech stack, shipping history).`
 
 ---
 
@@ -339,14 +339,14 @@ Prioritize: auth docs and env var docs being stale is a security risk.
 ## Before Starting
 
 ### Step 0: Product Context
-Check for existing context files: `README.md`, `CLAUDE.md`, `.agents/product-context.md`, `package.json#description`. Read all available context before scanning code.
+Check for existing context files: `README.md`, `CLAUDE.md`, `research/product-context.md`, `package.json#description`. Read all available context before scanning code.
 
 ### Optional Artifacts
 | Artifact | Source | Benefit |
 |----------|--------|---------|
-| `product-context.md` | icp-research (from `hungv47/marketing-skills`) | Product positioning and audience already defined |
+| `product-context.md` | icp-research (from `hungv47/research-skills`) | Product positioning and audience already defined |
 | `system-architecture.md` | system-architecture | Architecture decisions pre-mapped |
-| `.agents/design/brand-system.md` | brand-system (from `hungv47/marketing-skills`) | Brand voice and terminology guidelines |
+| `brand/BRAND.md` + `brand/DESIGN.md` | brand-system (from `hungv47/marketing-skills`) | Brand voice, terminology, and design system |
 
 ---
 

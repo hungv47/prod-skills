@@ -62,7 +62,7 @@ Technical blueprints — tech stack selection, database schema, API design, file
 
 **Not for:** unclear requirements (use `discover`) or task decomposition (use `task-breakdown`)
 
-**Produces:** `.agents/system-architecture.md`
+**Produces:** `architecture/system-architecture.md`
 
 ---
 
@@ -83,7 +83,7 @@ Structural audit, AI slop removal (code-level and frontend/visual), dead code de
 
 ### `technical-writer` — generate documentation from code
 
-READMEs, API references, setup guides, runbooks, and architecture docs with consistent structure and terminology. Ship log mode (`--ship-log`) writes a plain-language product snapshot to `.agents/product-context.md` so agents and humans know what the app does. Sync mode (`--sync`) updates existing docs after code changes.
+READMEs, API references, setup guides, runbooks, and architecture docs with consistent structure and terminology. Ship log mode (`--ship-log`) writes a plain-language product snapshot to `research/product-context.md` so agents and humans know what the app does. Sync mode (`--sync`) updates existing docs after code changes.
 
 **Use when:**
 - You have a codebase and need documentation generated from it
@@ -93,7 +93,7 @@ READMEs, API references, setup guides, runbooks, and architecture docs with cons
 
 **Not for:** specifying what to build (use `discover`) or restructuring code (use `code-cleanup`)
 
-**Produces:** Documentation files directly in the project (README.md, docs/) or `.agents/product-context.md` (ship log mode)
+**Produces:** Documentation files directly in the project (README.md, docs/) or `research/product-context.md` (ship log mode)
 
 ---
 
@@ -130,8 +130,8 @@ Verifies a production URL is healthy after shipping — page load, console error
 ## Cross-Stack
 
 - `system-architecture` reads `.agents/solution-design.md` (from [research-skills](https://github.com/hungv47/research-skills)) and every `.agents/product/flow/*.md` for cross-stack context
-- `system-architecture` and `technical-writer` read `.agents/product-context.md` from research-skills
-- `technical-writer --ship-log` writes `.agents/product-context.md`, the canonical cross-stack artifact consumed by 12+ downstream skills
+- `system-architecture` and `technical-writer` read `research/product-context.md` from research-skills
+- `technical-writer --ship-log` writes `research/product-context.md`, the canonical cross-stack artifact consumed by 12+ downstream skills
 - `user-flow` output feeds into `system-architecture` and `task-breakdown` (from [meta-skills](https://github.com/hungv47/meta-skills))
 
 ## License

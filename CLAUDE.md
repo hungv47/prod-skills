@@ -7,17 +7,17 @@ UX design, technical architecture, code cleanup, documentation, and shipping.
 - code-cleanup, technical-writer: standalone
 
 ## Artifacts
-Skills write to `.agents/`:
+Skills write to `.agents/` by default; canonical records live in top-level folders:
 - `.agents/product/flow/<flow-name>.md` — one file per flow (checkout.md, onboarding.md, etc.)
 - `.agents/product/flow/index.md` — catalog, auto-generated when ≥2 flow files exist
-- `.agents/system-architecture.md`
+- `architecture/system-architecture.md` — canonical system blueprint (top-level folder, co-locates schemas/ADRs/diagrams)
 - `.agents/cleanup-report.md`
 - `.agents/ship-report.md`
 - `.agents/deploy-verify-report.md` + `.agents/deploy-verify-baseline.json`
-- `technical-writer` writes directly to the project (README.md, docs/) or `.agents/product-context.md` (ship log mode)
+- `technical-writer` writes directly to the project (README.md, docs/) or `research/product-context.md` (ship log mode)
 
 ## Cross-Stack (Optional)
-system-architecture and technical-writer can read `.agents/product-context.md`.
+system-architecture and technical-writer can read `research/product-context.md`.
 Created by `icp-research` (market/audience context) or `technical-writer --ship-log` (product state context).
 Install research-skills: `npx skills add hungv47/research-skills`
 

@@ -112,7 +112,7 @@ The orchestrator handles file existence checks and renaming before dispatching y
 - Skip: dependency bumps, CI tweaks, internal refactors, formatting changes
 - Group by significance, not by commit
 
-**Output location:** `.agents/product-context.md` (the orchestrator handles directory creation and file naming)
+**Output location:** `research/product-context.md` (the orchestrator handles directory creation and file naming)
 
 ### Anti-Patterns
 
