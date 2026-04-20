@@ -47,7 +47,7 @@ routing:
     - product-context.md
     - spec.md
     - solution-design.md
-    - design/user-flow.md
+    - product/flow/*.md  # reads every flow file in the directory
   requires: []
   defers-to:
     - skill: discover
@@ -192,7 +192,7 @@ None — this skill can run standalone.
 | `product-context.md` | icp-research (from `hungv47/marketing-skills`) | Industry context, user personas, and constraints |
 | `task-breakdown.md` | task-breakdown | Feature list already decomposed into buildable units |
 | `solution-design.md` | solution-design (from `hungv47/research-skills`) | Business initiatives and constraints from strategy track |
-| `.agents/design/user-flow.md` | user-flow (from `hungv47/product-skills`) | User flow diagrams for API endpoint design and feature scoping |
+| `.agents/product/flow/*.md` | user-flow (from `hungv47/product-skills`) | Per-flow user flow diagrams + platform-surface matrix; read every file in the directory. Feeds API endpoint design and feature scoping. |
 
 ### Two Modes of Operation
 

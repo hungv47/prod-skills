@@ -37,16 +37,17 @@ See the [root README](https://github.com/hungv47/agent-skills#install) for the f
 
 ### `user-flow` — map the screens
 
-Maps multi-step in-product flows — screens, decisions, transitions, edge cases, and error states for features or user journeys.
+Maps multi-step in-product flows — screens, decisions, transitions, platform-native touchpoints (dock, menu bar, widgets, notifications, Live Activity, Dynamic Island, Quick Settings, etc.), edge cases, and error states for features or user journeys. Enumerates target platforms and per-platform surfaces explicitly; no "cross-platform" shortcuts.
 
 **Use when:**
-- You're designing a new feature and need to think through every screen and user path
-- You want to catch edge cases (errors, empty states, permissions) before building
+- You're designing a new feature and need to think through every screen, every platform surface, and every user path
+- You want to catch edge cases (errors, empty states, permissions, widget throttling, Live Activity ceilings, Web Push fallback) before building
 - You need a visual reference that developers can implement from
+- You ship on multiple platforms and need to map how the flow surfaces on each (dock, menu bar, widgets, notifications, share sheet, deep links…)
 
 **Not for:** visual brand design (use `brand-system`) or single-page conversion (use `lp-optimization`)
 
-**Produces:** `.agents/design/user-flow.md`
+**Produces:** `.agents/product/flow/<flow-name>.md` — one file per flow (checkout.md, onboarding.md, etc.) plus an auto-generated `index.md` when ≥2 flows exist
 
 ---
 
@@ -128,7 +129,7 @@ Verifies a production URL is healthy after shipping — page load, console error
 
 ## Cross-Stack
 
-- `system-architecture` reads `.agents/solution-design.md` (from [research-skills](https://github.com/hungv47/research-skills)) and `.agents/design/user-flow.md` for cross-stack context
+- `system-architecture` reads `.agents/solution-design.md` (from [research-skills](https://github.com/hungv47/research-skills)) and every `.agents/product/flow/*.md` for cross-stack context
 - `system-architecture` and `technical-writer` read `.agents/product-context.md` from research-skills
 - `technical-writer --ship-log` writes `.agents/product-context.md`, the canonical cross-stack artifact consumed by 12+ downstream skills
 - `user-flow` output feeds into `system-architecture` and `task-breakdown` (from [meta-skills](https://github.com/hungv47/meta-skills))

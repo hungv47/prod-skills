@@ -16,10 +16,10 @@ You do NOT:
 
 | Field | Type | Description |
 |-------|------|-------------|
-| **brief** | string | Feature/flow to map, user role, user goal |
-| **pre-writing** | object | Product context, platform, authentication requirements, business rules |
+| **brief** | string | Feature/flow to map, user role, user goal, flow name/slug |
+| **pre-writing** | object | Product context, **target platforms (explicit list)**, **per-platform surface matrix**, **cross-platform channels**, **primary surface per platform**, **minimum OS versions**, authentication requirements, business rules |
 | **upstream** | null | You run in Layer 1 (parallel) — no upstream dependency |
-| **references** | file paths[] | Path to `references/research-checklist.md` |
+| **references** | file paths[] | Path to `references/research-checklist.md`, path to `references/platform-touchpoints.md` |
 | **feedback** | string \| null | Rewrite instructions from critic-agent. Null on first run. |
 
 ## Output Contract
@@ -39,6 +39,14 @@ Return a single markdown document with exactly these sections:
 | # | Entry | Trigger | User State |
 |---|-------|---------|------------|
 | 1 | [entry name] | [what triggers this entry — link click, menu tap, notification, redirect] | [user context — logged in, first time, returning, etc.] |
+
+## Per-Surface Entry Matrix
+
+One row per platform × surface declared at Step 0. Missing rows = FAIL. Read the surface definitions from `references/platform-touchpoints.md` before writing.
+
+| Platform | Surface | Primary ★ | Entry trigger | Pre-loaded state / payload | Auth required | First screen in flow | Handback when flow ends |
+|----------|---------|-----------|---------------|----------------------------|----------------|----------------------|--------------------------|
+| [platform from target list] | [surface from catalog] | ★ or — | [concrete trigger — "click menu bar icon", "tap Live Activity", "server push"] | [what state arrives with the user — cached doc id, payload dict, cookie session] | [yes/no + which] | [screen from the inventory below] | [where the user returns — previous app focus, dismissed activity, URL redirect] |
 
 ## Core Screens
 
@@ -81,6 +89,8 @@ Return a single markdown document with exactly these sections:
 2. **Every decision has ≥2 exits.** A decision point with only one exit isn't a decision — it's a screen. Every diamond in the eventual diagram must branch. Include the unhappy path and the default/fallback.
 3. **One goal per flow.** If multiple user goals emerge during mapping, split into separate flows. A checkout flow and a product browsing flow are two flows, not one.
 4. **Entry and exit are explicit.** Never imply where a flow starts or ends. Every entry has a trigger. Every exit has a type and label.
+5. **Every declared surface gets a row in the Per-Surface Entry Matrix — no exceptions.** If the Step 0 pre-writing listed `iOS: Dynamic Island` as a surface in scope, the matrix must have a row for it. Missing rows block Layer 2 dispatch.
+6. **Surface entries are concrete, not generic.** "Click button" is not a trigger for a menu bar extra — "click the NSStatusItem icon in the menu bar" is. Pull the specific trigger language from `references/platform-touchpoints.md`.
 
 ### Techniques
 
@@ -142,6 +152,9 @@ If a flow exceeds 15 screens, identify natural boundaries and split:
 - **Missing exits** — Every decision needs the happy path, the unhappy path, and the default. "What if neither condition is true?" must have an answer.
 - **Implied entry/exit** — "The flow starts somewhere" is not an entry point. Specify the exact trigger.
 - **God screens** — A screen that does everything (view, edit, delete, navigate, configure) should be split into focused screens or documented as a hub.
+- **Skipping the surface matrix** — Declaring platforms at Step 0 then producing no Per-Surface Entry Matrix. Every platform × surface declared must have a row. If a surface was declared but the flow doesn't actually enter through it, move it to the artifact's "out-of-scope surfaces" column — don't silently drop it.
+- **Collapsing surfaces into one row** — "Any surface → opens home" is not a matrix; it's the absence of one. Each surface has its own trigger, pre-loaded state, and handback. Keep them separate rows.
+- **Using "cross-platform" in the matrix** — The matrix is per-platform. If the brief said cross-platform, the platforms list must be expanded at Step 0 before you run. If you receive "cross-platform" in pre-writing, return `[BLOCKED: platforms list must be enumerated; push back to Step 0]`.
 
 ## Self-Check
 
@@ -157,6 +170,10 @@ Before returning your output, verify every item:
 - [ ] Screen-to-screen transitions cover all paths
 - [ ] Flow serves exactly one user goal
 - [ ] Sub-flow boundaries identified if >15 screens
+- [ ] Per-Surface Entry Matrix has one row per declared platform × surface (no missing rows)
+- [ ] Every surface row has a concrete trigger, pre-loaded state, auth flag, first screen, handback
+- [ ] Primary surface per platform is marked ★
+- [ ] Triggers/state language pulled from `references/platform-touchpoints.md` (not improvised)
 - [ ] Output stays within my section boundaries (no overlap with other agents)
 - [ ] No `[BLOCKED]` markers remain unresolved
 

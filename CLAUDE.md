@@ -8,7 +8,8 @@ UX design, technical architecture, code cleanup, documentation, and shipping.
 
 ## Artifacts
 Skills write to `.agents/`:
-- `.agents/design/user-flow.md`
+- `.agents/product/flow/<flow-name>.md` — one file per flow (checkout.md, onboarding.md, etc.)
+- `.agents/product/flow/index.md` — catalog, auto-generated when ≥2 flow files exist
 - `.agents/system-architecture.md`
 - `.agents/cleanup-report.md`
 - `.agents/ship-report.md`
@@ -22,7 +23,7 @@ Install research-skills: `npx skills add hungv47/research-skills`
 
 ## Cross-Stack Connections
 - `.agents/solution-design.md` (from research-skills) → `system-architecture`: Business initiatives inform what to build
-- `.agents/design/user-flow.md` → `system-architecture`: User flows inform API design and feature decomposition
+- `.agents/product/flow/<flow-name>.md` → `system-architecture`: User flows inform API design and feature decomposition. System-architecture consumes all flow files in the directory.
 
 ## Recommended Order
 Run `user-flow` BEFORE `system-architecture`. User flows define WHAT screens and transitions exist; architecture defines HOW to build them.

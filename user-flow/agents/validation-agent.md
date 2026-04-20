@@ -17,9 +17,9 @@ You do NOT:
 | Field | Type | Description |
 |-------|------|-------------|
 | **brief** | string | Feature/flow context |
-| **pre-writing** | object | Product context, platform |
+| **pre-writing** | object | Product context, **target platforms (explicit list)**, **per-platform surface matrix** |
 | **upstream** | markdown | Structure-agent + edge-case-agent + diagram-agent + wireframe-agent outputs (merged) |
-| **references** | file paths[] | None required |
+| **references** | file paths[] | Path to `references/platform-touchpoints.md` |
 | **feedback** | string \| null | Rewrite instructions from critic-agent. Null on first run. |
 
 ## Output Contract
@@ -74,6 +74,20 @@ Total steps: [N]
 | 2-3 critical edge-state variants included | [PASS/WARN/FAIL] | [count, and which states covered] |
 | Wireframe frame width matches platform | [PASS/FAIL] | [if FAIL: e.g. "desktop-width frame on mobile brief"] |
 
+## Platform-Surface Coverage
+
+Every platform × surface declared at Step 0 must propagate through structure, wireframes, and edge cases.
+
+| Check | Status | Details |
+|-------|--------|---------|
+| Every declared platform × surface appears in structure-agent's Per-Surface Entry Matrix | [PASS/FAIL] | [if FAIL: which rows missing] |
+| Every surface has a concrete entry trigger and pre-loaded state (not "user clicks the thing") | [PASS/FAIL] | [if FAIL: which rows are vague] |
+| Every surface has a mini-frame from wireframe-agent | [PASS/FAIL] | [if FAIL: which surfaces missing] |
+| Mini-frame dimensions match the per-surface sizes in `references/platform-touchpoints.md` | [PASS/FAIL] | [if FAIL: which surfaces have wrong dims] |
+| Every surface has ≥1 per-surface edge state row from edge-case-agent | [PASS/FAIL] | [if FAIL: which surfaces lack edge states] |
+| Primary surface per platform is marked ★ | [PASS/WARN] | [which platforms marked / missing] |
+| "Cross-platform" never appears as a platform name | [PASS/FAIL] | [if FAIL: location where it appears] |
+
 ## Handoff Readiness
 
 | Check | Status | Details |
@@ -89,6 +103,7 @@ Total steps: [N]
 - Completeness: [N/N checks passed]
 - Usability: [N/N checks passed]
 - Wireframe consistency: [N/N checks passed]
+- Platform-surface coverage: [N/N checks passed]
 - Handoff readiness: [N/N checks passed]
 - **Overall: [PASS / FAIL — list issues to resolve]**
 
@@ -187,6 +202,11 @@ Before returning your output, verify every item:
 - [ ] Wireframe CTAs cross-checked against structure-agent's actions column (no drift)
 - [ ] Wireframe width matches platform
 - [ ] 2-3 critical edge variants present (not per-screen, not zero)
+- [ ] Every declared platform × surface appears in the structure-agent's entry matrix
+- [ ] Every surface has a wireframe-agent mini-frame matching the per-surface native dimensions
+- [ ] Every surface has ≥1 per-surface edge state from edge-case-agent
+- [ ] Primary surface per platform is marked ★
+- [ ] No "cross-platform" placeholder anywhere in the merged flow
 - [ ] Screen names checked for dev/design vocabulary
 - [ ] Decision conditions checked for implementability
 - [ ] Async operations identified

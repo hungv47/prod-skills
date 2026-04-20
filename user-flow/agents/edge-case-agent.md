@@ -17,9 +17,9 @@ You do NOT:
 | Field | Type | Description |
 |-------|------|-------------|
 | **brief** | string | Feature/flow description, user role, user goal |
-| **pre-writing** | object | Product context, platform, technical constraints |
+| **pre-writing** | object | Product context, **target platforms (explicit list)**, **per-platform surface matrix**, **cross-platform channels**, **minimum OS versions**, technical constraints |
 | **upstream** | null | You run in Layer 1 (parallel) — no upstream dependency |
-| **references** | file paths[] | Path to `references/research-checklist.md` |
+| **references** | file paths[] | Path to `references/research-checklist.md`, path to `references/platform-touchpoints.md` |
 | **feedback** | string \| null | Rewrite instructions from critic-agent. Null on first run. |
 
 ## Output Contract
@@ -59,6 +59,14 @@ Return a single markdown document with exactly these sections:
 |--------|----------------|-----------------|---------------|
 | [screen name] | [requires network / can use cache] | [cached view / retry prompt / queue action] | [sync on reconnect / conflict resolution] |
 
+## Per-Surface Platform Edge States
+
+One row per declared platform × surface. These are surface-specific failure modes that generic error/empty/loading/permission/offline don't cover. Pull the candidate list from the surface's row in `references/platform-touchpoints.md` under "Edge states to check," then write the recovery path for each.
+
+| Platform | Surface | Edge state | Trigger | Recovery / handling | User message or visual state |
+|----------|---------|------------|---------|---------------------|-------------------------------|
+| [platform] | [surface] | [e.g., "app terminated → menu bar icon disappears"] | [what causes it] | [how the product recovers — background agent relaunch, fallback surface, re-prompt, etc.] | [what the user sees or does not see] |
+
 ## Back/Cancel Paths
 
 | Screen | Back Action | Cancel Action | Data Preserved? |
@@ -90,8 +98,12 @@ For screens with multiple possible states, define priority:
 2. **Edge cases are per-screen, not per-flow.** Each screen may have different error, empty, loading, permission, and offline states. Map them individually.
 3. **Back/cancel is always available.** At every step where the user might want to retreat, define where back and cancel go. They may go to different places.
 4. **State priority prevents confusion.** When multiple states could apply simultaneously (offline + error + empty), define which state takes visual priority.
+5. **Surface-specific failures are distinct from generic failures.** A widget refresh budget exhausted is not a "loading" state — it's a platform-imposed constraint. A Live Activity 8h ceiling is not an "error" — it's a platform lifecycle event. Each declared surface gets its own edge-state analysis using `references/platform-touchpoints.md` as the starting list.
+6. **Every declared surface gets at least one per-surface edge state row.** If a surface is in scope, at least one platform-specific failure mode must be documented with a recovery path. "None applicable" is only valid if the catalog lists no edge states for that surface — which is rare.
 
 ### Techniques
+
+**Six dimensions to check:** the five standard state categories (per-screen) **plus** per-surface platform edge states (per-surface). The first five apply inside the main flow. The sixth applies at every external touchpoint the flow occupies.
 
 **Five state categories to check at every screen:**
 
@@ -104,6 +116,17 @@ For screens with multiple possible states, define priority:
 4. **Permission** — What requires auth or access? Login required, subscription needed, role-based restrictions, feature flags. For each: what happens if permission is missing — upgrade prompt, redirect, explanation.
 
 5. **Offline** — What if network is unavailable? Which screens need network vs. can use cached data? Define offline behavior and sync-on-reconnect strategy.
+
+**Per-surface platform edge states** — read the declared surface list, then walk `references/platform-touchpoints.md` for each. Typical categories to check per surface:
+
+- **Lifecycle** — surface appears/disappears based on app state (e.g., macOS menu bar extra vanishes if app terminated; iOS Live Activity auto-dismisses after 8h; Android foreground service killed by user).
+- **Refresh budget / throttling** — OS-imposed update limits (widgets, complications, background tasks all have budgets).
+- **Permission scope per surface** — a permission granted in the main app may not extend to a surface (e.g., iOS notification permission separate from widget configuration; Android POST_NOTIFICATIONS on 13+ separate from other permissions; web Push permission per-origin).
+- **Fallback when surface unavailable** — what happens if the surface doesn't exist on the device (iOS 15 has no Live Activities; older macOS has no interactive widgets; Android Auto not connected; Web Push not supported in the browser)?
+- **State drift across surfaces** — if the same data shows in an app + a widget + a notification, how are they kept in sync?
+- **OS-version gating** — surfaces gated by minimum OS (Live Activities 16.1+, Dynamic Island 16.1+ Pro-only, Control Center custom controls 18+, Android 14 foreground service types, etc.). Recovery = what happens on older OS.
+- **Cross-device handoff failure** — Handoff / Continuity state missing between devices.
+- **Universal link / deep link fallback** — app not installed, link routed to web, authentication not present, deep-link parameters missing.
 
 **Back/cancel mapping:**
 - Back = return to previous screen (navigation history)
@@ -161,6 +184,9 @@ Before returning your output, verify every item:
 - [ ] Data preservation noted for each back/cancel (draft saved or data lost?)
 - [ ] State priority matrix defined for screens with multiple possible states
 - [ ] Error messages are user-friendly (no blame, no technical jargon)
+- [ ] Every declared platform × surface has at least one per-surface edge state row
+- [ ] Per-surface edge states cover lifecycle, refresh/throttling, permission, OS-version gating, fallback where applicable
+- [ ] Per-surface edge state recovery paths are concrete (not "handle gracefully")
 - [ ] Output stays within my section boundaries (no overlap with other agents)
 - [ ] No `[BLOCKED]` markers remain unresolved
 
