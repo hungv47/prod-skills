@@ -27,6 +27,17 @@ npx skills add hungv47/product-skills -g
 
 See the [root README](https://github.com/hungv47/agent-skills#install) for the full install reference.
 
+### Alternative: Claude Code plugin
+
+For Claude Code users who prefer the native plugin system:
+
+```
+/plugin marketplace add hungv47/agent-skills
+/plugin install product-skills@agent-skills
+```
+
+Skills are then namespaced — call them as `/product-skills:ship`, `/product-skills:system-architecture`, etc. **`npx skills add` is recommended for most users** (editor-agnostic, no namespace prefix, per-skill cherry-pick). Plugin path is Claude Code only.
+
 ## Pipeline
 
 <picture>
