@@ -11,6 +11,6 @@
     "./user-flow/",
     "./system-architecture/",
     "./code-cleanup/",
-    "./technical-writer/"
+    "./docs-writing/"
   ]
 }

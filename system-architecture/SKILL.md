@@ -1,6 +1,6 @@
 ---
 name: system-architecture
-description: "Designs technical blueprints — tech stack selection, database schema, API design, file structure, and deployment plan for a defined product or feature. Produces `architecture/system-architecture.md`. Not for unclear requirements (use discover) or task decomposition (use task-breakdown). For user journey mapping, see user-flow. For code quality after building, see review-chain."
+description: "Designs technical blueprints — tech stack selection, database schema, API design, file structure, and deployment plan for a defined product or feature. Produces `architecture/system-architecture.md`. Not for unclear requirements (use discover) or task decomposition (use task-breakdown). For user journey mapping, see user-flow. For code quality after building, see fresh-eyes."
 argument-hint: "[product or feature to architect]"
 allowed-tools: Read Grep Glob Bash
 license: MIT
@@ -46,7 +46,7 @@ routing:
   consumes:
     - product-context.md
     - spec.md
-    - solution-design.md
+    - prioritize.md
     - product/flow/*.md  # reads every flow file in the directory
   requires: []
   defers-to:
@@ -74,7 +74,7 @@ routing:
 - `architecture/system-architecture.md`
 
 ## Chain Position
-Previous: `discover` or `task-breakdown` (optional) | Next: `task-breakdown` (optional) | Cross-stack: reads `solution-design.md` (from research-skills), `user-flow.md` (from product-skills)
+Previous: `discover` or `task-breakdown` (optional) | Next: `task-breakdown` (optional) | Cross-stack: reads `prioritize.md` (from research-skills), `user-flow.md` (from product-skills)
 
 **Re-run triggers:** When product spec changes significantly, when scale requirements change (10x growth), when migrating core infrastructure, or when adding major new integrations.
 
@@ -141,7 +141,7 @@ When designing integrations and service boundaries, classify every external depe
 | **Remote but owned** | Your own services | Ports & Adapters — define interface, test with in-memory adapter | Your auth service, your billing API |
 | **True external** | Third-party, no stand-in | Mock at the boundary only | Stripe API, Twilio, OpenAI |
 
-Document the category for each dependency in the Service Connections section. This directly informs testing strategy in `task-breakdown` and `review-chain`.
+Document the category for each dependency in the Service Connections section. This directly informs testing strategy in `task-breakdown` and `fresh-eyes`.
 
 ## Critical Gates
 
@@ -191,7 +191,7 @@ None — this skill can run standalone.
 |----------|--------|---------|
 | `product-context.md` | icp-research (from `hungv47/research-skills`) | Industry context, user personas, and constraints |
 | `task-breakdown.md` | task-breakdown | Feature list already decomposed into buildable units |
-| `solution-design.md` | solution-design (from `hungv47/research-skills`) | Business initiatives and constraints from strategy track |
+| `prioritize.md` | prioritize (from `hungv47/research-skills`) | Business initiatives and constraints from strategy track |
 | `.agents/product/flow/*.md` | user-flow (from `hungv47/product-skills`) | Per-flow user flow diagrams + platform-surface matrix; read every file in the directory. Feeds API endpoint design and feature scoping. |
 
 ### Two Modes of Operation

@@ -1,5 +1,5 @@
 ---
-name: technical-writer
+name: docs-writing
 description: "Generates documentation from a codebase — READMEs, API references, setup guides, runbooks, architecture docs, and ship logs with consistent structure and terminology. Produces documentation files in the project. Ship log mode writes a plain-language product snapshot to research/product-context.md so agents and humans know what the app does. Not for specifying what to build (use discover) or restructuring code (use code-cleanup). For task decomposition, see task-breakdown."
 argument-hint: "[codebase or project to document]"
 allowed-tools: Read Grep Glob Bash
@@ -135,7 +135,7 @@ Layer 2 (sequential):
 
 ### Route C: Post-Change Sync
 
-Triggered by: `/technical-writer --sync`, "update the docs after this change", "sync docs", or "docs are stale after that PR."
+Triggered by: `/docs-writing --sync`, "update the docs after this change", "sync docs", or "docs are stale after that PR."
 
 This route cross-references the git diff against ALL existing documentation and makes targeted updates — not a full rewrite. It's the documentation equivalent of a patch, not a rebuild.
 
@@ -170,7 +170,7 @@ scanner-agent ──────────────── inventory existin
 
 ### Route D: Ship Log
 
-Triggered by: `/technical-writer --ship-log`, "write a ship log", "product context", "what does this app do", or "document the current state of the app."
+Triggered by: `/docs-writing --ship-log`, "write a ship log", "product context", "what does this app do", or "document the current state of the app."
 
 This route produces a **plain-language product snapshot** saved to `research/product-context.md`. It answers the questions: What does this app do? What's been built? How do you use it? What's the tech stack? What shipped recently? Written so a non-technical person could understand, while still being precise enough for coding agents to use as context.
 
@@ -197,7 +197,7 @@ writer-agent ────────────────── writes ship 
 **Pre-write step (orchestrator responsibility):**
 Before dispatching writer-agent, the orchestrator checks for `research/product-context.md`:
 - If it exists with `skill: icp-research` in frontmatter: pass `merge-mode: preserve-marketing` to writer-agent
-- If it exists with `skill: technical-writer` in frontmatter: rename to `product-context.v[N].md`, pass `merge-mode: overwrite` to writer-agent
+- If it exists with `skill: docs-writing` in frontmatter: rename to `product-context.v[N].md`, pass `merge-mode: overwrite` to writer-agent
 - If it exists with unknown origin: rename to `product-context.v[N].md`, pass `merge-mode: overwrite` to writer-agent
 - If it doesn't exist: pass `merge-mode: create` to writer-agent
 
@@ -356,7 +356,7 @@ On re-run: rename existing artifact to `[name].v[N].md` and create new with incr
 
 ```yaml
 ---
-skill: technical-writer
+skill: docs-writing
 version: 1
 date: {{today}}
 status: draft
@@ -367,7 +367,7 @@ doc-type: [readme | user-guide | api-reference | config-guide | tutorial | ship-
 
 ## Next Step
 
-Documentation complete. Run `review-chain` for quality review. Run `seo` if docs are public-facing.
+Documentation complete. Run `fresh-eyes` for quality review. Run `seo` if docs are public-facing.
 
 ---
 

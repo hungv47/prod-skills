@@ -41,7 +41,7 @@ Skills are then namespaced — call them as `/product-skills:user-flow`, `/produ
 ## Pipeline
 
 <picture>
-  <img src="./assets/pipeline.svg" alt="Product pipeline: user-flow → system-architecture, plus horizontal code-cleanup and technical-writer" width="100%">
+  <img src="./assets/pipeline.svg" alt="Product pipeline: user-flow → system-architecture, plus horizontal code-cleanup and docs-writing" width="100%">
 </picture>
 
 ## Skills
@@ -86,13 +86,13 @@ Structural audit, AI slop removal (code-level and frontend/visual), dead code de
 - You want to remove AI-generated patterns that hurt readability
 - You need to identify dead code, unused dependencies, unused assets, or structural issues
 
-**Not for:** diagnosing business problems (use `problem-analysis`) or writing documentation (use `technical-writer`)
+**Not for:** diagnosing business problems (use `diagnose`) or writing documentation (use `docs-writing`)
 
 **Produces:** `.agents/cleanup-report.md` + in-place fixes
 
 ---
 
-### `technical-writer` — generate documentation from code
+### `docs-writing` — generate documentation from code
 
 READMEs, API references, setup guides, runbooks, and architecture docs with consistent structure and terminology. Ship log mode (`--ship-log`) writes a plain-language product snapshot to `research/product-context.md` so agents and humans know what the app does. Sync mode (`--sync`) updates existing docs after code changes.
 
@@ -110,9 +110,9 @@ READMEs, API references, setup guides, runbooks, and architecture docs with cons
 
 ## Cross-Stack
 
-- `system-architecture` reads `.agents/solution-design.md` (from [research-skills](https://github.com/hungv47/research-skills)) and every `.agents/product/flow/*.md` for cross-stack context
-- `system-architecture` and `technical-writer` read `research/product-context.md` from research-skills
-- `technical-writer --ship-log` writes `research/product-context.md`, the canonical cross-stack artifact consumed by 12+ downstream skills
+- `system-architecture` reads `.agents/prioritize.md` (from [research-skills](https://github.com/hungv47/research-skills)) and every `.agents/product/flow/*.md` for cross-stack context
+- `system-architecture` and `docs-writing` read `research/product-context.md` from research-skills
+- `docs-writing --ship-log` writes `research/product-context.md`, the canonical cross-stack artifact consumed by 12+ downstream skills
 - `user-flow` output feeds into `system-architecture` and `task-breakdown` (from [meta-skills](https://github.com/hungv47/meta-skills))
 
 ## License

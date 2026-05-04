@@ -1,6 +1,6 @@
 ---
 name: code-cleanup
-description: "Audits and refactors existing code for readability, maintainability, and dead code removal without changing behavior. Produces `.agents/cleanup-report.md` and applies fixes in-place. Not for diagnosing business problems (use problem-analysis) or writing documentation (use technical-writer). For writing missing docs after cleanup, see technical-writer."
+description: "Audits and refactors existing code for readability, maintainability, and dead code removal without changing behavior. Produces `.agents/cleanup-report.md` and applies fixes in-place. Not for diagnosing business problems (use diagnose) or writing documentation (use docs-writing). For writing missing docs after cleanup, see docs-writing."
 argument-hint: "[file or directory to clean]"
 allowed-tools: Read Grep Glob Bash
 license: MIT
@@ -50,10 +50,10 @@ routing:
   defers-to:
     - skill: task-breakdown
       when: "planning new features, not cleaning existing code"
-    - skill: technical-writer
+    - skill: docs-writing
       when: "need documentation, not code cleanup"
   parallel-with:
-    - technical-writer
+    - docs-writing
   interactive: false
   estimated-complexity: heavy
 ---
@@ -286,7 +286,7 @@ status: complete
 
 ## Next Step
 
-Run `review-chain` for a fresh-eyes quality review.
+Run `fresh-eyes` for a fresh-eyes quality review.
 
 ---
 

@@ -8,7 +8,7 @@ Use this structure when generating a ship log (product context snapshot). The sh
 
 ```markdown
 ---
-skill: technical-writer
+skill: docs-writing
 mode: ship-log
 version: 1
 date: {{today}}
