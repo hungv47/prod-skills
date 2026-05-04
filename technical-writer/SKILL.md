@@ -174,7 +174,7 @@ Triggered by: `/technical-writer --ship-log`, "write a ship log", "product conte
 
 This route produces a **plain-language product snapshot** saved to `research/product-context.md`. It answers the questions: What does this app do? What's been built? How do you use it? What's the tech stack? What shipped recently? Written so a non-technical person could understand, while still being precise enough for coding agents to use as context.
 
-**Why `research/product-context.md`:** This is the canonical cross-stack artifact consumed by 12+ downstream skills (brand-system, content-create, seo, system-architecture, etc.). Writing the ship log here means every skill automatically gets current product context.
+**Why `research/product-context.md`:** This is the canonical cross-stack artifact consumed by 12+ downstream skills (brand-system, copywriting, seo, system-architecture, etc.). Writing the ship log here means every skill automatically gets current product context.
 
 **Execution flow:**
 ```
