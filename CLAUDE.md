@@ -1,9 +1,9 @@
 # Product Skills
 
-UX design, technical architecture, code cleanup, documentation, and shipping.
+UX design, technical architecture, code cleanup, and documentation.
 
 ## Workflows
-- user-flow → system-architecture → (execution) → review-chain → ship
+- user-flow → system-architecture → (execution) → review-chain
 - code-cleanup, technical-writer: standalone
 
 ## Artifacts
@@ -12,8 +12,6 @@ Skills write to `.agents/` by default; canonical records live in top-level folde
 - `.agents/product/flow/index.md` — catalog, auto-generated when ≥2 flow files exist
 - `architecture/system-architecture.md` — canonical system blueprint (top-level folder, co-locates schemas/ADRs/diagrams)
 - `.agents/cleanup-report.md`
-- `.agents/ship-report.md`
-- `.agents/deploy-verify-report.md` + `.agents/deploy-verify-baseline.json`
 - `technical-writer` writes directly to the project (README.md, docs/) or `research/product-context.md` (ship log mode)
 
 ## Cross-Stack (Optional)
@@ -30,7 +28,7 @@ Run `user-flow` BEFORE `system-architecture`. User flows define WHAT screens and
 
 ## Multi-Agent Skills
 
-5 of 6 skills use a multi-agent orchestration pattern (`deploy-verify` is single-agent):
+All 4 skills use a multi-agent orchestration pattern.
 
 ### Agent Inventory
 
@@ -40,8 +38,6 @@ Run `user-flow` BEFORE `system-architecture`. User flows define WHAT screens and
 | system-architecture | 7 | stack-selection, infrastructure | schema → api → integration → scaling → critic |
 | code-cleanup | 8 | structural-scanner, code-scanner, dependency-scanner, asset-scanner | safe-removal → refactoring → validation → critic |
 | technical-writer | 6 | scanner, concept-extractor, audience-profiler | writer → staleness-checker → critic |
-| ship | 4 | test-runner (gate) | commit-organizer → pr-writer → critic |
-| deploy-verify | 0 | — | — (single-agent methodology) |
 
 ### Key Constraints
 - **code-cleanup enforces 5 golden rules**: preserve behavior, small steps, check conventions, test after each change, rollback awareness.

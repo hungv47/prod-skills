@@ -1,6 +1,6 @@
 ---
 name: technical-writer
-description: "Generates documentation from a codebase — READMEs, API references, setup guides, runbooks, architecture docs, and ship logs with consistent structure and terminology. Produces documentation files in the project. Ship log mode writes a plain-language product snapshot to research/product-context.md so agents and humans know what the app does. Not for specifying what to build (use discover) or restructuring code (use code-cleanup). For shipping and PRs, see ship. For task decomposition, see task-breakdown."
+description: "Generates documentation from a codebase — READMEs, API references, setup guides, runbooks, architecture docs, and ship logs with consistent structure and terminology. Produces documentation files in the project. Ship log mode writes a plain-language product snapshot to research/product-context.md so agents and humans know what the app does. Not for specifying what to build (use discover) or restructuring code (use code-cleanup). For task decomposition, see task-breakdown."
 argument-hint: "[codebase or project to document]"
 allowed-tools: Read Grep Glob Bash
 license: MIT

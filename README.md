@@ -11,9 +11,9 @@ Installs via the [`skills` CLI](https://skills.sh). Requires Node.js 18+. Auto-d
 npx skills add hungv47/product-skills
 
 # Cherry-pick a single skill (any skill in the stack — these are just examples)
-npx skills add hungv47/product-skills --skill ship
 npx skills add hungv47/product-skills --skill code-cleanup
 npx skills add hungv47/product-skills --skill system-architecture
+npx skills add hungv47/product-skills --skill user-flow
 
 # List available skills without installing
 npx skills add hungv47/product-skills --list
@@ -36,12 +36,12 @@ For Claude Code users who prefer the native plugin system:
 /plugin install product-skills@agent-skills
 ```
 
-Skills are then namespaced — call them as `/product-skills:ship`, `/product-skills:system-architecture`, etc. **`npx skills add` is recommended for most users** (editor-agnostic, no namespace prefix, per-skill cherry-pick). Plugin path is Claude Code only.
+Skills are then namespaced — call them as `/product-skills:user-flow`, `/product-skills:system-architecture`, etc. **`npx skills add` is recommended for most users** (editor-agnostic, no namespace prefix, per-skill cherry-pick). Plugin path is Claude Code only.
 
 ## Pipeline
 
 <picture>
-  <img src="./assets/pipeline.svg" alt="Product pipeline: user-flow → system-architecture → ship → deploy-verify, plus horizontal code-cleanup and technical-writer" width="100%">
+  <img src="./assets/pipeline.svg" alt="Product pipeline: user-flow → system-architecture, plus horizontal code-cleanup and technical-writer" width="100%">
 </picture>
 
 ## Skills
@@ -105,36 +105,6 @@ READMEs, API references, setup guides, runbooks, and architecture docs with cons
 **Not for:** specifying what to build (use `discover`) or restructuring code (use `code-cleanup`)
 
 **Produces:** Documentation files directly in the project (README.md, docs/) or `research/product-context.md` (ship log mode)
-
----
-
-### `ship` — automated pre-merge pipeline
-
-Runs tests, checks the review gate, organizes commits, and creates a PR with a structured body.
-
-**Use when:**
-- You've built and reviewed something and need to ship it cleanly
-- You want an automated pipeline from tests through PR creation
-- You need commits organized and a well-structured PR body
-
-**Not for:** code review (use `review-chain`) or task decomposition (use `task-breakdown`)
-
-**Produces:** `.agents/ship-report.md` + a pull request on the remote
-
----
-
-### `deploy-verify` — post-deploy health check
-
-Verifies a production URL is healthy after shipping — page load, console errors, critical paths, response times.
-
-**Use when:**
-- You just deployed and want to verify production is healthy
-- You need evidence-backed health status (HEALTHY / DEGRADED / BROKEN)
-- You want a baseline comparison against prior deploys
-
-**Not for:** pre-merge review (use `review-chain`) or shipping (use `ship`)
-
-**Produces:** `.agents/deploy-verify-report.md`, `.agents/deploy-verify-baseline.json`
 
 ---
 

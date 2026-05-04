@@ -286,7 +286,7 @@ status: complete
 
 ## Next Step
 
-Run `review-chain` for a fresh-eyes quality review. Run `ship` when ready to create a PR.
+Run `review-chain` for a fresh-eyes quality review.
 
 ---
 
