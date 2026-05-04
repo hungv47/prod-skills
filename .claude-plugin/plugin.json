@@ -1,16 +1,16 @@
 {
   "name": "product-skills",
   "description": "UX design, architecture, cleanup, and documentation skills — user flows, system architecture, code cleanup, technical writing.",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "author": { "name": "hungv47" },
   "homepage": "https://github.com/hungv47/product-skills",
   "repository": "https://github.com/hungv47/product-skills",
   "license": "MIT",
   "keywords": ["product", "architecture", "ux", "cleanup", "documentation"],
   "skills": [
-    "./user-flow/",
-    "./system-architecture/",
-    "./code-cleanup/",
-    "./docs-writing/"
+    "./skills/user-flow/",
+    "./skills/system-architecture/",
+    "./skills/code-cleanup/",
+    "./skills/docs-writing/"
   ]
 }
