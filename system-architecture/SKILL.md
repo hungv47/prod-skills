@@ -181,7 +181,7 @@ When context window is constrained or the product is simple (fewer than 3 user t
 
 Check for `research/product-context.md`. If missing: interview for product dimensions (what, who, problem, differentiator, scale, integrations) and save to `research/product-context.md`. Or recommend running `icp-research` (from `hungv47/research-skills`) to bootstrap it.
 
-If `research/product-context.md` has a `date` field older than 30 days, recommend re-running `icp-research` (from research-skills) to refresh it. Tip: `/navigate status` (from meta-skills) gives a single-pass freshness report across all upstream artifacts.
+If `research/product-context.md` has a `date` field older than 30 days, recommend re-running `icp-research` (from research-skills) to refresh it.
 
 ### Required Artifacts
 None — this skill can run standalone.

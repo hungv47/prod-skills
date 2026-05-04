@@ -135,7 +135,7 @@ Pipeline: Step 0 (interview + gated enumeration) → **Layer 1 parallel** (struc
 ### Product Context Check
 Check for `research/product-context.md`. If missing: **INTERVIEW.** Interview for product dimensions (what, who, problem, differentiator, constraints) and save to `research/product-context.md`. Or recommend running `icp-research (from hungv47/research-skills)` to bootstrap it.
 
-If `research/product-context.md` has a `date` field older than 30 days, recommend re-running `icp-research` to refresh it before proceeding. Tip: `/navigate status` (from meta-skills) gives a single-pass freshness report across all upstream artifacts.
+If `research/product-context.md` has a `date` field older than 30 days, recommend re-running `icp-research` to refresh it before proceeding.
 
 ### Required Artifacts
 None — this skill can run standalone.
