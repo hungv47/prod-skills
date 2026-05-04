@@ -59,49 +59,49 @@ routing:
 
 # User Flow Design — Orchestrator
 
-*Design — Step 2 of 2. Coordinates specialized agents to map navigation paths, decision points, edge cases, platform-native touchpoints, and screen-to-screen transitions into a validated flow diagram.*
+*Design — Step 2 of 2. Maps navigation paths, decisions, edge cases, platform-native touchpoints, and screen transitions into a validated flow diagram.*
 
 **Core Question:** "Can the user complete their goal without thinking — on every surface of every platform it ships on?"
 
 ## Critical Gates — Read First
 
-- **Do NOT dispatch Layer 1 before platforms and surfaces are enumerated.** See `references/platform-touchpoints.md` for the catalog and interview gate. Wireframe size, entry points, and edge states all depend on it.
-- **Do NOT accept "cross-platform" as a platform answer.** Enumerate every platform: macOS, iOS, iPadOS, Android, Windows, web-desktop, web-mobile, watchOS, tvOS, visionOS, CarPlay, Android Auto, Linux.
-- **Do NOT create diagrams before mapping structure.** Diagram-agent needs structure + edge-case outputs first.
-- **Do NOT skip edge cases.** Error/empty/loading/permission/offline + per-surface platform edge states must be mapped for every screen and every selected surface.
-- **Do NOT accept >7 happy path steps without challenge.** Miller's threshold. Every step must justify its existence.
-- **One flow = one file.** Run once per flow. Each run writes `.agents/product/flow/<flow-name>.md`. No pooling.
-- **Stale product context (>30 days) produces misaligned flows.** Recommend re-running `icp-research`.
+- **No Layer 1 before platforms + surfaces enumerated.** See `references/platform-touchpoints.md`. Wireframe size, entries, edge states all depend on it.
+- **Reject "cross-platform" as a platform.** Enumerate: macOS, iOS, iPadOS, Android, Windows, web-desktop, web-mobile, watchOS, tvOS, visionOS, CarPlay, Android Auto, Linux.
+- **No diagrams before structure.** Diagram-agent needs structure + edge-case outputs first.
+- **No skipping edge cases.** Error/empty/loading/permission/offline + per-surface edge states for every screen and surface.
+- **Challenge >7 happy-path steps.** Miller's threshold. Every step must justify itself.
+- **One flow = one file.** No pooling. Each run writes `.agents/product/flow/<flow-name>.md`.
+- **Stale product context (>30 days) misaligns flows.** Recommend re-running `icp-research`.
 
 ## Inputs Required
-- A product or feature requiring flow mapping (new feature, redesign, or existing flow audit)
-- Target user role or persona (flows change per role)
-- The user goal the flow serves (one goal per flow)
-- **Target platforms** — explicit list from the platform catalog in `references/platform-touchpoints.md`
-- **Per-platform surfaces in scope** — explicit list of surfaces per platform
+- Product/feature requiring flow mapping (new, redesign, or audit)
+- Target user role/persona (flows change per role)
+- Single user goal (one per flow)
+- **Target platforms** — explicit list from `references/platform-touchpoints.md`
+- **Per-platform surfaces in scope** — explicit list per platform
 
 ## Output
 - `.agents/product/flow/<flow-name>.md` — one file per flow run
-- `.agents/product/flow/index.md` — catalog index, auto-created / auto-updated when ≥2 flow files exist in the directory
+- `.agents/product/flow/index.md` — auto-created/updated when ≥2 flow files exist
 
-Flow name is derived from the user's brief (e.g., "checkout flow" → `checkout.md`); if ambiguous, the orchestrator confirms the slug with the user before writing.
+Slug derived from brief (e.g., "checkout flow" → `checkout.md`); orchestrator confirms if ambiguous.
 
 ## Quality Gate
-The **critic agent** runs the full rubric (see `agents/critic-agent.md`). The non-negotiable checks the orchestrator must confirm before accepting a PASS:
+**Critic agent** runs full rubric (see `agents/critic-agent.md`). Non-negotiable PASS checks:
 - Platforms + per-platform surfaces explicitly enumerated (no "cross-platform")
 - Every platform × surface has entry + mini-frame + per-surface edge state (Surface Coverage Map complete)
 - Mini-frame dimensions match `references/platform-touchpoints.md`
 - Every decision point has ≥2 labeled exits; no dead-end errors
 - Happy path ≤7 steps; ≤3 primary actions per screen
-- Every core screen has an ASCII wireframe + 2-4 sentence Description; wireframe CTAs match structure actions (no drift)
+- Every core screen has ASCII wireframe + 2-4 sentence Description; wireframe CTAs match structure actions
 - 2-3 critical edge-state variants included
 
 ## Chain Position
-Previous: `brand-system` (optional — design tokens). Next: handoff to implementation. Related: `system-architecture` (consumes flows for API design), `task-breakdown` (consumes flows for decomposition), `discover` (specs → flows).
+Prev: `brand-system` (optional — design tokens). Next: implementation. Related: `system-architecture` (API design), `task-breakdown` (decomposition), `discover` (specs).
 
-**Re-run triggers:** features change significantly, new research patterns, usability-testing failures, or new user roles.
+**Re-run triggers:** significant feature changes, new research, usability failures, new user roles.
 
-**Deference:** `discover` if requirements unclear · `brand-system` for design tokens · `task-breakdown` after for task decomposition.
+**Deference:** `discover` if requirements unclear · `brand-system` for design tokens · `task-breakdown` for decomposition.
 
 ---
 
@@ -124,57 +124,55 @@ Previous: `brand-system` (optional — design tokens). Next: handoff to implemen
 
 ## Routing Logic
 
-Only one route — all flows use the full agent stack. Flows >15 screens are split automatically via structure-agent's sub-flow decomposition.
-
-Pipeline: Step 0 (interview + gated enumeration) → **Layer 1 parallel** (structure + edge-case) → Merge → **Layer 2a parallel** (diagram + wireframe) → **Layer 2b sequential** (validation → critic). Critic FAIL re-dispatches named agents (max 2 cycles). Deliver to `.agents/product/flow/<flow-name>.md`; update `index.md` if ≥2 flows exist.
+Single route — all flows use the full stack. Flows >15 screens auto-split via structure-agent's sub-flow decomposition. Pipeline: Step 0 (interview + gated enumeration) → **Layer 1 parallel** (structure + edge-case) → Merge → **Layer 2a parallel** (diagram + wireframe) → **Layer 2b sequential** (validation → critic). Critic FAIL re-dispatches named agents (max 2 cycles). Deliver to `.agents/product/flow/<flow-name>.md`; update `index.md` if ≥2 flows.
 
 ---
 
 ## Step 0: Pre-Dispatch Context Gathering
 
 ### Product Context Check
-Check for `research/product-context.md`. If missing: **INTERVIEW.** Interview for product dimensions (what, who, problem, differentiator, constraints) and save to `research/product-context.md`. Or recommend running `icp-research (from hungv47/research-skills)` to bootstrap it.
+Check `research/product-context.md`. If missing: **INTERVIEW** for product dimensions (what, who, problem, differentiator, constraints) and save it — or recommend `icp-research (from hungv47/research-skills)` to bootstrap.
 
-If `research/product-context.md` has a `date` field older than 30 days, recommend re-running `icp-research` to refresh it before proceeding.
+If `date` field >30 days old, recommend re-running `icp-research` first.
 
 ### Required Artifacts
-None — this skill can run standalone.
+None — runs standalone.
 
 ### Optional Artifacts
-- `product-context.md` (icp-research) — product/user context for better flow decisions
-- `brand/DESIGN.md` (brand-system) — component inventory, design tokens
-- `brand/BRAND.md` (brand-system) — voice, terminology for screen Descriptions
+- `product-context.md` (icp-research) — product/user context
+- `brand/DESIGN.md` (brand-system) — components, design tokens
+- `brand/BRAND.md` (brand-system) — voice/terminology for Descriptions
 
 ### Flow Interview
-Interview for these dimensions before proceeding. Full platform/surface enumeration details live in `references/platform-touchpoints.md` § "Using this catalog at the interview."
+Interview these dimensions first. Full platform/surface enumeration in `references/platform-touchpoints.md` § "Using this catalog at the interview."
 
 **Product context**
-1. What product or feature needs flow mapping?
-2. What problem does it solve for the user?
-3. Who is the primary user? (role, technical skill, frequency of use)
+1. Product/feature needing flow mapping?
+2. Problem it solves?
+3. Primary user? (role, technical skill, frequency)
 
 **Flow scope**
-4. What is the single user goal this flow serves?
-5. Confirm the flow name (auto-derived slug from brief, e.g. "checkout flow" → `checkout`).
-6. Where does the flow start? (specific trigger — answer multiple if multi-surface)
-7. What does success look like? (specific end state)
-8. Are there existing flows to reference, replace, or extend?
+4. Single user goal this flow serves?
+5. Confirm flow slug (auto-derived, e.g. "checkout flow" → `checkout`).
+6. Where does it start? (specific trigger — multiple if multi-surface)
+7. Success state? (specific)
+8. Existing flows to reference, replace, or extend?
 
 **Platforms & surfaces — mandatory gate (see `references/platform-touchpoints.md`)**
-9. **Target platforms** — one or more from: `macOS`, `iOS`, `iPadOS`, `Android`, `Windows`, `web-desktop`, `web-mobile`, `watchOS`, `tvOS`, `visionOS`, `CarPlay`, `Android Auto`, `Linux`. Reject "cross-platform."
-10. **Per-platform surfaces in scope** — for every platform, pick surfaces from the catalog. Catalog is authoritative; don't list from memory.
-11. **Cross-platform channels in scope** — from the catalog's Cross-platform section.
-12. **Primary surface per platform** — the *one* default entry on each platform (drives default wireframe size).
+9. **Target platforms** — from: `macOS`, `iOS`, `iPadOS`, `Android`, `Windows`, `web-desktop`, `web-mobile`, `watchOS`, `tvOS`, `visionOS`, `CarPlay`, `Android Auto`, `Linux`. Reject "cross-platform."
+10. **Per-platform surfaces** — pick from catalog (authoritative; don't list from memory).
+11. **Cross-platform channels** — from catalog's Cross-platform section.
+12. **Primary surface per platform** — the *one* default entry (drives default wireframe size).
 
 **Constraints**
-13. Authentication? (logged in, guest, role-based)
-14. Technical or business rules that force specific paths?
+13. Authentication? (logged in / guest / role-based)
+14. Technical/business rules forcing specific paths?
 15. Minimum OS versions? (drives available surfaces — e.g., Live Activities iOS 16.1+, Control Center custom controls iOS 18+)
 
-**Gate:** Do not proceed to Layer 1 until Q9–Q12 are answered explicitly. "All surfaces" and "cross-platform" fail the enumeration test.
+**Gate:** No Layer 1 until Q9–Q12 are explicit. "All surfaces" / "cross-platform" fail.
 
 ### Context to Pass to All Agents
-Product · user · goal · flow slug · platform list · surface matrix · cross-platform channels · primary surface per platform · minimum OS versions · constraints (auth, business rules, existing flows).
+Product · user · goal · slug · platform list · surface matrix · cross-platform channels · primary surface per platform · min OS versions · constraints.
 
 ---
 
@@ -182,61 +180,57 @@ Product · user · goal · flow slug · platform list · surface matrix · cross
 
 ### How to spawn a sub-agent
 
-1. **Read** the agent instruction file — include its FULL content in the Agent prompt.
-2. **Append** context (product, user, goal, platform, constraints) after the instructions.
-3. **Resolve file paths to absolute** (rooted at this skill's directory).
-4. **Pass upstream artifacts by content**: orchestrator reads `.agents/` files first and includes excerpts; sub-agents do NOT read artifact files directly.
+1. **Read** the agent instruction file — include FULL content in the Agent prompt.
+2. **Append** context (product, user, goal, platform, constraints).
+3. **Resolve paths to absolute** (rooted at this skill's directory).
+4. **Pass upstream artifacts by content**: orchestrator reads `.agents/` files and includes excerpts; sub-agents don't read artifact files directly.
 5. On critic FAIL, append feedback under `## Critic Feedback — Address Every Point`.
 
 ### Conventions
 
-- **Source citation:** Cite sources for UX heuristics / research / patterns; include URLs from web searches; flag unattributable claims `[UNVERIFIED]`.
-- **Context loaded:** Artifact body includes which upstream artifacts were read + versions/dates (audit trail for downstream skills).
+- **Source citation:** Cite UX heuristics/research/patterns; include URLs; flag unattributable claims `[UNVERIFIED]`.
+- **Context loaded:** Artifact body lists which upstream artifacts were read + versions/dates (audit trail).
 
 ### Single-agent fallback
 
-If multi-agent dispatch is unavailable, execute each agent's instructions sequentially in-context: Layer 1 (structure → edge cases) → Layer 2 (diagram + wireframes → validation) → critic.
+If multi-agent dispatch is unavailable, execute agent instructions sequentially in-context: Layer 1 (structure → edge cases) → Layer 2 (diagram + wireframes → validation) → critic.
 
 ---
 
 ## Layer 1: Parallel Foundation
 
-Spawn **IN PARALLEL**:
+Spawn **IN PARALLEL** (wait for both — outputs feed merge and Layer 2):
 
 | Agent | Instruction File | Pass These Inputs | Reference Files |
 |-------|-----------------|-------------------|-----------------|
 | Structure Agent | `agents/structure-agent.md` | brief (product + user + goal + platforms + surface matrix + constraints) | `references/research-checklist.md`, `references/platform-touchpoints.md` |
 | Edge Case Agent | `agents/edge-case-agent.md` | brief (product + user + goal + platforms + surface matrix + constraints) | `references/research-checklist.md`, `references/platform-touchpoints.md` |
 
-Wait for both to complete. Their outputs feed the merge step and Layer 2.
-
 ---
 
 ## Merge Step
 
-Combine structure-agent and edge-case-agent outputs into a unified flow model:
+Combine structure + edge-case outputs into a unified flow model:
 
-- **Structure agent contributes:** flow classification, entry points, platform-surface entry matrix, core screens (name/purpose/actions/responses), decision points, exits, screen-to-screen transitions.
-- **Edge-case agent contributes:** error/empty/loading/permission/offline states per screen, back/cancel paths, per-surface platform edge states (app not running, widget stale, refresh throttled, notification grouping, deep-link fallback, etc.).
+- **Structure:** flow classification, entry points, platform-surface entry matrix, core screens (name/purpose/actions/responses), decisions, exits, transitions.
+- **Edge-case:** error/empty/loading/permission/offline per screen, back/cancel paths, per-surface platform edge states (app not running, widget stale, refresh throttled, notification grouping, deep-link fallback, etc.).
 
-**Cross-reference checks before Layer 2:** (1) every screen has edge coverage; (2) every declared platform × surface has an entry-matrix row; (3) every platform × surface has a per-surface edge-state row. If any check fails, flag before dispatching Layer 2.
+**Cross-reference checks before Layer 2:** (1) every screen has edge coverage; (2) every platform × surface has an entry-matrix row; (3) every platform × surface has a per-surface edge-state row. Flag failures before dispatching Layer 2.
 
 ---
 
 ## Layer 2a: Parallel Rendering
 
-Spawn **IN PARALLEL** (both consume the same merged Layer 1 output):
+Spawn **IN PARALLEL** (both consume merged Layer 1 output; wait for both before Layer 2b):
 
 | Agent | Instruction File | Pass These Inputs | Reference Files |
 |-------|-----------------|-------------------|-----------------|
 | Diagram Agent | `agents/diagram-agent.md` | brief + merged structure + edge cases | none |
-| Wireframe Agent | `agents/wireframe-agent.md` | brief + platforms + surface matrix + merged structure + edge cases | `references/platform-touchpoints.md` (for per-surface native dimensions) |
-
-Wait for both to complete before Layer 2b.
+| Wireframe Agent | `agents/wireframe-agent.md` | brief + platforms + surface matrix + merged structure + edge cases | `references/platform-touchpoints.md` (per-surface native dimensions) |
 
 ## Layer 2b: Sequential Chain
 
-Dispatch **ONE AT A TIME, IN ORDER**:
+Dispatch **ONE AT A TIME, IN ORDER:**
 
 | Step | Agent | Instruction File | Receives |
 |------|-------|-----------------|----------|
@@ -247,8 +241,8 @@ Dispatch **ONE AT A TIME, IN ORDER**:
 
 ## Critic Gate
 
-- **PASS:** Deliver the artifact.
-- **FAIL:** Re-dispatch named agent(s) with critic feedback. Max 2 rewrite cycles. After 2 failures, deliver with critic annotations and flag to user.
+- **PASS:** Deliver artifact.
+- **FAIL:** Re-dispatch named agent(s) with feedback. Max 2 cycles. After 2 failures, deliver with critic annotations and flag to user.
 
 ---
 
@@ -256,9 +250,9 @@ Dispatch **ONE AT A TIME, IN ORDER**:
 
 **Output path:** `.agents/product/flow/<flow-name>.md` (one file per flow).
 
-**On re-run of the same flow:** rename the existing `<flow-name>.md` to `<flow-name>.v[N].md` and create a new file at `<flow-name>.md` with incremented version.
+**Re-run of same flow:** rename existing `<flow-name>.md` → `<flow-name>.v[N].md`, create new `<flow-name>.md` with incremented version.
 
-**Multi-flow products:** run this skill once per flow — each run creates its own file. After any run that results in ≥2 **distinct flow slugs** (not counting `.v[N]` versioned files of the same flow) in `.agents/product/flow/`, the orchestrator auto-creates or updates `.agents/product/flow/index.md` (see template below). Versioned files like `checkout.v1.md` sit next to their live `checkout.md` and are excluded from the slug count and from the index.
+**Multi-flow products:** run once per flow — each creates its own file. After any run yielding ≥2 **distinct slugs** (excluding `.v[N]` versioned files) in `.agents/product/flow/`, orchestrator auto-creates/updates `.agents/product/flow/index.md` (template below). Versioned files sit next to live ones and are excluded from slug count and index.
 
 ### Per-flow file
 
