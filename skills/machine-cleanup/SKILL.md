@@ -299,7 +299,7 @@ On re-run: rename existing artifact to `machine-cleanup-report.v[N].md` and crea
 skill: machine-cleanup
 version: 1
 date: {{today}}
-status: complete
+status: done | done_with_concerns | blocked | needs_context
 total_reclaimed: "X.X GB"
 ---
 
@@ -358,6 +358,18 @@ If the user wants to dotfile-track the resulting clean state, suggest `chezmoi` 
   - Shell-rc files that source non-existent paths
 
   All four Layer 1 scanners share its output to avoid redundant `du`/`ls` runs.
+
+---
+
+## Completion Status
+
+Every run ends with explicit status:
+- **DONE** — all approved removals executed, totals reported (`total_reclaimed`), no orphaned references in shell-rcs
+- **DONE_WITH_CONCERNS** — cleanup applied but some folders deferred to manual user triage (user-data dirs, ambiguous ownership); report enumerates what was deferred
+- **BLOCKED** — destructive removal would touch user data without confirmation; halted pending explicit user decision
+- **NEEDS_CONTEXT** — tool ownership unclear for some folders (no entry in tool-ownership-map.md and the user can't identify the owning tool); ask before removing
+
+---
 
 ## References
 

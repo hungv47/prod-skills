@@ -266,7 +266,7 @@ On re-run: rename existing artifact to `system-architecture.v[N].md` and create 
 skill: system-architecture
 version: 1
 date: {{today}}
-status: draft
+status: done | done_with_concerns | blocked | needs_context
 ---
 
 # System Architecture: [Product Name]
@@ -306,6 +306,16 @@ List any patterns that were checked but excluded per the false-positive exclusio
 ## Next Step
 Run `task-breakdown` to decompose this architecture into implementable tasks.
 ```
+
+---
+
+## Completion Status
+
+Every run ends with explicit status:
+- **DONE** — full architecture written (stack, schema, API, infra, scaling), critic PASS, open questions explicitly listed
+- **DONE_WITH_CONCERNS** — architecture written but with scaling assumptions or stack tradeoffs the user should validate; flagged in Open Questions
+- **BLOCKED** — requirements contradict (e.g., budget vs scale, latency vs cost); needs user trade-off decision before any single architecture can be specified
+- **NEEDS_CONTEXT** — spec, prioritized initiatives, or user-flows missing; recommend `discover`, `prioritize`, or `user-flow` first
 
 ---
 

@@ -359,7 +359,7 @@ On re-run: rename existing artifact to `[name].v[N].md` and create new with incr
 skill: docs-writing
 version: 1
 date: {{today}}
-status: draft
+status: done | done_with_concerns | blocked | needs_context
 audience: [end-user | developer | operator | mixed]
 doc-type: [readme | user-guide | api-reference | config-guide | tutorial | ship-log]
 ---
@@ -368,6 +368,16 @@ doc-type: [readme | user-guide | api-reference | config-guide | tutorial | ship-
 ## Next Step
 
 Documentation complete. Run `fresh-eyes` for quality review. Run `seo` if docs are public-facing.
+
+---
+
+## Completion Status
+
+Every run ends with explicit status:
+- **DONE** — docs written for the requested audience and doc-type, staleness checks passed, critic PASS
+- **DONE_WITH_CONCERNS** — docs written but some areas thin (advanced features under-documented, code samples stub-only, examples missing); flagged in artifact
+- **BLOCKED** — codebase too large or contradictory for in-scope coverage; needs scope reduction before continuing
+- **NEEDS_CONTEXT** — audience or doc-type not specified and can't be inferred from codebase; ask the user
 
 ---
 

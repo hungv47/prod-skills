@@ -261,7 +261,7 @@ Dispatch **ONE AT A TIME, IN ORDER:**
 skill: user-flow
 version: 1
 date: {{today}}
-status: draft
+status: done | done_with_concerns | blocked | needs_context
 flow_name: [slug, matches filename]
 platforms: [macOS, iOS, web-desktop, ...]
 ---
@@ -478,6 +478,16 @@ Generated from the files in this directory. Update whenever a flow file is added
 **Drift between wireframe and structure inventory** — Wireframe shows 5 CTAs when the structure-agent listed 2 actions. INSTEAD: Wireframe CTAs must match the structure actions column exactly.
 
 **Wireframes without descriptions** — An ASCII frame + CTA label gives layout but not intent. INSTEAD: Each screen has a 2-4 sentence Description covering content/data, visual priority, and mood. "Shows information" is not a description — name the actual content, hierarchy, and mood.
+
+---
+
+## Completion Status
+
+Every run ends with explicit status:
+- **DONE** — flow specified for all declared platforms with structure, wireframes, edge states, and per-surface coverage; critic PASS
+- **DONE_WITH_CONCERNS** — flow complete but with platform surfaces under-specified (e.g., widget refresh budget unverified, Live Activity ceiling not modeled); flagged inline
+- **BLOCKED** — feature scope unclear or contradictory across declared platforms; needs user clarification before flow can converge
+- **NEEDS_CONTEXT** — `research/product-context.md` missing for audience grounding; recommend `icp-research` or interview the user
 
 ---
 

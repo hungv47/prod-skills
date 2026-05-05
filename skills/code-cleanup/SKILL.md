@@ -260,7 +260,7 @@ On re-run: rename existing artifact to `cleanup-report.v[N].md` and create new w
 skill: code-cleanup
 version: 1
 date: {{today}}
-status: complete
+status: done | done_with_concerns | blocked | needs_context
 ---
 
 # Cleanup Report
@@ -287,6 +287,16 @@ status: complete
 ## Next Step
 
 Run `fresh-eyes` for a fresh-eyes quality review.
+
+---
+
+## Completion Status
+
+Every run ends with explicit status:
+- **DONE** — all approved removals applied, behavior preserved (tests + lint + build PASS), critic PASS
+- **DONE_WITH_CONCERNS** — cleanup applied but some validation skipped (no test suite, pre-existing build break, manual verification required); report flags what wasn't checked
+- **BLOCKED** — pre-existing test/build failures unrelated to cleanup; pause so the baseline can be fixed before proceeding (otherwise rollback signal is unreliable)
+- **NEEDS_CONTEXT** — codebase conventions unclear (no framework detected, mixed language stack, ambiguous test runner); ask user before scanning
 
 ---
 
