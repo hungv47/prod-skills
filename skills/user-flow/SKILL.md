@@ -45,8 +45,8 @@ routing:
     - product/flow/index.md  # auto-generated when ≥2 flows exist
   consumes:
     - product-context.md
-    - brand/DESIGN.md
   requires: []
+  # brand/DESIGN.md and brand/BRAND.md are documented as Optional Artifacts in body — read if present, never gated.
   defers-to:
     - skill: brand-system
       when: "need visual identity, not screen flows"
