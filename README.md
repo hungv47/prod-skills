@@ -41,7 +41,7 @@ Skills are then namespaced — call them as `/product-skills:user-flow`, `/produ
 ## Pipeline
 
 <picture>
-  <img src="./assets/pipeline.svg" alt="Product pipeline: user-flow → system-architecture, plus horizontal code-cleanup and docs-writing" width="100%">
+  <img src="./assets/pipeline.png" alt="Product pipeline: user-flow → system-architecture, plus horizontal code-cleanup and docs-writing" width="100%">
 </picture>
 
 ## Skills
