@@ -128,51 +128,68 @@ Single route — all flows use the full stack. Flows >15 screens auto-split via 
 
 ---
 
-## Step 0: Pre-Dispatch Context Gathering
+## Pre-Dispatch
 
-### Product Context Check
-Check `research/product-context.md`. If missing: **INTERVIEW** for product dimensions (what, who, problem, differentiator, constraints) and save it — or recommend `icp-research (from hungv47/research-skills)` to bootstrap.
+Run the Pre-Dispatch protocol (`meta-skills/references/pre-dispatch-protocol.md`). user-flow has a **mandatory platform/surface gate** before any Layer 1 dispatch — that gate sits inside Pre-Dispatch's question set.
 
-If `date` field >30 days old, recommend re-running `icp-research` first.
+**Needed dimensions:** feature, role/persona, goal (success state), platforms (explicit list, never "cross-platform"), surfaces per platform, primary surface per platform, constraints (auth + min OS versions).
 
-### Required Artifacts
-None — runs standalone.
+**Read order:**
+1. Pipeline: `research/product-context.md` for product/audience grounding. `brand/DESIGN.md` (optional — components, tokens). `brand/BRAND.md` (optional — voice, terminology).
+2. Experience: `.agents/experience/{audience,technical,goals}.md` for product, audience, and platform history.
+3. Catalog: `references/platform-touchpoints.md` for the canonical platform/surface list.
 
-### Optional Artifacts
-- `product-context.md` (icp-research) — product/user context
-- `brand/DESIGN.md` (brand-system) — components, design tokens
-- `brand/BRAND.md` (brand-system) — voice/terminology for Descriptions
+If `research/product-context.md` `date` is >30 days old, recommend re-running `icp-research` to refresh.
 
-### Flow Interview
-Interview these dimensions first. Full platform/surface enumeration in `references/platform-touchpoints.md` § "Using this catalog at the interview."
+**Warm Start** (product-context + prior flow files exist, target platforms inferable from project history):
 
-**Product context**
-1. Product/feature needing flow mapping?
-2. Problem it solves?
-3. Primary user? (role, technical skill, frequency)
+```
+Found:
+- product/audience → "[from product-context.md]"
+- prior flows → "[list of .agents/product/flow/*.md]"
+- typical platform set → "[from experience/technical.md]"
 
-**Flow scope**
-4. Single user goal this flow serves?
-5. Confirm flow slug (auto-derived, e.g. "checkout flow" → `checkout`).
-6. Where does it start? (specific trigger — multiple if multi-surface)
-7. Success state? (specific)
-8. Existing flows to reference, replace, or extend?
+Need before dispatching: feature name + goal + platform set + primary surface per platform.
+(Platform set is the mandatory gate — must be explicit, no "cross-platform".)
+```
 
-**Platforms & surfaces — mandatory gate (see `references/platform-touchpoints.md`)**
-9. **Target platforms** — from: `macOS`, `iOS`, `iPadOS`, `Android`, `Windows`, `web-desktop`, `web-mobile`, `watchOS`, `tvOS`, `visionOS`, `CarPlay`, `Android Auto`, `Linux`. Reject "cross-platform."
-10. **Per-platform surfaces** — pick from catalog (authoritative; don't list from memory).
-11. **Cross-platform channels** — from catalog's Cross-platform section.
-12. **Primary surface per platform** — the *one* default entry (drives default wireframe size).
+**Cold Start** (no upstream context):
 
-**Constraints**
-13. Authentication? (logged in / guest / role-based)
-14. Technical/business rules forcing specific paths?
-15. Minimum OS versions? (drives available surfaces — e.g., Live Activities iOS 16.1+, Control Center custom controls iOS 18+)
+```
+user-flow maps a feature into structure, edge cases, and platform-native
+wireframes. The mandatory gate is platforms+surfaces — without explicit
+enumeration, wireframe size, entries, and edge states all become guesses.
 
-**Gate:** No Layer 1 until Q9–Q12 are explicit. "All surfaces" / "cross-platform" fail.
+1. **Feature/flow name** — what's being mapped? (E.g., "checkout", "onboarding".)
+2. **Role + goal** — who's using it (role, technical skill, frequency)
+   and what's the single user goal this flow serves?
+3. **Platforms** — explicit list from this catalog ONLY:
+   `macOS`, `iOS`, `iPadOS`, `Android`, `Windows`, `web-desktop`,
+   `web-mobile`, `watchOS`, `tvOS`, `visionOS`, `CarPlay`, `Android Auto`, `Linux`.
+   "Cross-platform" is rejected.
+4. **Surfaces per platform + primary** — for each platform you listed, name
+   the surfaces (from `references/platform-touchpoints.md` catalog) and
+   designate the *one* primary surface (drives default wireframe size).
+   E.g., "iOS: app + widget + Live Activity, primary=app".
+5. **Constraints** — authentication (logged in / guest / role-based),
+   business rules forcing specific paths, minimum OS versions.
+
+Answer 1-5 in one response. Q3 + Q4 are gates — no Layer 1 dispatch until both are explicit.
+```
+
+**Write-back:**
+
+| Q | File | Key |
+|---|---|---|
+| 2. Role | `audience.md` | `Audience — [feature] persona` (only if novel) |
+| 3. Platforms | `technical.md` | `Technical — supported platforms` (durable across flows) |
+| 5. Min OS versions | `technical.md` | `Technical — min OS versions` |
+
+Feature name, goal, surfaces per flow, and per-flow constraints stay project-specific (live in the flow file itself).
 
 ### Context to Pass to All Agents
-Product · user · goal · slug · platform list · surface matrix · cross-platform channels · primary surface per platform · min OS versions · constraints.
+
+After Pre-Dispatch resolves: product · user · goal · slug · platform list · surface matrix · cross-platform channels · primary surface per platform · min OS versions · constraints.
 
 ---
 

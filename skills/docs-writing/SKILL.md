@@ -72,6 +72,58 @@ routing:
 ## Output
 - Documentation artifact saved to project root or specified location (e.g., `docs/`, `README.md`)
 
+---
+
+## Pre-Dispatch
+
+Run the Pre-Dispatch protocol (`meta-skills/references/pre-dispatch-protocol.md`).
+
+**Needed dimensions:** audience (end-user / developer / operator / mixed), doc type (readme / user-guide / api-reference / config-guide / tutorial / ship-log), codebase path, fresh write or update existing.
+
+**Read order:**
+1. Codebase scan: existing README, docs/, package manifest, framework hints.
+2. Experience: `.agents/experience/technical.md` for prior doc conventions.
+
+**Warm Start** (audience + type both inferable, e.g., user said "write the README"):
+
+```
+Found:
+- repo → "[detected framework]"
+- existing docs → "[README.md present / docs/ folder]"
+- inferred audience → "[developer | end-user | mixed]"
+- inferred type → "[readme | api-reference | etc.]"
+
+Override audience or type, or proceed?
+```
+
+**Cold Start** (vague: "document this"):
+
+```
+docs-writing produces audience-appropriate documentation. The output shape
+depends heavily on who reads it and what they need from it:
+
+1. **Audience** — end-user (people using the product), developer (people
+   building with the API or extending the code), operator (people deploying
+   or maintaining), or mixed?
+2. **Doc type** — readme (project intro + getting started), user-guide
+   (task-oriented walkthroughs), api-reference (signatures + examples),
+   config-guide (settings + flags), tutorial (step-by-step learning),
+   or ship-log (changelog snapshot)?
+3. **Codebase path** — root or specific subset.
+4. **Fresh or update** — write new docs from scratch, or refresh existing
+   ones (preserves human-edited prose, updates code-derived sections only)?
+
+Answer 1-4 in one response. I'll dispatch.
+```
+
+**Write-back:**
+
+| Q | File | Key |
+|---|---|---|
+| 4. Conventions emerging from doc style preferences | `technical.md` | `Technical — doc conventions` (only if user expresses durable preference, e.g., "always use this voice") |
+
+Other answers are run-specific.
+
 ## Chain Position
 Previous: none | Next: none (standalone)
 

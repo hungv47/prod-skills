@@ -73,6 +73,61 @@ routing:
 ## Output
 - `architecture/system-architecture.md`
 
+---
+
+## Pre-Dispatch
+
+Run the Pre-Dispatch protocol (`meta-skills/references/pre-dispatch-protocol.md`).
+
+**Needed dimensions:** spec/PRD reference, scale targets (users / RPS / data), constraints (budget / team skills / latency / compliance), deployment context (greenfield / brownfield / migration).
+
+**Read order:**
+1. Pipeline: `.agents/spec.md`, `.agents/prioritize.md`, `.agents/product/flow/*.md`, existing `architecture/system-architecture.md` (if re-run).
+2. Codebase: package manifest, existing schema files, framework signals.
+3. Experience: `.agents/experience/technical.md` for stack history + constraints.
+
+**Warm Start** (spec + flows present, scale either declared or derivable from product context):
+
+```
+Found:
+- spec → "[1-line summary]"
+- flows → "[N flow files]"
+- declared stack → "[from package.json / experience/technical.md]"
+
+Need before dispatching: scale targets and any new constraints (compliance, latency, budget tier)?
+```
+
+**Cold Start** (no spec, greenfield, conversation only):
+
+```
+system-architecture produces a full technical blueprint — stack, schema,
+APIs, infra, scaling. Without specifics, defaults will be generic and
+likely wrong for your scale or constraints.
+
+1. **Spec/PRD reference** — file path, paste, or 2-3 paragraph description
+   of what this system does. (Defer to `discover` first if requirements
+   are still fuzzy.)
+2. **Scale targets** — users, requests/second, data volume. (E.g., "10k MAU,
+   peak 50 RPS, ~100GB data".)
+3. **Constraints** — budget tier (bootstrapped / seed / Series A+), team
+   skills (frontend-only / full-stack / specialists), latency requirements,
+   compliance (HIPAA / SOC2 / GDPR / none).
+4. **Deployment context** — greenfield (no existing system), brownfield
+   (extend existing), or migration (replace existing)?
+
+Answer 1-4 in one response. I'll dispatch stack-selection and infrastructure agents.
+```
+
+**Write-back:**
+
+| Q | File | Key |
+|---|---|---|
+| 2. Scale | `technical.md` | `Technical — scale targets` |
+| 3. Constraints | `technical.md` | `Technical — constraints` (durable: compliance, latency tier, team skills) |
+| 4. Deployment context | `technical.md` | `Technical — deployment context` |
+
+Spec is project-specific (lives in spec.md / system-architecture.md), not persisted to experience/.
+
 ## Chain Position
 Previous: `discover` or `task-breakdown` (optional) | Next: `task-breakdown` (optional) | Cross-stack: reads `prioritize.md` (from research-skills), `user-flow.md` (from product-skills)
 

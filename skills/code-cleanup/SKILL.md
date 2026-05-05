@@ -71,6 +71,56 @@ routing:
 ## Output
 - `.agents/cleanup-report.md`
 
+---
+
+## Pre-Dispatch
+
+Run the Pre-Dispatch protocol (`meta-skills/references/pre-dispatch-protocol.md`).
+
+**Needed dimensions:** codebase path, cleanup intent (dead code / unused deps / asset / refactor / mixed), test suite available?, conventions to preserve.
+
+**Read order:**
+1. Codebase scan: package manifest, test config, lint config, framework hints (CLAUDE.md, .editorconfig, etc.).
+2. Experience: `.agents/experience/technical.md` for prior conventions notes.
+
+**Warm Start** (cleanup intent obvious from invocation, e.g., user said "remove dead code"):
+
+```
+Found:
+- repo → "[detected framework + test runner]"
+- intent → "[parsed from invocation: dead code / deps / asset / refactor]"
+
+Test suite detected: [yes/no]. Override or proceed?
+```
+
+**Cold Start** (vague invocation, e.g., "clean this up"):
+
+```
+code-cleanup applies the 5 golden rules (preserve behavior, small steps,
+check conventions, test after each change, rollback awareness). Before I scan:
+
+1. **Codebase path** — root directory or specific files/glob.
+2. **Cleanup intent** — pick one or more:
+   - dead code (unused exports, unreachable branches, abandoned features)
+   - unused dependencies
+   - asset cleanup (orphaned images, unused config files)
+   - refactor (consolidation, splitting, naming)
+3. **Test suite** — does the project have one? (Identifies your validation
+   floor; if no, I'll skip auto-validation and flag DONE_WITH_CONCERNS.)
+4. **Conventions to preserve** — anything I should NOT touch (file structure,
+   naming patterns, in-flight refactors)?
+
+Answer 1-4 in one response. I'll dispatch scanners.
+```
+
+**Write-back:**
+
+| Q | File | Key |
+|---|---|---|
+| 4. Conventions | `technical.md` | `Technical — codebase conventions` (only if user gave durable rules, not "leave file X alone for this run") |
+
+Other answers are run-specific, not persisted.
+
 ## Chain Position
 Previous: none | Next: none (standalone)
 
