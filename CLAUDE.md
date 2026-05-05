@@ -26,6 +26,10 @@ Install research-skills: `npx skills add hungv47/research-skills`
 ## Recommended Order
 Run `user-flow` BEFORE `system-architecture`. User flows define WHAT screens and transitions exist; architecture defines HOW to build them.
 
+## Pre-Dispatch Protocol
+
+All 5 skills follow the canonical Pre-Dispatch protocol (`meta-skills/references/pre-dispatch-protocol.md`). Cold Start (3-5 bundled questions, one round-trip) when context is missing; Warm Start (summary + optional probe) when artifacts/experience cover what's needed. Most product-skill answers persist to `.agents/experience/technical.md` (supported platforms, min OS versions, scale targets, deployment context, codebase conventions, machine-cleanup excluded paths) — durable cross-skill state. `user-flow` has a mandatory platforms+surfaces gate inside Pre-Dispatch.
+
 ## Multi-Agent Skills
 
 All 4 skills use a multi-agent orchestration pattern.
