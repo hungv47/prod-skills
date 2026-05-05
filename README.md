@@ -1,5 +1,7 @@
 # Product Skills
 
+![Product Skills](./assets/banner.png)
+
 UX design, technical architecture, code cleanup, documentation, and shipping — the skills for designing and building software.
 
 ## Install
