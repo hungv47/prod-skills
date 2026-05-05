@@ -119,7 +119,7 @@ READMEs, API references, setup guides, runbooks, and architecture docs with cons
 
 ## Changelog
 
-See [CHANGELOG.md](CHANGELOG.md) for release notes.
+See [CHANGELOG.md](CHANGELOG.md) for release notes (commit 1c1bb63, 2026-05-05).
 
 ## License
 
