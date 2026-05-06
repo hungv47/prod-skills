@@ -1,0 +1,278 @@
+---
+name: start-product
+description: "Stack orchestrator for product-skills. Reads what's already done in `.agents/product/`, `architecture/`, and `research/`, parses your intent, and proposes the next 1–3 skills (user-flow → system-architecture → docs-writing, plus standalone code-cleanup and machine-cleanup). Use when you don't know which product skill to invoke, or want a guided run from user flows through architecture to docs. Not for executing the work itself — it routes to the skill that does. Not for cross-stack workflows (use start-meta or invoke skills directly)."
+argument-hint: "[free-form ask, or empty to be guided]"
+allowed-tools: Read Grep Glob Bash
+user-invocable: true
+license: MIT
+metadata:
+  author: hungv47
+  version: "1.0.0"
+  budget: standard
+  estimated-cost: "$0.10-0.30"
+promptSignals:
+  phrases:
+    - "where do i start with product"
+    - "what skill should i use for product"
+    - "start product"
+    - "begin product"
+    - "product workflow"
+    - "i need to design a feature"
+    - "build something"
+  allOf:
+    - [where, start, product]
+    - [what, skill, product]
+  anyOf:
+    - "product workflow"
+    - "design a feature"
+    - "system design"
+    - "user journey"
+    - "code cleanup"
+    - "machine cleanup"
+    - "documentation"
+  noneOf:
+    - "marketing campaign"
+    - "landing page"
+    - "icp"
+  minScore: 5
+routing:
+  intent-tags:
+    - product-orchestration
+    - workflow-routing
+    - stack-entry-point
+    - product-guide
+  position: orchestrator
+  produces:
+    - .agents/experience/product-workflow.md
+  consumes:
+    - research/product-context.md
+    - .agents/product/flow/*.md
+    - .agents/product/flow/index.md
+    - architecture/system-architecture.md
+    - .agents/cleanup-report.md
+    - .agents/machine-cleanup-report.md
+    - .agents/spec.md
+    - .agents/tasks.md
+    - .agents/experience/*.md
+  requires: []
+  defers-to:
+    - skill: user-flow
+      when: "designing a feature with multiple screens / decisions / states"
+    - skill: system-architecture
+      when: "tech stack, schema, API design, file structure"
+    - skill: docs-writing
+      when: "README, API reference, runbook, ship log, setup guide"
+    - skill: code-cleanup
+      when: "auditing existing code for dead code, duplication, refactor candidates"
+    - skill: machine-cleanup
+      when: "auditing developer machine — caches, dotfolders, package globals"
+    - skill: discover
+      when: "spec is unclear before any product skill can run"
+    - skill: task-breakdown
+      when: "spec + architecture exist, need a buildable task list"
+  parallel-with: []
+  interactive: true
+  estimated-complexity: low
+---
+
+# Start Product
+
+*Meta — Stack orchestrator. The entry point for the product-skills stack when you don't know what to invoke.*
+
+**Core Job:** read what exists in `.agents/product/`, `architecture/`, and `research/`, infer where you are, propose the next skill.
+
+**Core Question:** "Given the spec, the user-flow state, and the architecture state, what's the next product skill to run?"
+
+This skill does NOT execute product work. It is a router. The actual work is done by the skill it routes you to.
+
+---
+
+## When To Use
+
+- You just installed product-skills and don't know what to type.
+- You're mid-build and forget which skill is next.
+- You have a vague need ("design this feature", "clean up the codebase", "document this", "tidy my machine") and want a guided routing.
+- You want to resume across sessions.
+
+## When NOT To Use
+
+- You already know which skill to run.
+- Your task is cross-stack (e.g., needs research + product). Use `/start-meta`.
+- You want execution rather than routing.
+
+---
+
+## How It Works
+
+1. **State detection** — silently read `.agents/product/`, `architecture/`, `.agents/spec.md`, `.agents/tasks.md`, `.agents/experience/*.md`, `research/product-context.md`.
+2. **Intention analysis** — parse user's free-form ask. If empty, ask one bundled scoping question.
+3. **Routing decision** — propose 1–3 skills with rationale + cost + duration.
+4. **User confirmation** — print hand-off `/skill-name` and exit. Never auto-invoke.
+
+---
+
+## Step 1: State Detection
+
+Silent scan:
+
+| Path | What it tells you |
+|---|---|
+| `research/product-context.md` | Cross-stack ICP/business context exists. |
+| `.agents/spec.md` | A scoped spec exists (from `discover`). |
+| `.agents/product/flow/index.md` | At least 2 user flows mapped. |
+| `.agents/product/flow/*.md` | Specific flows mapped (each file = one flow). |
+| `architecture/system-architecture.md` | System blueprint exists. |
+| `.agents/tasks.md` | Buildable task list exists (from `task-breakdown`). |
+| `.agents/cleanup-report.md` | Code cleanup audit done. |
+| `.agents/machine-cleanup-report.md` | Machine cleanup audit done. |
+| `.agents/experience/technical.md` | Cold-start tech context (platforms, OS versions, scale, deployment, codebase conventions) persisted. |
+| `.agents/experience/product-workflow.md` | Prior breadcrumb. |
+
+State map:
+
+```
+spec:              done | partial | missing
+flows-mapped:      [list of flow names]
+architecture:      done | partial | missing
+tasks-broken-down: done | partial | missing
+code-cleanup:      done | not run
+machine-cleanup:   done | not run
+docs:              [skim README, docs/, look for ship log in product-context.md]
+```
+
+**Stale check:** flow files older than current `architecture/system-architecture.md` mtime → architecture may be ahead of flow definitions; warn. Spec older than 60 days → may be misaligned.
+
+---
+
+## Step 2: Intention Analysis
+
+| User says | Intent | Pipeline position |
+|---|---|---|
+| "design this feature", "user journey", "screen flow", "edge states", "platform touchpoints" | flow-mapping | user-flow |
+| "tech stack", "database schema", "API design", "file structure", "deployment plan", "system design" | architecture | system-architecture |
+| "decompose tasks", "task list", "what to build first", "implementation order" | task-decomposition | task-breakdown (meta-skills) |
+| "README", "API docs", "runbook", "setup guide", "ship log", "document this" | documentation | docs-writing |
+| "clean up code", "dead code", "refactor", "code audit", "remove unused" | code-cleanup | code-cleanup |
+| "machine cleanup", "clean my mac", "free disk space", "remove caches", "dotfolder audit", "developer hygiene" | machine-cleanup | machine-cleanup |
+| "scope this", "clarify requirements", "what should we build" | discovery | discover (meta-skills) |
+
+**If empty or ambiguous**, ask:
+
+> "What are you trying to do? Pick one or describe in your words:
+>
+> 1. Design a feature (user flows, screens, edge states)
+> 2. Design the system (stack, schema, API)
+> 3. Document something (README, API ref, runbook)
+> 4. Clean up code (refactor, dead code, duplication)
+> 5. Clean up developer machine (caches, dotfolders)
+> 6. Decompose into tasks (already have spec/architecture)"
+
+---
+
+## Step 3: Routing Decision
+
+Apply rules in order — first match wins.
+
+**Foundation gates:**
+1. **No spec or product-context AND intent is flow-mapping or architecture** → defer to `/discover` (from meta-skills) first to clarify scope. Note: not strict — user can override if they have clarity in conversation already.
+
+**Pipeline routing:**
+2. **flow-mapping** → propose `user-flow`. Note: produces one file per flow; can be invoked multiple times for different flows (checkout, onboarding, etc.).
+3. **architecture** → propose `system-architecture`. Soft-gate: if no flows mapped, note "system-architecture works without flows but is sharper with them — flows define what screens/transitions exist; architecture defines how to build them."
+4. **task-decomposition** → defer to `/task-breakdown` (meta-skills). Hard requires either spec.md or system-architecture.md.
+5. **documentation** → propose `docs-writing`. Ask user which mode (README / API ref / runbook / ship log / setup guide).
+6. **code-cleanup** → propose `code-cleanup`. Standalone — no upstream gate.
+7. **machine-cleanup** → propose `machine-cleanup`. Standalone — no upstream gate.
+8. **discovery** → defer to `/discover` (meta-skills).
+
+**Combined intents** ("I want to design and build a feature"):
+- Propose 2-step path: `/user-flow` → `/system-architecture`. Show both as the recommended sequence with rationale.
+
+**Cross-stack pull-in:**
+- If intent is architecture AND `.agents/prioritize.md` exists, mention: "system-architecture can read `.agents/prioritize.md` to align technical work with business priorities."
+
+---
+
+## Step 4: Present + Confirm
+
+```
+## Where you are
+
+- Spec: ✅ done (.agents/spec.md, last week)
+- Flows mapped: 1 (checkout)
+- Architecture: ❌ missing
+- Tasks broken down: ❌ missing
+- Code cleanup: not run
+- Machine cleanup: not run
+
+## What you asked
+
+"I need to design how this feature is built" → architecture intent.
+
+## Recommended next: system-architecture
+
+Why: spec is done; checkout flow is mapped. system-architecture consumes
+both and produces the technical blueprint (stack, schema, API, file
+structure, deployment plan).
+
+Cost: ~$1–3 · Duration: ~10 min · Produces: architecture/system-architecture.md
+
+Note: only 1 flow is mapped. If your feature spans multiple flows
+(onboarding, settings, etc.), consider running /user-flow on those
+first — system-architecture is sharper with all flows in place.
+
+Run it?  →  /system-architecture
+```
+
+If multiple options apply, show 2–3.
+
+---
+
+## Step 5: Persist + Hand Off
+
+Append to `.agents/experience/product-workflow.md`:
+
+```markdown
+## Session 2026-05-06
+
+- Read state: spec ✅, flows [checkout], architecture ❌, tasks ❌
+- User intent: architecture
+- Recommended: system-architecture
+- User confirmed: yes
+```
+
+Print:
+
+> Run `/system-architecture` next. After it completes, re-run `/start-product` to plan the next step (likely `/task-breakdown`).
+
+Exit.
+
+---
+
+## Pipeline Reference
+
+For canonical pipeline, decision rules, per-skill catalog, see [`./references/workflow-graph.md`](./references/workflow-graph.md).
+
+---
+
+## Anti-Patterns
+
+- **Don't conflate code-cleanup and machine-cleanup.** Code = source files; machine = dotfolders, caches, globals.
+- **Don't recommend system-architecture without any flows or spec context.** It produces hollow blueprints.
+- **Don't auto-invoke.** Always print `/skill-name`.
+- **Don't recommend more than 3 skills.**
+- **Don't recommend skills outside this stack except `discover` (meta) and `task-breakdown` (meta).** These two are intentional exceptions because they sit *inside* the product workflow, not adjacent to it: `discover` is the canonical upstream of any product build (clarifies WHAT before flow/architecture); `task-breakdown` is the canonical downstream after architecture (decomposes HOW into tasks before implementation). For all other meta-skills (`agents-panel`, `fresh-eyes`) and for cross-stack work, route through `/start-meta`.
+
+---
+
+## Output
+
+- **Inline only.**
+- **Side effect:** appends one entry to `.agents/experience/product-workflow.md`.
+
+## Status
+
+Ends with one of:
+- `DONE` — recommendation given, hand-off printed.
+- `BLOCKED` — couldn't read state.
+- `NEEDS_CONTEXT` — empty ask + no state. Ask scoping question.

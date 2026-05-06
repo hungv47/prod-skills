@@ -2,7 +2,9 @@
 
 ![Product Skills](./assets/banner.png)
 
-UX design, technical architecture, code cleanup, documentation, and shipping — the skills for designing and building software.
+UX design, technical architecture, code cleanup, machine cleanup, and documentation — the skills for designing and building software. 6 skills (incl. `/start-product` orchestrator).
+
+**New here?** Run `/start-product` — it reads project state (spec, flows, architecture), parses your ask, and proposes the next skill to invoke with rationale.
 
 ## Install
 

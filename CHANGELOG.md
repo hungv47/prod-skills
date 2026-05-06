@@ -6,6 +6,24 @@ This file tracks stack-level releases. SKILL.md files describe current behavior;
 
 ---
 
+## [2.1.0] - 2026-05-06
+
+Stack orchestrator added; declaration drift fixed.
+
+### Added
+
+- `start-product` — Stack orchestrator. Reads `.agents/product/`, `architecture/`, `.agents/spec.md`, `.agents/tasks.md`, and `.agents/experience/*.md`, parses the user's free-form ask (or asks one bundled scoping question if empty), and proposes the next 1–3 skills in the product pipeline (`user-flow` → `system-architecture` → `docs-writing`, with `code-cleanup` and `machine-cleanup` as standalone branches) with rationale + cost + duration. Knows two intentional cross-stack exceptions: `discover` (canonical upstream of any product build) and `task-breakdown` (canonical decomposition step between architecture and implementation) — these are referenced directly because they sit *inside* the product workflow rather than adjacent to it. All other meta-skills route via `/start-meta`. Never auto-invokes — always prints the `/skill-name` for the user to type. Persists a breadcrumb to `.agents/experience/product-workflow.md`. Standard budget, ~$0.10–0.30 per run. Pipeline catalog lives in `references/workflow-graph.md`.
+
+### Fixed
+
+- `machine-cleanup` was present on disk since v2.0.0 but missing from `.claude-plugin/plugin.json` `skills[]` — declaration restored. Skill now installs correctly via the Claude Code plugin marketplace path.
+
+### Changed
+
+- Plugin `keywords` extended with `machine-cleanup` to surface the developer-machine-hygiene capability in marketplace search.
+
+---
+
 ## [1.0.0] - 2026-05-05
 
 Initial public release. UX design, technical architecture, code cleanup, machine cleanup, and documentation generation.
