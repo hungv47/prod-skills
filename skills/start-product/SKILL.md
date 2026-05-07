@@ -44,6 +44,8 @@ routing:
   position: orchestrator
   produces:
     - .agents/experience/product-workflow.md
+  side-effects:
+    - manifest-sync
   consumes:
     - research/product-context.md
     - .agents/product/flow/*.md
@@ -113,7 +115,31 @@ This skill does NOT execute product work. It is a router. The actual work is don
 
 ## Step 1: State Detection
 
-Silent scan:
+**Read `.agents/manifest.json` first** — it is the canonical state index for all artifact metadata. A single read gives you status, staleness, producer, and a one-line summary for every relevant artifact; no per-path filesystem scanning required.
+
+If the manifest is missing or you suspect drift (e.g., artifacts exist that aren't listed), refresh it:
+
+```bash
+bun ${SKILLS_ROOT:-.claude/skills}/meta-skills/scripts/manifest-sync.ts
+```
+
+**Status-aware lookup:** for each product-relevant artifact key — `architecture/system-architecture.md`, `.agents/spec.md`, `.agents/tasks.md`, `.agents/product/flow/*.md`, `.agents/cleanup-report.md`, `.agents/machine-cleanup-report.md`, and any `docs-writing` outputs — read the manifest entry's `status` and `stale` fields to qualify the state map:
+
+| Manifest signal | State map value |
+|---|---|
+| `status: done`, `stale: false` | ✅ done |
+| `status: done_with_concerns` | ⚠️ done-with-concerns — surface the concern in routing output |
+| `status: blocked` or `needs_context` | treat as missing |
+| `stale: true` | ✅ done (stale) — propose refresh as an option, don't block |
+| `frontmatter_present: false` | ✅ done (legacy, no frontmatter) — quality unknown, suggest refresh |
+
+Staleness is derived per-artifact via the manifest's `stale_after_days` (defaults vary per artifact type — see manifest spec). Read the manifest entry's `stale` field directly; do not apply a fixed-day threshold here.
+
+**Experience block:** also read the manifest's `experience` block. The `entries` count for `technical.md`, `audience.md`, and `goals.md` indicates Pre-Dispatch coverage for product-stack questions — a domain with 0–1 entries likely needs a Cold Start; 5+ entries is well-covered.
+
+See [`../../../meta-skills/references/manifest-spec.md`](../../../meta-skills/references/manifest-spec.md) for the full contract.
+
+**Path reference / filesystem fallback** — used only when `.agents/manifest.json` doesn't exist (fresh project) or sync hasn't been run.
 
 | Path | What it tells you |
 |---|---|
@@ -139,8 +165,6 @@ code-cleanup:      done | not run
 machine-cleanup:   done | not run
 docs:              [skim README, docs/, look for ship log in product-context.md]
 ```
-
-**Stale check:** flow files older than current `architecture/system-architecture.md` mtime → architecture may be ahead of flow definitions; warn. Spec older than 60 days → may be misaligned.
 
 ---
 
@@ -257,6 +281,7 @@ For canonical pipeline, decision rules, per-skill catalog, see [`./references/wo
 
 ## Anti-Patterns
 
+- **Don't ignore the manifest** — always read `.agents/manifest.json` first; per-path filesystem scans are a fallback, not the default.
 - **Don't conflate code-cleanup and machine-cleanup.** Code = source files; machine = dotfolders, caches, globals.
 - **Don't recommend system-architecture without any flows or spec context.** It produces hollow blueprints.
 - **Don't auto-invoke.** Always print `/skill-name`.

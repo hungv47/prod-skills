@@ -6,6 +6,21 @@ This file tracks stack-level releases. SKILL.md files describe current behavior;
 
 ---
 
+## [2.2.0] - 2026-05-07
+
+Manifest-aware state detection in `start-product`.
+
+### Changed
+
+- `start-product` SKILL.md — Step 1 (State Detection) now reads `.agents/manifest.json` first with a status-aware lookup table (`done`, `done_with_concerns`, `blocked`/`needs_context`, `stale`, `frontmatter_present: false`). Per-artifact staleness flows from the manifest's `stale_after_days` field rather than the previous flow-vs-architecture mtime check or 60-day spec rule. The manifest's `experience` block surfaces Pre-Dispatch coverage (entries count for `technical.md`, `audience.md`, `goals.md`). Per-path filesystem scan demoted to fallback for fresh projects. Anti-pattern entry added: "Don't ignore the manifest." Added `side-effects: [manifest-sync]` to the skill's routing block.
+- `CLAUDE.md` — added "Manifest Spec" section pointing producer skills (system-architecture, user-flow, code-cleanup, machine-cleanup, docs-writing) at the canonical contract in `meta-skills/references/manifest-spec.md` and the frontmatter obligations.
+
+### Notes
+
+This release lands the manifest-spec contract on the consumer side. Per-skill frontmatter retrofit (system-architecture, user-flow, etc.) follows in a later release — the spec's graceful fallback (`frontmatter_present: false`) keeps existing artifacts working until producers are migrated.
+
+---
+
 ## [2.1.0] - 2026-05-06
 
 Stack orchestrator added; declaration drift fixed.

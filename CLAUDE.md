@@ -30,6 +30,10 @@ Run `user-flow` BEFORE `system-architecture`. User flows define WHAT screens and
 
 All 5 skills follow the canonical Pre-Dispatch protocol (`meta-skills/references/pre-dispatch-protocol.md`). Cold Start (3-5 bundled questions, one round-trip) when context is missing; Warm Start (summary + optional probe) when artifacts/experience cover what's needed. Most product-skill answers persist to `.agents/experience/technical.md` (supported platforms, min OS versions, scale targets, deployment context, codebase conventions, machine-cleanup excluded paths) — durable cross-skill state. `user-flow` has a mandatory platforms+surfaces gate inside Pre-Dispatch.
 
+## Manifest Spec
+
+State detection across all product skills (especially `start-product`) reads `.agents/manifest.json` — a derived index of artifact metadata (producer, date, status, schema version, staleness, summary). The manifest is rebuilt from artifact frontmatter by `meta-skills/scripts/manifest-sync.ts`; skills don't write to it directly. See [`../meta-skills/references/manifest-spec.md`](../meta-skills/references/manifest-spec.md) for the full contract. Skills that produce artifacts (system-architecture, user-flow, code-cleanup, machine-cleanup, docs-writing) must write the required frontmatter fields (`skill`, `version`, `date`, `status`) and call sync as their last step.
+
 ## Multi-Agent Skills
 
 All 4 skills use a multi-agent orchestration pattern.
