@@ -1,6 +1,6 @@
 ---
 name: user-flow
-description: "Maps multi-step in-product flows — screens, decisions, transitions, platform-native touchpoints (dock, menu bar, widgets, notifications, Live Activity, etc.), edge cases, and error states for features or user journeys. Produces `.agents/product/flow/<flow-name>.md` (one file per flow) plus an auto-generated `index.md` when ≥2 flows exist. Not for visual brand design (use brand-system) or single-page conversion (use lp-optimization). For technical architecture, see system-architecture. For task decomposition, see task-breakdown."
+description: "Maps multi-step in-product flows — screens, decisions, transitions, platform-native touchpoints (dock, menu bar, widgets, notifications, Live Activity, etc.), edge cases, and error states for features or user journeys. Produces `.agents/skill-artifacts/product/flow/<flow-name>.md` (one file per flow) plus an auto-generated `index.md` when ≥2 flows exist. Not for visual brand design (use brand-system) or single-page conversion (use lp-optimization). For technical architecture, see system-architecture. For task decomposition, see task-breakdown."
 argument-hint: "[feature or flow to map]"
 allowed-tools: Read Grep Glob Bash
 license: MIT
@@ -40,9 +40,10 @@ routing:
     - journey-mapping
     - wireframe-flow
   position: pipeline
+  lifecycle: pipeline
   produces:
-    - product/flow/[flow-name].md
-    - product/flow/index.md  # auto-generated when ≥2 flows exist
+    - skill-artifacts/product/flow/[flow-name].md
+    - skill-artifacts/product/flow/index.md  # auto-generated when ≥2 flows exist
   consumes:
     - product-context.md
   requires: []
@@ -70,7 +71,7 @@ routing:
 - **No diagrams before structure.** Diagram-agent needs structure + edge-case outputs first.
 - **No skipping edge cases.** Error/empty/loading/permission/offline + per-surface edge states for every screen and surface.
 - **Challenge >7 happy-path steps.** Miller's threshold. Every step must justify itself.
-- **One flow = one file.** No pooling. Each run writes `.agents/product/flow/<flow-name>.md`.
+- **One flow = one file.** No pooling. Each run writes `.agents/skill-artifacts/product/flow/<flow-name>.md`.
 - **Stale product context (>30 days) misaligns flows.** Recommend re-running `icp-research`.
 
 ## Inputs Required
@@ -81,8 +82,8 @@ routing:
 - **Per-platform surfaces in scope** — explicit list per platform
 
 ## Output
-- `.agents/product/flow/<flow-name>.md` — one file per flow run
-- `.agents/product/flow/index.md` — auto-created/updated when ≥2 flow files exist
+- `.agents/skill-artifacts/product/flow/<flow-name>.md` — one file per flow run
+- `.agents/skill-artifacts/product/flow/index.md` — auto-created/updated when ≥2 flow files exist
 
 Slug derived from brief (e.g., "checkout flow" → `checkout.md`); orchestrator confirms if ambiguous.
 
@@ -124,7 +125,7 @@ Prev: `brand-system` (optional — design tokens). Next: implementation. Related
 
 ## Routing Logic
 
-Single route — all flows use the full stack. Flows >15 screens auto-split via structure-agent's sub-flow decomposition. Pipeline: Step 0 (interview + gated enumeration) → **Layer 1 parallel** (structure + edge-case) → Merge → **Layer 2a parallel** (diagram + wireframe) → **Layer 2b sequential** (validation → critic). Critic FAIL re-dispatches named agents (max 2 cycles). Deliver to `.agents/product/flow/<flow-name>.md`; update `index.md` if ≥2 flows.
+Single route — all flows use the full stack. Flows >15 screens auto-split via structure-agent's sub-flow decomposition. Pipeline: Step 0 (interview + gated enumeration) → **Layer 1 parallel** (structure + edge-case) → Merge → **Layer 2a parallel** (diagram + wireframe) → **Layer 2b sequential** (validation → critic). Critic FAIL re-dispatches named agents (max 2 cycles). Deliver to `.agents/skill-artifacts/product/flow/<flow-name>.md`; update `index.md` if ≥2 flows.
 
 ---
 
@@ -146,7 +147,7 @@ If `research/product-context.md` `date` is >30 days old, recommend re-running `i
 ```
 Found:
 - product/audience → "[from product-context.md]"
-- prior flows → "[list of .agents/product/flow/*.md]"
+- prior flows → "[list of .agents/skill-artifacts/product/flow/*.md]"
 - typical platform set → "[from experience/technical.md]"
 
 Need before dispatching: feature name + goal + platform set + primary surface per platform.
@@ -265,11 +266,11 @@ Dispatch **ONE AT A TIME, IN ORDER:**
 
 ## Artifact Template
 
-**Output path:** `.agents/product/flow/<flow-name>.md` (one file per flow).
+**Output path:** `.agents/skill-artifacts/product/flow/<flow-name>.md` (one file per flow).
 
 **Re-run of same flow:** rename existing `<flow-name>.md` → `<flow-name>.v[N].md`, create new `<flow-name>.md` with incremented version.
 
-**Multi-flow products:** run once per flow — each creates its own file. After any run yielding ≥2 **distinct slugs** (excluding `.v[N]` versioned files) in `.agents/product/flow/`, orchestrator auto-creates/updates `.agents/product/flow/index.md` (template below). Versioned files sit next to live ones and are excluded from slug count and index.
+**Multi-flow products:** run once per flow — each creates its own file. After any run yielding ≥2 **distinct slugs** (excluding `.v[N]` versioned files) in `.agents/skill-artifacts/product/flow/`, orchestrator auto-creates/updates `.agents/skill-artifacts/product/flow/index.md` (template below). Versioned files sit next to live ones and are excluded from slug count and index.
 
 ### Per-flow file
 
@@ -415,7 +416,7 @@ Surface-specific failure modes that generic error/empty/loading don't capture. P
 
 ## Sub-flows
 
-- [Sub-flow name] → see `.agents/product/flow/[slug]-[sub].md`
+- [Sub-flow name] → see `.agents/skill-artifacts/product/flow/[slug]-[sub].md`
 
 ## Next Step
 
@@ -464,7 +465,7 @@ Generated from the files in this directory. Update whenever a flow file is added
 
 **Layer 2b** — Validation: happy path 5 steps (PASS), ≤3 actions/screen (PASS), surface coverage 13/13 (PASS). Critic: PASS 4.8.
 
-**Deliver** — `.agents/product/flow/checkout.md`. No `index.md` yet (only one flow). Second flow triggers index creation.
+**Deliver** — `.agents/skill-artifacts/product/flow/checkout.md`. No `index.md` yet (only one flow). Second flow triggers index creation.
 
 ---
 
@@ -488,7 +489,7 @@ Generated from the files in this directory. Update whenever a flow file is added
 
 **"Cross-platform" as a platform answer** — Collapses platform-specific surface decisions into nothing. macOS, iOS, and Android surfaces are different — a flow on "cross-platform" has no defined surface set. INSTEAD: Enumerate every platform. "Cross-platform" is a refusal to enumerate.
 
-**Pooling many flows into one file** — One `FLOW.md` for checkout + onboarding + password reset drifts quickly. INSTEAD: One flow per file at `.agents/product/flow/<flow-name>.md`. Use `index.md` for the catalog view.
+**Pooling many flows into one file** — One `FLOW.md` for checkout + onboarding + password reset drifts quickly. INSTEAD: One flow per file at `.agents/skill-artifacts/product/flow/<flow-name>.md`. Use `index.md` for the catalog view.
 
 **Skipping per-surface coverage** — Picking surfaces at Step 0 but only wireframing main screens, or treating "widget refresh budget exhausted" / "Live Activity 8h ceiling hit" / "universal link fell back to web" as generic "network errors." Each declared surface has specific layout constraints and specific failure modes. INSTEAD: One mini-frame per selected surface at its native dimensions, plus a per-surface edge-state table — both pulled from `references/platform-touchpoints.md`.
 

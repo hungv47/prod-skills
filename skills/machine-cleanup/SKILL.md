@@ -1,6 +1,6 @@
 ---
 name: machine-cleanup
-description: "Audits and cleans a developer's machine — dotfolders, caches, language toolchains, and package-manager globals — with per-target classification, risk surfacing (auth, running processes, side effects), and explicit user confirmation before each deletion. Produces `.agents/machine-cleanup-report.md`. Not for cleaning code (use code-cleanup) or for triaging user files in Documents/Downloads (those need human review)."
+description: "Audits and cleans a developer's machine — dotfolders, caches, language toolchains, and package-manager globals — with per-target classification, risk surfacing (auth, running processes, side effects), and explicit user confirmation before each deletion. Produces `.agents/skill-artifacts/meta/records/machine-cleanup-*.md`. Not for cleaning code (use code-cleanup) or for triaging user files in Documents/Downloads (those need human review)."
 argument-hint: "[target: home | caches | runtimes | packages | all]"
 allowed-tools: Read Grep Glob Bash
 license: MIT
@@ -48,8 +48,9 @@ routing:
     - disk-reclaim
     - dev-machine-hygiene
   position: horizontal
+  lifecycle: snapshot
   produces:
-    - machine-cleanup-report.md
+    - skill-artifacts/meta/records/machine-cleanup-*.md
   consumes: []
   requires: []
   defers-to:
@@ -71,7 +72,7 @@ routing:
 - User intent: full audit, caches only, runtimes only, package globals only, or specific folder
 
 ## Output
-- `.agents/machine-cleanup-report.md`
+- `.agents/skill-artifacts/meta/records/machine-cleanup-*.md`
 
 ## Chain Position
 Previous: none | Next: none (standalone)
@@ -176,7 +177,7 @@ Layer 3 (interactive — execution):
    - Execute with side-effect fixes
    - Track reclaim
 5. **Critic review** — `critic-agent` checks golden rules. If FAIL, restore from backup and report.
-6. **Assembly** — compile report. Save to `.agents/machine-cleanup-report.md`.
+6. **Assembly** — compile report. Save to `.agents/skill-artifacts/meta/records/machine-cleanup-*.md`.
 
 ### Routing Rules
 
@@ -222,7 +223,7 @@ When context window is constrained or the cleanup target is a single folder:
 6. Wait for explicit user confirmation.
 7. Execute with side-effect fixes.
 8. Verify post-state.
-9. Save to `.agents/machine-cleanup-report.md`.
+9. Save to `.agents/skill-artifacts/meta/records/machine-cleanup-*.md`.
 
 ---
 
@@ -338,7 +339,7 @@ Walks the candidate list one at a time. For each target:
 
 **Critic review:** PASS. All 6 golden rules satisfied. No user data touched. All auth surprises were surfaced. Shell rc fixed inline.
 
-**Artifact saved to `.agents/machine-cleanup-report.md`.**
+**Artifact saved to `.agents/skill-artifacts/meta/records/machine-cleanup-*.md`.**
 
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: code-cleanup
-description: "Audits and refactors existing code for readability, maintainability, and dead code removal without changing behavior. Produces `.agents/cleanup-report.md` and applies fixes in-place. Not for diagnosing business problems (use diagnose) or writing documentation (use docs-writing). For writing missing docs after cleanup, see docs-writing."
+description: "Audits and refactors existing code for readability, maintainability, and dead code removal without changing behavior. Produces `.agents/skill-artifacts/meta/records/[date]-cleanup-<slug>.md` and applies fixes in-place. Not for diagnosing business problems (use diagnose) or writing documentation (use docs-writing). For writing missing docs after cleanup, see docs-writing."
 argument-hint: "[file or directory to clean]"
 allowed-tools: Read Grep Glob Bash
 license: MIT
@@ -43,8 +43,9 @@ routing:
     - shipping-bloat
     - dead-assets
   position: horizontal
+  lifecycle: snapshot
   produces:
-    - cleanup-report.md
+    - skill-artifacts/meta/records/[date]-cleanup-[slug].md
   consumes: []
   requires: []
   defers-to:
@@ -69,7 +70,7 @@ routing:
 - User intent: structural reorganization, code-level cleanup, refactoring, or all three
 
 ## Output
-- `.agents/cleanup-report.md`
+- `.agents/skill-artifacts/meta/records/[date]-cleanup-<slug>.md`
 
 ---
 
@@ -171,7 +172,7 @@ Layer 2 (sequential):
 4. **Refactoring** — pass code scanner results + removal results to `refactoring-agent`. It fixes code-level issues.
 5. **Validation** — `validation-agent` runs all available checks (tests, types, lint, build).
 6. **Critic review** — `critic-agent` checks golden rules compliance. If FAIL, identify the specific change to revert.
-7. **Assembly** — compile cleanup report. Save to `.agents/cleanup-report.md`.
+7. **Assembly** — compile cleanup report. Save to `.agents/skill-artifacts/meta/records/[date]-cleanup-<slug>.md`.
 
 ### Routing Rules
 
@@ -215,7 +216,7 @@ When context window is constrained or the cleanup scope is small (fewer than 5 f
 4. Apply fixes one at a time, testing after each
 5. Run all available checks
 6. Verify golden rules compliance as self-review
-7. Save to `.agents/cleanup-report.md`
+7. Save to `.agents/skill-artifacts/meta/records/[date]-cleanup-<slug>.md`
 
 ---
 
@@ -297,13 +298,13 @@ The refactoring-agent skips these situations:
 - `validation-agent` → bun test: 47/47 pass. tsc --noEmit: clean. Lint: clean.
 - `critic-agent` → PASS. All 5 golden rules pass.
 
-**Artifact saved to `.agents/cleanup-report.md`.**
+**Artifact saved to `.agents/skill-artifacts/meta/records/2026-05-08-cleanup-express-api.md`.**
 
 ---
 
 ## Artifact Template
 
-On re-run: rename existing artifact to `cleanup-report.v[N].md` and create new with incremented version.
+On re-run with the same slug on the same day, append `-v[N]` to the dated filename — e.g., `2026-05-08-cleanup-api-v2.md`. Different days produce new dated files automatically.
 
 ```markdown
 ---

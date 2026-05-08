@@ -42,6 +42,7 @@ routing:
     - ship-log
     - product-context
   position: horizontal
+  lifecycle: canonical
   produces:
     - product-context.md
   consumes:

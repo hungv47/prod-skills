@@ -1,6 +1,6 @@
 ---
 name: start-product
-description: "Stack orchestrator for product-skills. Reads what's already done in `.agents/product/`, `architecture/`, and `research/`, parses your intent, and proposes the next 1–3 skills (user-flow → system-architecture → docs-writing, plus standalone code-cleanup and machine-cleanup). Use when you don't know which product skill to invoke, or want a guided run from user flows through architecture to docs. Not for executing the work itself — it routes to the skill that does. Not for cross-stack workflows (use start-meta or invoke skills directly)."
+description: "Stack orchestrator for product-skills. Reads what's already done in `.agents/skill-artifacts/product/`, `architecture/`, and `research/`, parses your intent, and proposes the next 1–3 skills (user-flow → system-architecture → docs-writing, plus standalone code-cleanup and machine-cleanup). Use when you don't know which product skill to invoke, or want a guided run from user flows through architecture to docs. Not for executing the work itself — it routes to the skill that does. Not for cross-stack workflows (use start-meta or invoke skills directly)."
 argument-hint: "[free-form ask, or empty to be guided]"
 allowed-tools: Read Grep Glob Bash
 user-invocable: true
@@ -42,19 +42,20 @@ routing:
     - stack-entry-point
     - product-guide
   position: orchestrator
+  lifecycle: pipeline
   produces:
     - .agents/experience/product-workflow.md
   side-effects:
     - manifest-sync
   consumes:
     - research/product-context.md
-    - .agents/product/flow/*.md
-    - .agents/product/flow/index.md
+    - .agents/skill-artifacts/product/flow/*.md
+    - .agents/skill-artifacts/product/flow/index.md
     - architecture/system-architecture.md
-    - .agents/cleanup-report.md
-    - .agents/machine-cleanup-report.md
-    - .agents/spec.md
-    - .agents/tasks.md
+    - .agents/skill-artifacts/meta/records/cleanup-*.md
+    - .agents/skill-artifacts/meta/records/machine-cleanup-*.md
+    - .agents/skill-artifacts/meta/specs/*.md
+    - .agents/skill-artifacts/meta/tasks.md
     - .agents/experience/*.md
   requires: []
   defers-to:
@@ -81,7 +82,7 @@ routing:
 
 *Meta — Stack orchestrator. The entry point for the product-skills stack when you don't know what to invoke.*
 
-**Core Job:** read what exists in `.agents/product/`, `architecture/`, and `research/`, infer where you are, propose the next skill.
+**Core Job:** read what exists in `.agents/skill-artifacts/product/`, `architecture/`, and `research/`, infer where you are, propose the next skill.
 
 **Core Question:** "Given the spec, the user-flow state, and the architecture state, what's the next product skill to run?"
 
@@ -106,7 +107,7 @@ This skill does NOT execute product work. It is a router. The actual work is don
 
 ## How It Works
 
-1. **State detection** — silently read `.agents/product/`, `architecture/`, `.agents/spec.md`, `.agents/tasks.md`, `.agents/experience/*.md`, `research/product-context.md`.
+1. **State detection** — silently read `.agents/skill-artifacts/product/`, `architecture/`, `.agents/skill-artifacts/meta/specs/*.md`, `.agents/skill-artifacts/meta/tasks.md`, `.agents/experience/*.md`, `research/product-context.md`.
 2. **Intention analysis** — parse user's free-form ask. If empty, ask one bundled scoping question.
 3. **Routing decision** — propose 1–3 skills with rationale + cost + duration.
 4. **User confirmation** — print hand-off `/skill-name` and exit. Never auto-invoke.
@@ -123,7 +124,7 @@ If the manifest is missing or you suspect drift (e.g., artifacts exist that aren
 bun ${SKILLS_ROOT:-.claude/skills}/meta-skills/scripts/manifest-sync.ts
 ```
 
-**Status-aware lookup:** for each product-relevant artifact key — `architecture/system-architecture.md`, `.agents/spec.md`, `.agents/tasks.md`, `.agents/product/flow/*.md`, `.agents/cleanup-report.md`, `.agents/machine-cleanup-report.md`, and any `docs-writing` outputs — read the manifest entry's `status` and `stale` fields to qualify the state map:
+**Status-aware lookup:** for each product-relevant artifact key — `architecture/system-architecture.md`, `.agents/skill-artifacts/meta/specs/*.md`, `.agents/skill-artifacts/meta/tasks.md`, `.agents/skill-artifacts/product/flow/*.md`, `.agents/skill-artifacts/meta/records/cleanup-*.md`, `.agents/skill-artifacts/meta/records/machine-cleanup-*.md`, and any `docs-writing` outputs — read the manifest entry's `status` and `stale` fields to qualify the state map:
 
 | Manifest signal | State map value |
 |---|---|
@@ -144,13 +145,13 @@ See [`../../../meta-skills/references/manifest-spec.md`](../../../meta-skills/re
 | Path | What it tells you |
 |---|---|
 | `research/product-context.md` | Cross-stack ICP/business context exists. |
-| `.agents/spec.md` | A scoped spec exists (from `discover`). |
-| `.agents/product/flow/index.md` | At least 2 user flows mapped. |
-| `.agents/product/flow/*.md` | Specific flows mapped (each file = one flow). |
+| `.agents/skill-artifacts/meta/specs/*.md` | A scoped spec exists (from `discover`). |
+| `.agents/skill-artifacts/product/flow/index.md` | At least 2 user flows mapped. |
+| `.agents/skill-artifacts/product/flow/*.md` | Specific flows mapped (each file = one flow). |
 | `architecture/system-architecture.md` | System blueprint exists. |
-| `.agents/tasks.md` | Buildable task list exists (from `task-breakdown`). |
-| `.agents/cleanup-report.md` | Code cleanup audit done. |
-| `.agents/machine-cleanup-report.md` | Machine cleanup audit done. |
+| `.agents/skill-artifacts/meta/tasks.md` | Buildable task list exists (from `task-breakdown`). |
+| `.agents/skill-artifacts/meta/records/cleanup-*.md` | Code cleanup audit done. |
+| `.agents/skill-artifacts/meta/records/machine-cleanup-*.md` | Machine cleanup audit done. |
 | `.agents/experience/technical.md` | Cold-start tech context (platforms, OS versions, scale, deployment, codebase conventions) persisted. |
 | `.agents/experience/product-workflow.md` | Prior breadcrumb. |
 
@@ -213,7 +214,7 @@ Apply rules in order — first match wins.
 - Propose 2-step path: `/user-flow` → `/system-architecture`. Show both as the recommended sequence with rationale.
 
 **Cross-stack pull-in:**
-- If intent is architecture AND `.agents/prioritize.md` exists, mention: "system-architecture can read `.agents/prioritize.md` to align technical work with business priorities."
+- If intent is architecture AND `.agents/skill-artifacts/meta/sketches/prioritize-*.md` exists, mention: "system-architecture can read `.agents/skill-artifacts/meta/sketches/prioritize-*.md` to align technical work with business priorities."
 
 ---
 
@@ -222,7 +223,7 @@ Apply rules in order — first match wins.
 ```
 ## Where you are
 
-- Spec: ✅ done (.agents/spec.md, last week)
+- Spec: ✅ done (.agents/skill-artifacts/meta/specs/*.md, last week)
 - Flows mapped: 1 (checkout)
 - Architecture: ❌ missing
 - Tasks broken down: ❌ missing

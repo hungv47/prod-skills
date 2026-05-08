@@ -6,6 +6,26 @@ This file tracks stack-level releases. SKILL.md files describe current behavior;
 
 ---
 
+## [2.2.1] - 2026-05-08
+
+T33 path migration — every skill SKILL.md updated to the new `.agents/skill-artifacts/` lifecycle taxonomy (see `agent-skills/CLAUDE.md` §"Artifact Placement"). Mechanical churn only — no behavior changes.
+
+### Changed
+
+- All 6 SKILL.md files (`code-cleanup`, `docs-writing`, `machine-cleanup`, `start-product`, `system-architecture`, `user-flow`) — frontmatter `description`, `routing.produces`, `routing.consumes`, and inline body references updated:
+  - `.agents/cleanup-report.md` → `.agents/skill-artifacts/meta/records/cleanup-*.md`
+  - `.agents/machine-cleanup-report.md` → `.agents/skill-artifacts/meta/records/machine-cleanup-*.md`
+  - `.agents/product/flow/...` → `.agents/skill-artifacts/product/flow/...`
+  - `.agents/spec.md`, `.agents/tasks.md`, `.agents/prioritize.md` → `.agents/skill-artifacts/meta/{specs,tasks.md,sketches/prioritize-*.md}` (consumer refs in start-product, system-architecture, etc.)
+  - Top-level `architecture/system-architecture.md` and `research/product-context.md` paths unchanged (canonical).
+- All 6 SKILL.md files declare `routing.lifecycle:` — `canonical` (system-architecture, docs-writing — produce top-level project records), `pipeline` (user-flow, start-product orchestrator), `snapshot` (code-cleanup, machine-cleanup).
+
+### Notes
+
+Non-behavioral release. No skill output changed format. Manifest reconciles automatically.
+
+---
+
 ## [2.2.0] - 2026-05-07
 
 Manifest-aware state detection in `start-product`.

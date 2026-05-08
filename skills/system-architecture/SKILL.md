@@ -41,13 +41,14 @@ routing:
     - system-design
     - infrastructure
   position: pipeline
+  lifecycle: canonical
   produces:
     - system-architecture.md
   consumes:
     - product-context.md
-    - spec.md
-    - prioritize.md
-    - product/flow/*.md  # reads every flow file in the directory
+    - skill-artifacts/meta/specs/*.md
+    - skill-artifacts/meta/sketches/prioritize-*.md
+    - skill-artifacts/product/flow/*.md  # reads every flow file in the directory
   requires: []
   defers-to:
     - skill: discover
@@ -82,7 +83,7 @@ Run the Pre-Dispatch protocol (`meta-skills/references/pre-dispatch-protocol.md`
 **Needed dimensions:** spec/PRD reference, scale targets (users / RPS / data), constraints (budget / team skills / latency / compliance), deployment context (greenfield / brownfield / migration).
 
 **Read order:**
-1. Pipeline: `.agents/spec.md`, `.agents/prioritize.md`, `.agents/product/flow/*.md`, existing `architecture/system-architecture.md` (if re-run).
+1. Pipeline: `.agents/skill-artifacts/meta/specs/*.md`, `.agents/skill-artifacts/meta/sketches/prioritize-*.md`, `.agents/skill-artifacts/product/flow/*.md`, existing `architecture/system-architecture.md` (if re-run).
 2. Codebase: package manifest, existing schema files, framework signals.
 3. Experience: `.agents/experience/technical.md` for stack history + constraints.
 
@@ -247,7 +248,7 @@ None — this skill can run standalone.
 | `product-context.md` | icp-research (from `hungv47/research-skills`) | Industry context, user personas, and constraints |
 | `task-breakdown.md` | task-breakdown | Feature list already decomposed into buildable units |
 | `prioritize.md` | prioritize (from `hungv47/research-skills`) | Business initiatives and constraints from strategy track |
-| `.agents/product/flow/*.md` | user-flow (from `hungv47/product-skills`) | Per-flow user flow diagrams + platform-surface matrix; read every file in the directory. Feeds API endpoint design and feature scoping. |
+| `.agents/skill-artifacts/product/flow/*.md` | user-flow (from `hungv47/product-skills`) | Per-flow user flow diagrams + platform-surface matrix; read every file in the directory. Feeds API endpoint design and feature scoping. |
 
 ### Two Modes of Operation
 
