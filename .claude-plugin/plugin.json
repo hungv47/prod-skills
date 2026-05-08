@@ -1,7 +1,7 @@
 {
   "name": "product-skills",
   "description": "UX design, architecture, cleanup, and documentation skills — user flows, system architecture, code cleanup, machine cleanup, technical writing — 5 skills + start-product orchestrator.",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "author": { "name": "hungv47" },
   "homepage": "https://github.com/hungv47/product-skills",
   "repository": "https://github.com/hungv47/product-skills",

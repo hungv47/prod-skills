@@ -6,6 +6,24 @@ This file tracks stack-level releases. SKILL.md files describe current behavior;
 
 ---
 
+## [2.2.2] - 2026-05-08
+
+CLAUDE.md doc cleanup — align stack-level documentation with the new `.agents/skill-artifacts/` taxonomy shipped in v2.2.1 and across the umbrella as marketplace 1.5.0.
+
+### Changed
+
+- `product-skills/CLAUDE.md` Artifacts and Cross-Stack Connections sections — every `.agents/product/...`, `.agents/cleanup-report.md`, `.agents/prioritize.md` reference migrated to the new taxonomy:
+  - `.agents/product/flow/...` → `.agents/skill-artifacts/product/flow/...`
+  - `.agents/cleanup-report.md` → `.agents/skill-artifacts/meta/records/cleanup-*.md`
+  - `.agents/prioritize.md` → `.agents/skill-artifacts/meta/sketches/prioritize-*.md`
+- "Skills write to `.agents/` by default" → "Skills write under `.agents/skill-artifacts/` by default."
+
+### Notes
+
+Doc-only patch — no SKILL.md or skill-behavior changes.
+
+---
+
 ## [2.2.1] - 2026-05-08
 
 T33 path migration — every skill SKILL.md updated to the new `.agents/skill-artifacts/` lifecycle taxonomy (see `agent-skills/CLAUDE.md` §"Artifact Placement"). Mechanical churn only — no behavior changes.
