@@ -1,14 +1,14 @@
 {
   "name": "product-skills",
-  "description": "UX design, architecture, cleanup, and documentation skills — user flows, system architecture, code cleanup, machine cleanup, technical writing — 5 skills + start-product orchestrator.",
-  "version": "2.2.2",
+  "description": "UX design, architecture, cleanup, and documentation skills — user flows, system architecture, code cleanup, machine cleanup, technical writing — 5 skills + orchestrate-product orchestrator.",
+  "version": "3.0.0",
   "author": { "name": "hungv47" },
   "homepage": "https://github.com/hungv47/product-skills",
   "repository": "https://github.com/hungv47/product-skills",
   "license": "MIT",
   "keywords": ["product", "architecture", "ux", "cleanup", "documentation", "machine-cleanup"],
   "skills": [
-    "./skills/start-product/",
+    "./skills/orchestrate-product/",
     "./skills/user-flow/",
     "./skills/system-architecture/",
     "./skills/code-cleanup/",

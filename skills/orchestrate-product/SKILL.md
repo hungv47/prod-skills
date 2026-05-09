@@ -1,6 +1,6 @@
 ---
-name: start-product
-description: "Stack orchestrator for product-skills. Reads what's already done in `.agents/skill-artifacts/product/`, `architecture/`, and `research/`, parses your intent, and proposes the next 1–3 skills (user-flow → system-architecture → docs-writing, plus standalone code-cleanup and machine-cleanup). Use when you don't know which product skill to invoke, or want a guided run from user flows through architecture to docs. Not for executing the work itself — it routes to the skill that does. Not for cross-stack workflows (use start-meta or invoke skills directly)."
+name: orchestrate-product
+description: "Stack orchestrator for product-skills. Reads what's already done in `.agents/skill-artifacts/product/`, `architecture/`, and `research/`, parses your intent, and proposes the next 1–3 skills (user-flow → system-architecture → docs-writing, plus standalone code-cleanup and machine-cleanup). Use when you don't know which product skill to invoke, or want a guided run from user flows through architecture to docs. Not for executing the work itself — it routes to the skill that does. Not for cross-stack workflows (use orchestrate-meta or invoke skills directly). Renamed from `start-product` in v3.0.0."
 argument-hint: "[free-form ask, or empty to be guided]"
 allowed-tools: Read Grep Glob Bash
 user-invocable: true
@@ -78,7 +78,7 @@ routing:
   estimated-complexity: low
 ---
 
-# Start Product
+# Orchestrate Product
 
 *Meta — Stack orchestrator. The entry point for the product-skills stack when you don't know what to invoke.*
 
@@ -100,7 +100,7 @@ This skill does NOT execute product work. It is a router. The actual work is don
 ## When NOT To Use
 
 - You already know which skill to run.
-- Your task is cross-stack (e.g., needs research + product). Use `/start-meta`.
+- Your task is cross-stack (e.g., needs research + product). Use `/orchestrate-meta`.
 - You want execution rather than routing.
 
 ---
@@ -268,7 +268,7 @@ Append to `.agents/experience/product-workflow.md`:
 
 Print:
 
-> Run `/system-architecture` next. After it completes, re-run `/start-product` to plan the next step (likely `/task-breakdown`).
+> Run `/system-architecture` next. After it completes, re-run `/orchestrate-product` to plan the next step (likely `/task-breakdown`).
 
 Exit.
 
@@ -287,7 +287,7 @@ For canonical pipeline, decision rules, per-skill catalog, see [`./references/wo
 - **Don't recommend system-architecture without any flows or spec context.** It produces hollow blueprints.
 - **Don't auto-invoke.** Always print `/skill-name`.
 - **Don't recommend more than 3 skills.**
-- **Don't recommend skills outside this stack except `discover` (meta) and `task-breakdown` (meta).** These two are intentional exceptions because they sit *inside* the product workflow, not adjacent to it: `discover` is the canonical upstream of any product build (clarifies WHAT before flow/architecture); `task-breakdown` is the canonical downstream after architecture (decomposes HOW into tasks before implementation). For all other meta-skills (`agents-panel`, `fresh-eyes`) and for cross-stack work, route through `/start-meta`.
+- **Don't recommend skills outside this stack except `discover` (meta) and `task-breakdown` (meta).** These two are intentional exceptions because they sit *inside* the product workflow, not adjacent to it: `discover` is the canonical upstream of any product build (clarifies WHAT before flow/architecture); `task-breakdown` is the canonical downstream after architecture (decomposes HOW into tasks before implementation). For all other meta-skills (`agents-panel`, `fresh-eyes`) and for cross-stack work, route through `/orchestrate-meta`.
 
 ---
 

@@ -2,9 +2,11 @@
 
 ![Product Skills](./assets/banner.png)
 
-UX design, technical architecture, code cleanup, machine cleanup, and documentation — the skills for designing and building software. 6 skills (incl. `/start-product` orchestrator).
+> **v3.0.0 BREAKING:** `start-product` renamed to `orchestrate-product`. Update any `/start-product` invocations in your workflows to `/orchestrate-product`.
 
-**New here?** Run `/start-product` — it reads project state (spec, flows, architecture), parses your ask, and proposes the next skill to invoke with rationale.
+UX design, technical architecture, code cleanup, machine cleanup, and documentation — the skills for designing and building software. 6 skills (incl. `/orchestrate-product` orchestrator).
+
+**New here?** Run `/orchestrate-product` — it reads project state (spec, flows, architecture), parses your ask, and proposes the next skill to invoke with rationale.
 
 ## Install
 

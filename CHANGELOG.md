@@ -6,6 +6,14 @@ This file tracks stack-level releases. SKILL.md files describe current behavior;
 
 ---
 
+## [3.0.0] - 2026-05-08
+
+### BREAKING
+- Renamed `start-product` → `orchestrate-product`. The skill scans existing artifacts and continues mid-pipeline; the orchestration role now reads explicitly in the slash command. No backward-compat alias — single-rev cutover.
+- Update any `/start-product` invocations in your workflows to `/orchestrate-product`.
+
+---
+
 ## [2.2.2] - 2026-05-08
 
 CLAUDE.md doc cleanup — align stack-level documentation with the new `.agents/skill-artifacts/` taxonomy shipped in v2.2.1 and across the umbrella as marketplace 1.5.0.

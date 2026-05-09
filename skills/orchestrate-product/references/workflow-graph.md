@@ -1,6 +1,6 @@
 # Product Stack Workflow Graph
 
-Canonical pipeline definition for the product-skills stack. `start-product` reads this for routing decisions.
+Canonical pipeline definition for the product-skills stack. `orchestrate-product` reads this for routing decisions.
 
 ---
 
@@ -80,13 +80,13 @@ discover (meta) ─→ spec ─┤                            │
 
 ---
 
-## Cross-Stack Skills (proposed by start-product, owned by meta-skills)
+## Cross-Stack Skills (proposed by orchestrate-product, owned by meta-skills)
 
 ### discover (meta)
 
 - **Job:** conversational discovery — adaptive from quick scoping (3-5 Qs) to deep interviews.
 - **When to propose:** intent is unclear OR no spec exists AND user wants to "build something" without clarity.
-- **Hand-off:** `/discover` → may produce `.agents/spec.md` → re-run `/start-product` after.
+- **Hand-off:** `/discover` → may produce `.agents/spec.md` → re-run `/orchestrate-product` after.
 
 ### task-breakdown (meta)
 
@@ -137,7 +137,7 @@ discover (meta) ─→ spec ─┤                            │
 
 ## Re-Entry Behavior
 
-`/start-product` is idempotent. If breadcrumb shows last session ran user-flow and `.agents/product/flow/index.md` now lists 3 flows, advance to system-architecture.
+`/orchestrate-product` is idempotent. If breadcrumb shows last session ran user-flow and `.agents/product/flow/index.md` now lists 3 flows, advance to system-architecture.
 
 If user-flow ran but no flow file exists, surface that.
 
@@ -148,4 +148,4 @@ If user-flow ran but no flow file exists, surface that.
 - Don't conflate `code-cleanup` (source files) with `machine-cleanup` (dotfolders, caches).
 - Don't recommend `system-architecture` for "I have a small bug to fix." That's not what it's for.
 - Don't auto-invoke. Always print `/skill-name`.
-- Don't recommend research or marketing skills directly — defer to `/start-research` or `/start-marketing`.
+- Don't recommend research or marketing skills directly — defer to `/orchestrate-research` or `/orchestrate-marketing`.
