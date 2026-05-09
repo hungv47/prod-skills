@@ -133,7 +133,7 @@ npx skills add hungv47/product-skills
 
 ## Changelog
 
-See [CHANGELOG.md](CHANGELOG.md) for release notes (commit 1c1bb63, 2026-05-05).
+Full release history with per-version notes: [product-skills/releases](https://github.com/hungv47/product-skills/releases)
 
 ## License
 
