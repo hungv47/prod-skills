@@ -121,6 +121,16 @@ READMEs, API references, setup guides, runbooks, and architecture docs with cons
 - `docs-writing --ship-log` writes `research/product-context.md`, the canonical cross-stack artifact consumed by 12+ downstream skills
 - `user-flow` output feeds into `system-architecture` and `task-breakdown` (from [meta-skills](https://github.com/hungv47/meta-skills))
 
+## Releases
+
+```bash
+# Update to latest version (if already installed)
+npx skills update
+
+# Add this stack to your project
+npx skills add hungv47/product-skills
+```
+
 ## Changelog
 
 See [CHANGELOG.md](CHANGELOG.md) for release notes (commit 1c1bb63, 2026-05-05).
