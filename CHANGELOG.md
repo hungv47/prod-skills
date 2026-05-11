@@ -6,6 +6,19 @@ This file tracks stack-level releases. SKILL.md files describe current behavior;
 
 ---
 
+## [3.0.1] - 2026-05-11
+
+`orchestrate-product` Step 1 starts from concrete disk state instead of asking the model to derive it. When you run `/orchestrate-product`, the skill now sees the actual artifact counts by domain, which top-level canonical folders exist (`research/`, `brand/`, `architecture/`), and the last 5 commits — all rendered inline before the manifest read kicks in.
+
+### Changed
+- **`skills/orchestrate-product/SKILL.md` §Step 1** — disk-snapshot block lifted from `orchestrate-meta`. Three `! \`<cmd>\`` interpolations (artifact-count-by-domain / canonical-folder check / git-log -5) substitute their output at slash-command invocation time, before the manifest read. The orchestrator starts from a deterministic snapshot instead of speculating about what's on disk.
+
+### Notes
+- Additive context. No behavioral change to routing, recommendations, or output schema. Existing invocations work unchanged.
+- The block only renders when the skill is invoked as a slash command. If `SKILL.md` is read via the Read tool inside another skill, the bang-backtick lines pass through as literal syntax — by design.
+
+---
+
 ## [3.0.0] - 2026-05-08
 
 ### BREAKING
