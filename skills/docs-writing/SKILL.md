@@ -1,14 +1,14 @@
 ---
 name: docs-writing
-description: "Generates documentation from a codebase — READMEs, API references, setup guides, runbooks, architecture docs, and ship logs with consistent structure and terminology. Produces documentation files in the project. Ship log mode writes a plain-language product snapshot to research/product-context.md so agents and humans know what the app does. Not for specifying what to build (use discover) or restructuring code (use code-cleanup). For task decomposition, see task-breakdown."
+description: "Generates documentation from a codebase — READMEs, API references, setup guides, runbooks, architecture docs, ship logs, and release notes (CHANGELOG entries + GitHub Release bodies enforcing the agent-skills CHANGELOG convention) with consistent structure and terminology. Produces documentation files in the project. Ship log mode writes a plain-language product snapshot to research/product-context.md. Release-notes mode appends to CHANGELOG.md and optionally emits a GitHub Release body draft. Not for specifying what to build (use discover) or restructuring code (use code-cleanup). For task decomposition, see task-breakdown."
 argument-hint: "[codebase or project to document]"
 allowed-tools: Read Grep Glob Bash
 license: MIT
 metadata:
   author: hungv47
-  version: "3.1.0"
+  version: "3.2.0"
   budget: standard
-  estimated-cost: "$0.15-0.40"
+  estimated-cost: "$0.10-0.40"
 promptSignals:
   phrases:
     - "write documentation"
@@ -17,6 +17,10 @@ promptSignals:
     - "setup guide"
     - "runbook"
     - "document this"
+    - "release notes"
+    - "changelog entry"
+    - "what changed in this version"
+    - "write the release"
   allOf:
     - [write, documentation]
     - [api, reference]
@@ -27,6 +31,8 @@ promptSignals:
     - "guide"
     - "runbook"
     - "reference"
+    - "release notes"
+    - "changelog"
   noneOf:
     - "code cleanup"
     - "refactor"
@@ -182,6 +188,7 @@ Layer 2 (sequential):
 | User says "audit docs" | Skip writer-agent; run scanner → staleness-checker → critic directly |
 | User says "sync docs", "update docs", or `--sync` | **Route C: Post-Change Sync** (see below) |
 | User says "ship log", "product context", "what does this app do", or `--ship-log` | **Route D: Ship Log** (see below) |
+| User says "release notes", "changelog entry", "what changed in this version", or `--release-notes` | **Route E: Release Notes** (see below) |
 | Monorepo detected | scanner-agent identifies package boundaries; writer produces per-package docs |
 | Critic PASS | Save and deliver |
 | Critic FAIL | Re-dispatch cited agents with feedback |
@@ -259,6 +266,76 @@ After writing, the orchestrator checks if the project's `CLAUDE.md` references `
 
 ---
 
+### Route E: Release Notes
+
+Triggered by: `/docs-writing --release-notes <version>`, "release notes", "changelog entry", "what changed in this version", "write the release."
+
+This route produces a **CHANGELOG.md entry** that follows the agent-skills CHANGELOG convention (defined in `agent-skills/RELEASING.md` § "CHANGELOG entries — release notes, not journal"). Optionally also emits a **GitHub Release body draft** for `gh release create`. The route is convention-enforcing: the critic-agent fails any output that reproduces the pre-convention anti-patterns (file inventories, fresh-eyes recaps, anti-goals lists).
+
+**Why CHANGELOG, not a free-form doc:** Release notes are what users see on `/plugin update`. They are NOT the canonical record of everything that happened — canonical lives in commit history + `.agents/skill-artifacts/meta/records/` + roadmap.md. This route writes the user-facing summary; depth links to records.
+
+**Inputs:**
+- `version` (required) — the version being released, e.g., `5.0.0`
+- `--range <ref>..HEAD` (optional, default: `$(git describe --tags --abbrev=0)..HEAD`, or staged commits when no prior tag)
+- `--gh-release` (optional flag) — also emit a GitHub Release body draft to stdout
+- `--stack <name>` (optional, default: detect from cwd) — which CHANGELOG.md to target when run from the umbrella
+
+**Execution flow:**
+```
+scanner-agent ──────────────┐
+concept-extractor-agent ────┤── Layer 1 (parallel) — read git log, CHANGELOG, fresh-eyes records, roadmap
+audience-profiler-agent ────┘── (locked to "user on /plugin update — wants user-visible delta")
+
+writer-agent ────────────────── writes entry following agent-skills/CLAUDE.md CHANGELOG convention
+  → staleness-checker-agent ── verifies every claim traces to a commit in <ref>..HEAD
+    → critic-agent ──────────── enforces convention gates (≤20 lines, ≤4 bullets, no anti-patterns)
+```
+
+**What's different from the full route:**
+- `audience-profiler-agent` is locked to `{ type: "stack user", goal: "decide whether/why to update" }`. No inference.
+- `scanner-agent` reads `git log <range>` + existing `CHANGELOG.md` (to learn voice + avoid duplicating prior entries) + `plugin.json` (to confirm version) — NOT the full codebase.
+- `concept-extractor-agent` reads `.agents/skill-artifacts/meta/records/{date}-fresh-eyes-*.md` for any fresh-eyes report in the release window + `.agents/skill-artifacts/meta/roadmap.md` for strategic-context tags. Does NOT scan source files.
+- `writer-agent` receives the CHANGELOG convention inline (from `agent-skills/RELEASING.md` § "CHANGELOG entries") as its primary template. Output is a single ≤20-line entry, NOT a multi-section document.
+- `critic-agent` applies **release-notes-specific gates** (see below), replacing the standard checklist.
+
+**Release-notes critic gates (replaces standard checklist):**
+- [ ] ≤20 lines total (hard cap — FAIL above)
+- [ ] ≤4 bullets in any single `### {Added|Changed|Fixed|Removed}` section
+- [ ] One-paragraph user-visible summary present (one paragraph, not multi-paragraph rationale)
+- [ ] No `### Files changed` heading present (FAIL on detect — git diff is authoritative)
+- [ ] No `### Anti-goals respected` heading (FAIL — lives in roadmap.md)
+- [ ] No `### Fresh-eyes pattern` recap (FAIL — lives in records dir)
+- [ ] No "What did NOT change" inventory (FAIL — assume nothing changed unless stated)
+- [ ] If a fresh-eyes report exists in `.agents/skill-artifacts/meta/records/` for the release window, the entry links to it (one-line link, not embedded recap)
+- [ ] Frame is user-seat, not implementor-seat (no "we caught a regression," yes "behavior corrected so X works")
+
+**Staleness gates:** every bullet must trace to at least one commit in the release range. Bullets describing changes outside the range FAIL. Bullets describing changes within range that don't match the commit's diff FAIL (the writer hallucinated a feature).
+
+**Pre-write step (orchestrator responsibility):**
+1. Confirm `version` parameter is set and matches `plugin.json` (or the user's intent for the imminent bump).
+2. Resolve the git range: if `--range` not provided, use `$(git describe --tags --abbrev=0)..HEAD`; if no prior tag exists, use all commits since branch divergence.
+3. Read existing `CHANGELOG.md` to confirm the new version doesn't already have an entry (prevent duplicate).
+4. Scan `.agents/skill-artifacts/meta/records/` for fresh-eyes reports within the release window (filter by date in filename + window dates).
+
+**Post-write step:**
+- Prepend the new entry to `CHANGELOG.md` (below `# Title`, above prior entries — Keep a Changelog convention).
+- If `--gh-release` flag set: emit GitHub Release body draft to stdout (same content as CHANGELOG entry plus a one-line installation reminder: `npx skills update` or `npx skills add hungv47/<stack>`).
+
+**Worked example output shape:**
+```markdown
+## [5.0.0] - 2026-05-12
+
+Stack-wide coordinated cut. Tier discipline now load-bearing: 5 skills changed budget (funnel-planner deep→standard with new default route; 4 orchestrate-* skills standard→fast). No skill rewrites. Versions aligned across the 4 stacks at v5.0.0 to mark the post-tier-discipline stable era.
+
+### Changed
+- `funnel-planner` defaults to Route B (Standard Path); Route A reserved for `--deep` or 3+ initiatives across 2+ funnel models. New Route C handles bump-update asks under 3 sentences.
+- All 4 `orchestrate-*` skills now declare `budget: fast` and explicitly state they are pure routers (no agent dispatch, no critic gate).
+
+Full review: `.agents/skill-artifacts/meta/records/2026-05-12-fresh-eyes-tier-discipline-phase-ab.md`
+```
+
+---
+
 ## Critical Gates
 
 Before delivering, the critic-agent verifies ALL of these pass:
@@ -311,8 +388,9 @@ When context window is constrained or the project is small (fewer than 20 files)
 | **Configuration Guide** | Operators deploying | Environment vars, settings, infrastructure | 2-5 pages |
 | **Getting Started Tutorial** | New users of any type | Single workflow, start to finish | 1-2 pages |
 | **Ship Log** | Humans + coding agents | Product snapshot, features, tech stack, shipping history | 2-5 pages |
+| **Release Notes** | Stack users on `/plugin update` | What changed in a version — user-visible delta only | ≤20 lines per entry |
 
-Default to **User Guide** if the user says "document this" without specifying type. Default to **Ship Log** if the user says "product context" or "what does this app do."
+Default to **User Guide** if the user says "document this" without specifying type. Default to **Ship Log** if the user says "product context" or "what does this app do." Default to **Release Notes** if the user says "release notes," "changelog entry," or passes `--release-notes`.
 
 ---
 

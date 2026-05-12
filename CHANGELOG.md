@@ -6,6 +6,21 @@ This file tracks stack-level releases. SKILL.md files describe current behavior;
 
 ---
 
+## [5.0.0] - 2026-05-12
+
+Stack-major cut coordinated across the 4-stack marketplace to mark the post-tier-discipline stable era. The stack-orchestrator declares itself fast-tier. `docs-writing` gains a new Route E for release-notes generation. Major bump signals the alignment + the new mode.
+
+### Added
+- `docs-writing` Route E (`--release-notes <version>`) — generates a CHANGELOG entry conforming to the agent-skills CHANGELOG convention defined in `RELEASING.md`. Convention-enforcing critic fails outputs with file inventories, fresh-eyes recaps, or anti-goals lists. Optional `--gh-release` flag emits a GitHub Release body draft.
+
+### Changed
+- `orchestrate-product` budget reclassified standard → fast; body declares it is a pure router (no agent dispatch, no critic gate).
+- `docs-writing` skill internally bumped 3.1.0 → 3.2.0 (new mode); stack-level major masks the skill-internal minor.
+
+Full review: `.agents/skill-artifacts/meta/records/2026-05-12-fresh-eyes-tier-discipline-phase-ab.md`
+
+---
+
 ## [3.0.1] - 2026-05-11
 
 `orchestrate-product` Step 1 starts from concrete disk state instead of asking the model to derive it. When you run `/orchestrate-product`, the skill now sees the actual artifact counts by domain, which top-level canonical folders exist (`research/`, `brand/`, `architecture/`), and the last 5 commits — all rendered inline before the manifest read kicks in.
