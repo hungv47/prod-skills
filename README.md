@@ -62,7 +62,7 @@ Maps multi-step in-product flows — screens, decisions, transitions, platform-n
 - You need a visual reference that developers can implement from
 - You ship on multiple platforms and need to map how the flow surfaces on each (dock, menu bar, widgets, notifications, share sheet, deep links…)
 
-**Not for:** visual brand design (use `brand-system`) or single-page conversion (use `lp-optimization`)
+**Not for:** visual brand design (use `brand-system`) or landing-page architecture (use `lp-brief`)
 
 **Produces:** `.agents/product/flow/<flow-name>.md` — one file per flow (checkout.md, onboarding.md, etc.) plus an auto-generated `index.md` when ≥2 flows exist
 

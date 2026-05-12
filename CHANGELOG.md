@@ -6,6 +6,15 @@ This file tracks stack-level releases. SKILL.md files describe current behavior;
 
 ---
 
+## [5.0.1] - 2026-05-12
+
+Coordinated cross-stack cleanup of cross-references to `lp-optimization`, which was hard-removed in marketing-skills 6.0.0.
+
+### Changed
+- `skills/user-flow/SKILL.md` description and `README.md` — replaced "single-page conversion (use lp-optimization)" with "landing-page architecture (use lp-brief)". The user-flow Not-for paragraph now points at the surviving skill that owns landing-page work; the prior pointer would have been broken after marketing-skills 6.0.0.
+
+No skill behavior changed; description-text and doc-cleanup only.
+
 ## [5.0.0] - 2026-05-12
 
 Stack-major cut coordinated across the 4-stack marketplace to mark the post-tier-discipline stable era. The stack-orchestrator declares itself fast-tier. `docs-writing` gains a new Route E for release-notes generation. Major bump signals the alignment + the new mode.
