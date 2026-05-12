@@ -30,6 +30,29 @@ Run `user-flow` BEFORE `system-architecture`. User flows define WHAT screens and
 
 All 5 skills follow the canonical Pre-Dispatch protocol (`meta-skills/references/pre-dispatch-protocol.md`). Cold Start (3-5 bundled questions, one round-trip) when context is missing; Warm Start (summary + optional probe) when artifacts/experience cover what's needed. Most product-skill answers persist to `.agents/experience/technical.md` (supported platforms, min OS versions, scale targets, deployment context, codebase conventions, machine-cleanup excluded paths) — durable cross-skill state. `user-flow` has a mandatory platforms+surfaces gate inside Pre-Dispatch.
 
+## Complexity Routing
+
+Every skill declares a `budget` tier in frontmatter: `fast`, `standard`, or `deep`. The harness reads the tier and adjusts execution before dispatch:
+
+| Budget | Execution |
+|--------|-----------|
+| **fast** | Single-agent, no sub-agent dispatch, no critic gate. Respond directly. |
+| **standard** | Reduced orchestration — essential agents only, one critic pass. |
+| **deep** | Full orchestration as documented — all agents, all layers, full critic gate. |
+
+**Auto-downgrade** (before dispatch): ≤3 sentences AND no prior artifacts AND not deep → fast; single-topic clear-scope → cap at standard; multi-artifact / cross-domain / ambiguous → full tier.
+
+**Override — bidirectional.** Auto-downgrade is heuristic; operator intent wins.
+
+- **Upward (force deeper):** "run this thoroughly", "full analysis", "deep mode" → use the documented tier even on small inputs.
+- **Downward (`--fast`):** `--fast` flag on the slash command, OR phrases "fast mode" / "quick pass" / "skip the orchestration" in the same turn → force single-agent execution regardless of tier. No sub-agents, no critic gate, no rewrite loops, no warm-start Pre-Dispatch interrogation. Skill produces its core deliverable in one pass and ends with "Ran in --fast mode; rerun without the flag for full critique."
+
+**`--fast` does NOT skip Cold Start.** When no context is resolvable from artifacts or `.agents/experience/`, the skill still asks its bundled cold-start questions. `--fast` only bypasses multi-agent orchestration *after* context is resolved — it does not authorize hallucinating against missing platforms / scale targets / deployment context.
+
+**Safety gates supersede `--fast`.** Hard-gated skills enforce gates regardless of `--fast` — `user-flow`'s mandatory platforms+surfaces gate (per the Pre-Dispatch section above) and `code-cleanup`'s 5 golden rules (preserve behavior, small steps, check conventions, test after each change, rollback awareness) both fire under `--fast`. The contract is "skip the heavy lift, not the guardrails."
+
+Conflict rules: `--fast` on a `fast`-tier skill is a no-op. `--fast` + "run thoroughly" → `--fast` wins (explicit flag > upward phrase). `--fast` + `--deep` → `--fast` wins (downward bias on conflicting explicit flags). Budget is the default — never a ceiling, never a floor.
+
 ## Manifest Spec
 
 State detection across all product skills (especially `orchestrate-product`) reads `.agents/manifest.json` — a derived index of artifact metadata (producer, date, status, schema version, staleness, summary). The manifest is rebuilt from artifact frontmatter by `meta-skills/scripts/manifest-sync.ts`; skills don't write to it directly. See [`../meta-skills/references/manifest-spec.md`](../meta-skills/references/manifest-spec.md) for the full contract. Skills that produce artifacts (system-architecture, user-flow, code-cleanup, machine-cleanup, docs-writing) must write the required frontmatter fields (`skill`, `version`, `date`, `status`) and call sync as their last step.
