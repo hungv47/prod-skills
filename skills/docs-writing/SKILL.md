@@ -89,7 +89,7 @@ Run the Pre-Dispatch protocol (`meta-skills/references/pre-dispatch-protocol.md`
 
 **Read order:**
 1. Codebase scan: existing README, docs/, package manifest, framework hints.
-2. Experience: `.agents/experience/technical.md` for prior doc conventions.
+2. Experience: `skills-resources/experience/technical.md` for prior doc conventions.
 
 **Warm Start** (audience + type both inferable, e.g., user said "write the README"):
 
@@ -272,7 +272,7 @@ Triggered by: `/docs-writing --release-notes <version>`, "release notes", "chang
 
 This route produces a **CHANGELOG.md entry** that follows the agent-skills CHANGELOG convention (defined in `agent-skills/RELEASING.md` § "CHANGELOG entries — release notes, not journal"). Optionally also emits a **GitHub Release body draft** for `gh release create`. The route is convention-enforcing: the critic-agent fails any output that reproduces the pre-convention anti-patterns (file inventories, fresh-eyes recaps, anti-goals lists).
 
-**Why CHANGELOG, not a free-form doc:** Release notes are what users see on `/plugin update`. They are NOT the canonical record of everything that happened — canonical lives in commit history + `.agents/skill-artifacts/meta/records/` + roadmap.md. This route writes the user-facing summary; depth links to records.
+**Why CHANGELOG, not a free-form doc:** Release notes are what users see on `/plugin update`. They are NOT the canonical record of everything that happened — canonical lives in commit history + `skills-resources/meta/records/` + roadmap.md. This route writes the user-facing summary; depth links to records.
 
 **Inputs:**
 - `version` (required) — the version being released, e.g., `5.0.0`
@@ -294,7 +294,7 @@ writer-agent ────────────────── writes entry
 **What's different from the full route:**
 - `audience-profiler-agent` is locked to `{ type: "stack user", goal: "decide whether/why to update" }`. No inference.
 - `scanner-agent` reads `git log <range>` + existing `CHANGELOG.md` (to learn voice + avoid duplicating prior entries) + `plugin.json` (to confirm version) — NOT the full codebase.
-- `concept-extractor-agent` reads `.agents/skill-artifacts/meta/records/{date}-fresh-eyes-*.md` for any fresh-eyes report in the release window + `.agents/skill-artifacts/meta/roadmap.md` for strategic-context tags. Does NOT scan source files.
+- `concept-extractor-agent` reads `skills-resources/meta/records/{date}-fresh-eyes-*.md` for any fresh-eyes report in the release window + `skills-resources/meta/roadmap.md` for strategic-context tags. Does NOT scan source files.
 - `writer-agent` receives the CHANGELOG convention inline (from `agent-skills/RELEASING.md` § "CHANGELOG entries") as its primary template. Output is a single ≤20-line entry, NOT a multi-section document.
 - `critic-agent` applies **release-notes-specific gates** (see below), replacing the standard checklist.
 
@@ -306,7 +306,7 @@ writer-agent ────────────────── writes entry
 - [ ] No `### Anti-goals respected` heading (FAIL — lives in roadmap.md)
 - [ ] No `### Fresh-eyes pattern` recap (FAIL — lives in records dir)
 - [ ] No "What did NOT change" inventory (FAIL — assume nothing changed unless stated)
-- [ ] If a fresh-eyes report exists in `.agents/skill-artifacts/meta/records/` for the release window, the entry links to it (one-line link, not embedded recap)
+- [ ] If a fresh-eyes report exists in `skills-resources/meta/records/` for the release window, the entry links to it (one-line link, not embedded recap)
 - [ ] Frame is user-seat, not implementor-seat (no "we caught a regression," yes "behavior corrected so X works")
 
 **Staleness gates:** every bullet must trace to at least one commit in the release range. Bullets describing changes outside the range FAIL. Bullets describing changes within range that don't match the commit's diff FAIL (the writer hallucinated a feature).
@@ -315,7 +315,7 @@ writer-agent ────────────────── writes entry
 1. Confirm `version` parameter is set and matches `plugin.json` (or the user's intent for the imminent bump).
 2. Resolve the git range: if `--range` not provided, use `$(git describe --tags --abbrev=0)..HEAD`; if no prior tag exists, use all commits since branch divergence.
 3. Read existing `CHANGELOG.md` to confirm the new version doesn't already have an entry (prevent duplicate).
-4. Scan `.agents/skill-artifacts/meta/records/` for fresh-eyes reports within the release window (filter by date in filename + window dates).
+4. Scan `skills-resources/meta/records/` for fresh-eyes reports within the release window (filter by date in filename + window dates).
 
 **Post-write step:**
 - Prepend the new entry to `CHANGELOG.md` (below `# Title`, above prior entries — Keep a Changelog convention).
@@ -331,7 +331,7 @@ Stack-wide coordinated cut. Tier discipline now load-bearing: 5 skills changed b
 - `funnel-planner` defaults to Route B (Standard Path); Route A reserved for `--deep` or 3+ initiatives across 2+ funnel models. New Route C handles bump-update asks under 3 sentences.
 - All 4 `orchestrate-*` skills now declare `budget: fast` and explicitly state they are pure routers (no agent dispatch, no critic gate).
 
-Full review: `.agents/skill-artifacts/meta/records/2026-05-12-fresh-eyes-tier-discipline-phase-ab.md`
+Full review: `skills-resources/meta/records/2026-05-12-fresh-eyes-tier-discipline-phase-ab.md`
 ```
 
 ---

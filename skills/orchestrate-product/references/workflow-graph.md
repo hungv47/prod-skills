@@ -39,7 +39,7 @@ discover (meta) ─→ spec ─┤                            │
 ### user-flow
 
 - **Job:** map multi-step in-product flow — screens, decisions, transitions, platform touchpoints (dock, menu bar, widgets, notifications, Live Activity, Dynamic Island), edge cases, error states.
-- **Produces:** `.agents/product/flow/<flow-name>.md` (one per flow), `.agents/product/flow/index.md` (auto when ≥2 flows)
+- **Produces:** `skills-resources/product/flow/<flow-name>.md` (one per flow), `skills-resources/product/flow/index.md` (auto when ≥2 flows)
 - **Consumes:** `research/product-context.md` (optional), `brand/DESIGN.md` (optional)
 - **When to recommend:** flow-mapping intent (designing a feature with multiple screens/states).
 - **Cost:** $0.20–0.50 · 6 agents · standard budget · ~5 min
@@ -50,14 +50,14 @@ discover (meta) ─→ spec ─┤                            │
 
 - **Job:** technical blueprint — tech stack, database schema, API design, file structure, deployment plan.
 - **Produces:** `architecture/system-architecture.md`
-- **Consumes:** `research/product-context.md`, `.agents/spec.md`, `.agents/prioritize.md` (optional), `.agents/product/flow/*.md` (optional but strong signal)
+- **Consumes:** `research/product-context.md`, `skills-resources/meta/specs/*.md`, `skills-resources/meta/sketches/prioritize-*.md` (optional), `skills-resources/product/flow/*.md` (optional but strong signal)
 - **When to recommend:** architecture intent. Soft-gate on flows.
 - **Cost:** $1–3 · 7 agents · deep budget · ~10 min
 
 ### code-cleanup
 
 - **Job:** audit and refactor existing code for readability, maintainability, dead code removal — without changing behavior. Enforces 5 golden rules (preserve behavior, small steps, check conventions, test after each change, rollback awareness).
-- **Produces:** `.agents/cleanup-report.md` + in-place edits.
+- **Produces:** `skills-resources/meta/records/cleanup-*.md` + in-place edits.
 - **Consumes:** nothing (operates on source code directly).
 - **When to recommend:** code-cleanup intent. Standalone branch.
 - **Cost:** $1–3 · 8 agents · deep budget · ~15 min (varies with codebase size)
@@ -65,7 +65,7 @@ discover (meta) ─→ spec ─┤                            │
 ### machine-cleanup
 
 - **Job:** audit and clean developer machine — dotfolders, caches, language toolchains, package globals. Per-target classification with risk surfacing (auth, running processes, side effects). Explicit user confirmation before each deletion.
-- **Produces:** `.agents/machine-cleanup-report.md`
+- **Produces:** `skills-resources/meta/records/machine-cleanup-*.md`
 - **Consumes:** nothing (operates on machine state).
 - **When to recommend:** machine-cleanup intent. Standalone — never tied to project pipeline.
 - **Cost:** $1–3 · 7 agents · deep budget · ~12 min
@@ -86,7 +86,7 @@ discover (meta) ─→ spec ─┤                            │
 
 - **Job:** conversational discovery — adaptive from quick scoping (3-5 Qs) to deep interviews.
 - **When to propose:** intent is unclear OR no spec exists AND user wants to "build something" without clarity.
-- **Hand-off:** `/discover` → may produce `.agents/spec.md` → re-run `/orchestrate-product` after.
+- **Hand-off:** `/discover` → may produce `skills-resources/meta/specs/*.md` → re-run `/orchestrate-product` after.
 
 ### task-breakdown (meta)
 
@@ -129,15 +129,15 @@ discover (meta) ─→ spec ─┤                            │
 
 ## Stale Detection
 
-- `.agents/spec.md` mtime > 60 days → flag stale.
+- `skills-resources/meta/specs/*.md` mtime > 60 days → flag stale.
 - `architecture/system-architecture.md` is OLDER than newest flow file → architecture may be behind. Warn.
-- `.agents/cleanup-report.md` mtime > 30 days → likely stale (codebase moves fast). Warn before re-using.
+- `skills-resources/meta/records/cleanup-*.md` mtime > 30 days → likely stale (codebase moves fast). Warn before re-using.
 
 ---
 
 ## Re-Entry Behavior
 
-`/orchestrate-product` is idempotent. If breadcrumb shows last session ran user-flow and `.agents/product/flow/index.md` now lists 3 flows, advance to system-architecture.
+`/orchestrate-product` is idempotent. If breadcrumb shows last session ran user-flow and `skills-resources/product/flow/index.md` now lists 3 flows, advance to system-architecture.
 
 If user-flow ran but no flow file exists, surface that.
 
