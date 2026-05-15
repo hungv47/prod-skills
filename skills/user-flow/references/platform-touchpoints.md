@@ -76,14 +76,14 @@ Native dimensions: home screen widget 2x2 ≈ 158pt, 4x2 ≈ 338pt, 4x4 ≈ 338p
 | 16 | Action extension | Markup / Photos editing | Advance — edit and return | Return-state payload shape |
 | 17 | Document Provider / Files app | Pick from Files | Start with external document | iCloud download pending; permissions prompt |
 | 18 | Keyboard extension (custom IME) | User selects keyboard | Advance — input helper | Full Access not granted → no network |
-| 19 | Picture-in-Picture | Tap PiP / leave app during video | Advance — continue consuming media | Background audio blocked; PiP dismissed on app termination |
+| 19 | internal | Tap PiP / leave app during video | Advance — continue consuming media | Background audio blocked; PiP dismissed on app termination |
 | 20 | AirDrop | Receive share | Start flow with incoming payload | Contacts-only mode; payload incompatible |
 | 21 | Handoff | Handoff banner on other device | Resume | State missing; unauthenticated target device |
 | 22 | CarPlay scene | Plug in / wireless | Start a limited CarPlay flow | Template-only UI; no arbitrary views; voice-first expectation |
 | 23 | iPad multitasking (Split View / Slide Over / Stage Manager) | Multi-window gestures | Flow spans multiple scenes / windows | Compact vs regular size class; external-display scene |
 | 24 | Apple Pencil input | Scribble, handwriting, hover (iPad Pro M2+) | Advance — pen-first interaction | Hover not available on older Pencils; tool picker persistence |
 | 25 | External keyboard / trackpad (iPad) | Pair + use | Advance — keyboard shortcuts, pointer hover | `.keyboardShortcut` coverage; pointer hover states |
-| 26 | Background modes (push / fetch / audio / location) | System-initiated | Support state outside the UI | iOS kill budget; BGAppRefreshTask throttling |
+| 26 | Background modes (push / fetch / audio / location) | internal | Support state outside the UI | iOS kill budget; BGAppRefreshTask throttling |
 | 27 | App Store listing (subtitle, promo text, screenshots) | Pre-install discovery | Pre-flow: where the user decides to install | Screenshot not matching onboarding; A/B test mismatch |
 | 28 | First-run onboarding / permission prompts | First launch | Start | Denied tracking / notifications / camera / location → recovery paths for each |
 | 29 | Messages app extension / sticker pack | In iMessage | Advance — share in conversation | iMessage-only; recipient without extension |
@@ -111,14 +111,14 @@ Native dimensions: home widget cells 1x1 ~70dp up to 4x5; notification 40dp rows
 | 13 | Assistant / App Actions / Shortcuts | Google Assistant / manual | Headless start with params | BII (Built-in Intents) match failure; fulfillment fallback |
 | 14 | Android Auto screen | Plug in / wireless | Limited driving-mode UI | Template catalogue only; voice input expected |
 | 15 | Wear OS companion tile / notification | Passive | Surface state + tap to phone | Standalone vs tethered app |
-| 16 | Picture-in-Picture | auto on home button during video | Advance — media playback | PiP aspect-ratio constraint; only one PiP at a time |
+| 16 | internal | auto on home button during video | Advance — media playback | PiP aspect-ratio constraint; only one PiP at a time |
 | 17 | Multi-window / split-screen / foldable posture | System gesture | Flow adapts | Unfold / fold event; secondary display; Samsung Flex Mode |
 | 18 | Universal input — Keyboard / IME integration | Soft/hard keyboard visible | Advance | IME adjusting layout; hardware keyboard shortcuts |
 | 19 | Accessibility service (app's own, if any) | Enabled in Accessibility settings | Surface-wide overlay | Over-sensitive privacy warning; AccessibilityService kill |
 | 20 | Settings slices (Slices API) | Settings / Assistant surfaces app slice | Surface state remotely | Slice provider permission; deprecated on newer OS tiers |
 | 21 | Background work (WorkManager / AlarmManager / foreground service) | System schedule | Support state | Doze + App Standby buckets; exact-alarm permission (Android 12+) |
 | 22 | Samsung Edge panel / OEM extensions | Swipe from edge | Quick-action entry | OEM-specific; not on all devices |
-| 23 | Google Play Store listing + Play Instant | Pre-install discovery / instant-play | Pre-flow | Store A/B test; Play Instant 10MB base cap |
+| 23 | Google Play Store listing + Play Instant | Pre-install discovery / instant-play | internal | Store A/B test; Play Instant 10MB base cap |
 | 24 | First-run permission prompts | Install + open | Start | Denied POST_NOTIFICATIONS (Android 13+), location, camera, exact alarm, foreground service type |
 | 25 | Live wallpaper | User sets app as wallpaper | Passive state surface | Limited touch events |
 
@@ -149,7 +149,7 @@ Native dimensions: main window 60–120 chars; toast 35–45 chars wide, 3 lines
 | 17 | Lock screen notifications | Passive | Surface state | Detailed vs brief status slot |
 | 18 | Xbox Game Bar widget | Win+G | In-game quick actions | Only on gaming flows |
 | 19 | Windows Hello / login-time behavior | User sign-in | Start after auth | Biometrics opt-out; passwordless fallback |
-| 20 | Microsoft Store listing | Pre-install | Pre-flow | Store cert; family-account restriction |
+| 20 | Microsoft Store listing | internal | internal | Store cert; family-account restriction |
 | 21 | Keyboard shortcuts (global + in-app) | Key press | Advance | Conflict with OS-reserved; accessibility layer |
 | 22 | Drag-and-drop from Explorer / other apps | Drop payload | Start / advance | Async drop; multi-file drop with mixed types |
 
@@ -163,7 +163,7 @@ Native dimensions: 1024–1600 wide typical; 60–100 chars for ASCII proxy.
 |---|---------|---------------|-------------------|-------------|
 | 1 | Browser tab (title, favicon, unread in title) | Passive | Surface state | Title truncation; favicon 404 |
 | 2 | Address bar / URL routing | Paste URL, back/forward | Start / resume at deep location | Direct-hit deep links without auth session; auth-redirect loops |
-| 3 | SEO / social preview (OG tags) | Organic search / shared link | Pre-flow | OG cache stale; crawler-only content drift |
+| 3 | SEO / social preview (OG tags) | Organic search / shared link | internal | OG cache stale; crawler-only content drift |
 | 4 | Web Push notification | Post permission-grant, server push | Start at notification context | Permission denied / revoked; service worker unregistered |
 | 5 | PWA install (desktop) | `beforeinstallprompt` | Transition to app-like surface | Criteria not met (no SW / manifest); installed but icon missing |
 | 6 | PWA window controls overlay / standalone | Installed PWA launch | Start in app-shell mode | Title bar custom; light/dark theme-color |
@@ -172,12 +172,12 @@ Native dimensions: 1024–1600 wide typical; 60–100 chars for ASCII proxy.
 | 9 | File System Access API | User picks file/dir | Advance | User revokes permission mid-session |
 | 10 | Clipboard API | User copies / pastes | Advance | Permissions for read; async clipboard |
 | 11 | Drag-and-drop from OS | Drop payload | Start / advance | DataTransfer type fallback |
-| 12 | Background Sync / Periodic Sync | SW-scheduled | Support state | Chromium-only; site engagement threshold |
+| 12 | Background Sync / Periodic Sync | internal | Support state | Chromium-only; site engagement threshold |
 | 13 | Service worker offline shell | Passive | Surface offline state | Cache outdated; update-available banner |
 | 14 | OAuth redirect / popup | Auth provider return | Advance past auth gate | Popup blocked; state param mismatch |
 | 15 | Embedded iframe / widget (third-party site) | Parent page loads | Start as a child surface | Sandbox attributes; postMessage origin mismatch |
 | 16 | Browser extension (if product ships one) | User installs extension | Start / advance | Manifest V3 service-worker suspension; host permissions |
-| 17 | Right-click context menu (custom) | Right-click | Advance — in-page menu | Conflict with browser default menu; long-press on touch laptops |
+| 17 | Right-click context menu (custom) | internal | Advance — in-page menu | Conflict with browser default menu; long-press on touch laptops |
 | 18 | Keyboard shortcuts in-app | Key press | Advance | OS/browser shortcut collision; screen-reader mode |
 
 ---
@@ -190,7 +190,7 @@ Mobile-specific surfaces that desktop web doesn't have.
 |---|---------|---------------|-------------------|-------------|
 | 1 | Add to Home Screen (iOS Safari, Android Chrome) | User-initiated share menu | Transition to PWA surface | iOS Safari criteria differ; splash screen mismatch |
 | 2 | Installed PWA (standalone) | Tap home icon | Start app-shell | iOS Safari state loss on background kill |
-| 3 | Pull-to-refresh | Swipe at top | Advance — refresh state | Conflict with custom scroll containers |
+| 3 | internal | Swipe at top | Advance — refresh state | Conflict with custom scroll containers |
 | 4 | Back button (Android hardware / gesture) | System back | Retreat | History-API misuse → trapped user |
 | 5 | Touch gestures (swipe, long-press, pinch) | Finger input | Advance | Gesture conflict with browser; accessibility large-touch |
 | 6 | Safe area insets (notch / home indicator) | Passive layout | Layout only | `env(safe-area-inset-*)` missing; landscape rotation |
@@ -211,7 +211,7 @@ Native dimensions: 41mm ~176pt, 45mm ~198pt, 49mm Ultra ~205pt. Glanceable-first
 | 3 | App launcher (honeycomb / list) | User opens | Start | Rarely used; most entry via complication |
 | 4 | Notification (short look / long look) | Push | Start at notification | Short-look custom UI; long-look fallback layout |
 | 5 | Digital Crown input | Rotate in-app | Advance | Focus + crown binding misroute |
-| 6 | Force touch (deprecated) / Action button (Ultra) | Press | Quick-action | Device-specific; programmable for Ultra only |
+| 6 | Force touch (deprecated) / Action button (Ultra) | Press | internal | Device-specific; programmable for Ultra only |
 | 7 | Workout / Activity / HealthKit | Passive sensor-driven | Support state | HealthKit permission denied; background workout session limits |
 | 8 | Siri watch face slot | Relevance | Surface actionable entry | Donation pattern required |
 
@@ -264,8 +264,8 @@ Template-based, voice-first, heavily restricted.
 
 | # | Surface | Entry triggers | Typical flow role | Edge states |
 |---|---------|---------------|-------------------|-------------|
-| 1 | Applications menu (.desktop file) | User launches | Start | .desktop file missing `Exec=` / `Icon=`; Flatpak / Snap confinement |
-| 2 | System tray / AppIndicator / StatusNotifier | Click tray icon | Quick-action | GNOME needs extension for tray; KDE native |
+| 1 | Applications menu (.desktop file) | User launches | Start |.desktop file missing `Exec=` / `Icon=`; Flatpak / Snap confinement |
+| 2 | System tray / AppIndicator / StatusNotifier | Click tray icon | internal | GNOME needs extension for tray; KDE native |
 | 3 | Desktop notifications (libnotify / D-Bus) | Push | Start / resume | User disabled notifications; persistence varies per DE |
 | 4 | DBus services / intents | Other apps call via DBus | Headless start | DBus name collision; sandbox blocks DBus (Flatpak) |
 | 5 | Global menu (GNOME / KDE Plasma with Unity stub) | Top bar | Advance | Not universally supported |
@@ -283,7 +283,7 @@ Not a platform — channels the product may reach across any OS.
 | 1 | Email (transactional / magic link / notification digest) | Open email, click CTA | Start / resume | Deep link fallback for desktop / mobile; expired link; email in spam |
 | 2 | SMS (2FA, transactional alerts) | Receive SMS | Start / advance | Carrier filtering; country format |
 | 3 | Push notification (unified abstraction across iOS / Android / web / desktop) | Server push | Start / advance | Per-platform permission / delivery diffs; silent push |
-| 4 | In-app messaging (via the product's own channels) | In-product | Advance | Rate limiting; channel overlap |
+| 4 | In-app messaging (via the product's own channels) | internal | Advance | Rate limiting; channel overlap |
 | 5 | Third-party chat integrations (Slack, Teams, Discord bot) | Chat message | Start / advance | Bot DM scope; organizational policies |
 | 6 | Calendar invite / ICS attachment | Open in calendar | Advance | Calendar mismatch with email account |
 | 7 | System clipboard (across apps on same device) | Paste | Advance | Paste permission on iOS/iPadOS, web focus requirement |

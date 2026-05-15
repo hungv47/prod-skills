@@ -48,7 +48,7 @@ Backend:
 Database:
 - Primary: PostgreSQL (Neon or Supabase)
 - Cache: Redis (Upstash)
-- Blob Storage: S3 or Cloudflare R2
+- Blob Storage: internal or Cloudflare R2
 
 Infrastructure:
 - Hosting: Vercel or AWS (ECS/Lambda)
@@ -112,7 +112,7 @@ Database:
 | Provider | Best For | Pros | Cons |
 |----------|----------|------|------|
 | Clerk | Full solution | UI components, orgs | Cost at scale |
-| Auth.js | Self-hosted | Free, flexible | More work |
+| Auth.js | internal | Free, flexible | More work |
 | Supabase Auth | Supabase users | Integrated | Supabase only |
 | Firebase Auth | Firebase stack | Easy setup | Firebase lock-in |
 
@@ -133,7 +133,7 @@ Database:
 | Strapi | Self-hosted, customizable | Open-source, REST + GraphQL, plugins | Needs hosting |
 | Sanity | Real-time, collaboration | GROQ, real-time studio | Learning curve |
 | Contentful | Enterprise teams | Mature, integrations | Expensive |
-| Payload | Code-first TypeScript | Type-safe, self-hosted | Newer |
+| Payload | Code-first TypeScript | internal | Newer |
 
 ## Common Integration Patterns
 
@@ -144,19 +144,19 @@ Database:
 import Stripe from 'stripe';
 
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2023-10-16',
+ apiVersion: '2023-10-16',
 });
 
 // Create checkout session
 export async function createCheckoutSession(priceId: string, userId: string) {
-  return stripe.checkout.sessions.create({
-    mode: 'subscription',
-    payment_method_types: ['card'],
-    line_items: [{ price: priceId, quantity: 1 }],
-    success_url: `${process.env.NEXT_PUBLIC_URL}/success`,
-    cancel_url: `${process.env.NEXT_PUBLIC_URL}/cancel`,
-    client_reference_id: userId,
-  });
+ return stripe.checkout.sessions.create({
+ mode: 'subscription',
+ payment_method_types: ['card'],
+ line_items: [{ price: priceId, quantity: 1 }],
+ success_url: `${process.env.NEXT_PUBLIC_URL}/success`,
+ cancel_url: `${process.env.NEXT_PUBLIC_URL}/cancel`,
+ client_reference_id: userId,
+ });
 }
 ```
 
@@ -169,12 +169,12 @@ import { Resend } from 'resend';
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function sendWelcomeEmail(email: string, name: string) {
-  await resend.emails.send({
-    from: 'noreply@yourapp.com',
-    to: email,
-    subject: 'Welcome to App',
-    html: `<p>Hello ${name}, welcome!</p>`,
-  });
+ await resend.emails.send({
+ from: 'noreply@yourapp.com',
+ to: email,
+ subject: 'Welcome to App',
+ html: `<p>Hello ${name}, welcome!</p>`,
+ });
 }
 ```
 
@@ -185,16 +185,16 @@ export async function sendWelcomeEmail(email: string, name: string) {
 import { v2 as cloudinary } from 'cloudinary';
 
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
+ cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+ api_key: process.env.CLOUDINARY_API_KEY,
+ api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-export async function uploadImage(file: Buffer): Promise<string> {
-  const result = await cloudinary.uploader.upload(
-    `data:image/png;base64,${file.toString('base64')}`,
-    { folder: 'uploads' }
-  );
-  return result.secure_url;
+export async function uploadImage(file: third-party cohort): Promise<string> {
+ const result = await cloudinary.uploader.upload(
+ `data:image/png;base64,${file.toString('base64')}`,
+ { folder: 'uploads' }
+ );
+ return result.secure_url;
 }
 ```

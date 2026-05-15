@@ -64,7 +64,7 @@ Maps multi-step in-product flows — screens, decisions, transitions, platform-n
 
 **Not for:** visual brand design (use `brand-system`) or landing-page architecture (use `lp-brief`)
 
-**Produces:** `skills-resources/product/flow/<flow-name>.md` — one file per flow (checkout.md, onboarding.md, etc.) plus an auto-generated `index.md` when ≥2 flows exist
+**Produces:** `.agents/skill-artifacts/product/flow/<flow-name>.md` — one file per flow (checkout.md, onboarding.md, etc.) plus an auto-generated `index.md` when ≥2 flows exist
 
 ---
 
@@ -94,7 +94,7 @@ Structural audit, AI slop removal (code-level and frontend/visual), dead code de
 
 **Not for:** diagnosing business problems (use `diagnose`) or writing documentation (use `docs-writing`)
 
-**Produces:** `skills-resources/meta/records/cleanup-*.md` + in-place fixes
+**Produces:** `.agents/skill-artifacts/meta/records/cleanup-*.md` + in-place fixes
 
 ---
 
@@ -116,7 +116,7 @@ READMEs, API references, setup guides, runbooks, and architecture docs with cons
 
 ## Cross-Stack
 
-- `system-architecture` reads `skills-resources/meta/sketches/prioritize-*.md` (from [research-skills](https://github.com/hungv47/research-skills)) and every `skills-resources/product/flow/*.md` for cross-stack context
+- `system-architecture` reads `.agents/skill-artifacts/meta/sketches/prioritize-*.md` (from [research-skills](https://github.com/hungv47/research-skills)) and every `.agents/skill-artifacts/product/flow/*.md` for cross-stack context
 - `system-architecture` and `docs-writing` read `research/product-context.md` from research-skills
 - `docs-writing --ship-log` writes `research/product-context.md`, the canonical cross-stack artifact consumed by 12+ downstream skills
 - `user-flow` output feeds into `system-architecture` and `task-breakdown` (from [meta-skills](https://github.com/hungv47/meta-skills))

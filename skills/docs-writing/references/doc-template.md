@@ -33,10 +33,10 @@ Use this structure when generating product documentation. Adapt sections based o
 [Step-by-step instructions for initial configuration. Number each step and include expected outcomes.]
 
 1. [Action to take]
-   - Expected result: [What users should see]
+ - Expected result: [What users should see]
 
 2. [Next action]
-   - Expected result: [What users should see]
+ - Expected result: [What users should see]
 
 ## How to Use [Product Name]
 

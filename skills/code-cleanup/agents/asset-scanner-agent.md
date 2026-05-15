@@ -59,7 +59,7 @@ Return a single markdown document with exactly these sections:
 
 ### Unoptimized Media
 | # | File | Current Size | Estimated Optimized | Format Issue |
-|---|------|-------------|--------------------|--------------| 
+|---|------|-------------|--------------------|--------------|
 | 1 | [path] | [size] | [estimated] | [PNG should be WebP / no srcset / oversized for display dimensions] |
 
 ### Dead Route-Level Code

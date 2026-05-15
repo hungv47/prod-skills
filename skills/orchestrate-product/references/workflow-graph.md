@@ -7,15 +7,15 @@ Canonical pipeline definition for the product-skills stack. `orchestrate-product
 ## The Pipeline
 
 ```
-                         ┌──→ user-flow ──→ system-architecture ──→ docs-writing
-                         │                            ↑
-discover (meta) ─→ spec ─┤                            │
-                         │                            └── task-breakdown (meta)
-                         └──→ (skip flows for backend-only or library work)
+ ┌──→ user-flow ──→ system-architecture ──→ docs-writing
+ │ ↑
+discover (meta) ─→ spec ─┤ │
+ │ └── task-breakdown (meta)
+ └──→ (skip flows for backend-only or library work)
 
 (parallel, standalone branches)
-                              code-cleanup       — audit existing source code
-                              machine-cleanup    — audit developer machine state
+ code-cleanup — audit existing source code
+ machine-cleanup — audit developer machine state
 ```
 
 **Strategy / Spec layer (meta-skills):** `discover` clarifies WHAT to build → produces `spec.md`. This is upstream of the product pipeline.
@@ -39,7 +39,7 @@ discover (meta) ─→ spec ─┤                            │
 ### user-flow
 
 - **Job:** map multi-step in-product flow — screens, decisions, transitions, platform touchpoints (dock, menu bar, widgets, notifications, Live Activity, Dynamic Island), edge cases, error states.
-- **Produces:** `skills-resources/product/flow/<flow-name>.md` (one per flow), `skills-resources/product/flow/index.md` (auto when ≥2 flows)
+- **Produces:** `.agents/skill-artifacts/product/flow/<flow-name>.md` (one per flow), `.agents/skill-artifacts/product/flow/index.md` (auto when ≥2 flows)
 - **Consumes:** `research/product-context.md` (optional), `brand/DESIGN.md` (optional)
 - **When to recommend:** flow-mapping intent (designing a feature with multiple screens/states).
 - **Cost:** $0.20–0.50 · 6 agents · standard budget · ~5 min
@@ -50,14 +50,14 @@ discover (meta) ─→ spec ─┤                            │
 
 - **Job:** technical blueprint — tech stack, database schema, API design, file structure, deployment plan.
 - **Produces:** `architecture/system-architecture.md`
-- **Consumes:** `research/product-context.md`, `skills-resources/meta/specs/*.md`, `skills-resources/meta/sketches/prioritize-*.md` (optional), `skills-resources/product/flow/*.md` (optional but strong signal)
+- **Consumes:** `research/product-context.md`, `.agents/skill-artifacts/meta/specs/*.md`, `.agents/skill-artifacts/meta/sketches/prioritize-*.md` (optional), `.agents/skill-artifacts/product/flow/*.md` (optional but strong signal)
 - **When to recommend:** architecture intent. Soft-gate on flows.
 - **Cost:** $1–3 · 7 agents · deep budget · ~10 min
 
 ### code-cleanup
 
 - **Job:** audit and refactor existing code for readability, maintainability, dead code removal — without changing behavior. Enforces 5 golden rules (preserve behavior, small steps, check conventions, test after each change, rollback awareness).
-- **Produces:** `skills-resources/meta/records/cleanup-*.md` + in-place edits.
+- **Produces:** `.agents/skill-artifacts/meta/records/cleanup-*.md` + in-place edits.
 - **Consumes:** nothing (operates on source code directly).
 - **When to recommend:** code-cleanup intent. Standalone branch.
 - **Cost:** $1–3 · 8 agents · deep budget · ~15 min (varies with codebase size)
@@ -65,7 +65,7 @@ discover (meta) ─→ spec ─┤                            │
 ### machine-cleanup
 
 - **Job:** audit and clean developer machine — dotfolders, caches, language toolchains, package globals. Per-target classification with risk surfacing (auth, running processes, side effects). Explicit user confirmation before each deletion.
-- **Produces:** `skills-resources/meta/records/machine-cleanup-*.md`
+- **Produces:** `.agents/skill-artifacts/meta/records/machine-cleanup-*.md`
 - **Consumes:** nothing (operates on machine state).
 - **When to recommend:** machine-cleanup intent. Standalone — never tied to project pipeline.
 - **Cost:** $1–3 · 7 agents · deep budget · ~12 min
@@ -86,7 +86,7 @@ discover (meta) ─→ spec ─┤                            │
 
 - **Job:** conversational discovery — adaptive from quick scoping (3-5 Qs) to deep interviews.
 - **When to propose:** intent is unclear OR no spec exists AND user wants to "build something" without clarity.
-- **Hand-off:** `/discover` → may produce `skills-resources/meta/specs/*.md` → re-run `/orchestrate-product` after.
+- **Hand-off:** `/discover` → may produce `.agents/skill-artifacts/meta/specs/*.md` → re-run `/orchestrate-product` after.
 
 ### task-breakdown (meta)
 
@@ -100,27 +100,27 @@ discover (meta) ─→ spec ─┤                            │
 
 ```
 1. Read state. Critical gates:
-   - intent is flow/architecture AND no spec.md AND no clear context
-     → soft-defer to /discover ("clarify scope first?")
-   - intent is task-decomposition AND no spec.md AND no architecture.md
-     → defer to /discover or /system-architecture first
+ - intent is flow/architecture AND no spec.md AND no clear context
+ → soft-defer to /discover ("clarify scope first?")
+ - intent is task-decomposition AND no spec.md AND no architecture.md
+ → defer to /discover or /system-architecture first
 
 2. Parse user intent → bucket
 
 3. Apply pipeline routing (first match):
-   a. flow-mapping        → user-flow
-   b. architecture        → system-architecture (soft-gate on flows)
-   c. task-decomposition  → task-breakdown (cross-stack, meta)
-   d. documentation       → docs-writing (ask mode)
-   e. code-cleanup        → code-cleanup (standalone)
-   f. machine-cleanup     → machine-cleanup (standalone)
-   g. discovery           → discover (cross-stack, meta)
+ a. flow-mapping → user-flow
+ b. architecture → system-architecture (soft-gate on flows)
+ c. task-decomposition → task-breakdown (cross-stack, meta)
+ d. documentation → docs-writing (ask mode)
+ e. code-cleanup → code-cleanup (standalone)
+ f. machine-cleanup → machine-cleanup (standalone)
+ g. discovery → discover (cross-stack, meta)
 
 4. Combined intents:
-   "design AND build" → propose 2-step: user-flow → system-architecture
+ "design AND build" → propose 2-step: user-flow → system-architecture
 
 5. Cross-stack pull-in:
-   architecture intent + prioritize.md exists → mention it'll be consumed.
+ architecture intent + prioritize.md exists → mention it'll be consumed.
 
 6. Present (1–3 max). Wait. Append breadcrumb.
 ```
@@ -129,15 +129,15 @@ discover (meta) ─→ spec ─┤                            │
 
 ## Stale Detection
 
-- `skills-resources/meta/specs/*.md` mtime > 60 days → flag stale.
+- `.agents/skill-artifacts/meta/specs/*.md` mtime > 60 days → flag stale.
 - `architecture/system-architecture.md` is OLDER than newest flow file → architecture may be behind. Warn.
-- `skills-resources/meta/records/cleanup-*.md` mtime > 30 days → likely stale (codebase moves fast). Warn before re-using.
+- `.agents/skill-artifacts/meta/records/cleanup-*.md` mtime > 30 days → likely stale (codebase moves fast). Warn before re-using.
 
 ---
 
 ## Re-Entry Behavior
 
-`/orchestrate-product` is idempotent. If breadcrumb shows last session ran user-flow and `skills-resources/product/flow/index.md` now lists 3 flows, advance to system-architecture.
+`/orchestrate-product` is idempotent. If breadcrumb shows last session ran user-flow and `.agents/skill-artifacts/product/flow/index.md` now lists 3 flows, advance to system-architecture.
 
 If user-flow ran but no flow file exists, surface that.
 

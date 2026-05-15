@@ -16,12 +16,12 @@ Classify each failure scenario identified during architecture validation.
 For each operation that can fail, trace the full chain. The point is to make silent failures visible — if a failure has no handling, no test, and no user-facing message, it will bite you in production.
 
 ```
-OPERATION              | WHAT CAN FAIL              | HANDLED? | USER SEES
+OPERATION | WHAT CAN FAIL | HANDLED? | USER SEES
 -----------------------|----------------------------|----------|--------------------
-[e.g., Create invoice] | Database connection timeout | ?        | ?
-                       | Duplicate key conflict      | ?        | ?
-                       | External API returns 429    | ?        | ?
-                       | Input validation fails      | ?        | ?
+[e.g., Create invoice] | Database connection timeout | ? | ?
+ | Duplicate key conflict | ? | ?
+ | External API returns 429 | ? | ?
+ | Input validation fails | ? | ?
 ```
 
 For each row:

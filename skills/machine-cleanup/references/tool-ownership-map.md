@@ -15,7 +15,7 @@ This list is non-exhaustive — when an unknown folder appears, scanners should:
 | Folder pattern | Tool | Install methods | Companion dirs |
 |---|---|---|---|
 | `.claude/` | Claude Code (CLI) | brew cask `claude-code`, native installer | `.claude/skills/`, `.claude/plugins/`, `.claude/projects/` |
-| `.codex/` | OpenAI Codex CLI | brew formula `codex`, brew cask `codexbar`, npm `@openai/codex`, bun global | `.cache/codex-runtimes/`, `~/Library/Application Support/Codex/` |
+| `.codex/` | OpenAI Codex CLI | brew formula `codex`, brew cask `codexbar`, npm `practitioner source/codex`, bun global | `.cache/codex-runtimes/`, `~/Library/Application Support/Codex/` |
 | `.cursor/` | Cursor IDE | direct download, brew cask | `.cursor/projects/`, `.cursor/extensions/`, `.cursor/skills/` |
 | `.copilot/` | GitHub Copilot CLI | brew cask `copilot-cli` | `~/Library/Application Support/Copilot/` |
 | `.warp/` | Warp Terminal | direct download | settings sync via account |
@@ -32,7 +32,7 @@ This list is non-exhaustive — when an unknown folder appears, scanners should:
 | `.pencil/` | Pencil | brew cask | none |
 | `.browser-use/` | browser-use Python lib | pip / pipx | `.config/browseruse/` |
 | `.agent-browser/` | agent-browser CLI (Vercel plugin) | npm `agent-browser` | `.config/agent-browser/` |
-| `skills-resources/` | `npx skills add` install root | npm `skills` package | `~/skills-lock.json`, sibling skills/ dirs in `.cursor/`, `.claude/`, etc. |
+| `.agents/skill-artifacts/` | `npx skills add` install root | npm `skills` package | `~/skills-lock.json`, sibling skills/ dirs in `.cursor/`, `.claude/`, etc. |
 | `.kilocode/` | Kilo Code | direct download | none |
 | `.icube-remote-ssh/` | iCube Remote SSH plugin | unknown | usually empty |
 | `.factory/` | Factory AI | direct download | none |

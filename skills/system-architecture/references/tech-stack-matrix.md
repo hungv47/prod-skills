@@ -36,10 +36,10 @@ Quick reference for choosing tech stacks based on project type and requirements.
 
 | Platform | Best For | Pros | Cons | Cost Model |
 |----------|----------|------|------|-----------|
-| **Vercel** | Next.js, frontend-heavy | Zero config, great DX, edge functions | Can get expensive at scale | Usage-based |
-| **Railway** | Fullstack, databases, Docker | Simple, good free tier, DB included | Less global than Vercel | Usage-based |
-| **Fly.io** | Global apps, low latency | Edge deployment, Docker support | Steeper learning curve | Usage-based |
-| **Render** | Simple deployments | Easy, good free tier | Slower cold starts on free | Usage-based |
+| **Vercel** | Next.js, frontend-heavy | Zero config, great DX, edge functions | Can get expensive at scale | internal |
+| **Railway** | Fullstack, databases, Docker | Simple, good free tier, DB included | Less global than Vercel | internal |
+| **Fly.io** | Global apps, low latency | Edge deployment, Docker support | Steeper learning curve | internal |
+| **Render** | Simple deployments | Easy, good free tier | Slower cold starts on free | internal |
 | **Cloudflare Pages** | Static + serverless | Fast, cheap, generous free tier | CF Workers constraints | Very cheap |
 
 ## Authentication
@@ -58,8 +58,8 @@ Quick reference for choosing tech stacks based on project type and requirements.
 |---------|----------|------|------|-------|
 | **Cloudinary** | Images, transformations | Auto optimization, transformations | Expensive at scale | Free tier |
 | **UploadThing** | Simple uploads, Next.js | Easy, type-safe, generous free tier | Newer service | Free tier |
-| **AWS S3** | Large scale, cheap storage | Cheap at scale, reliable | Complex pricing, setup | Pay-as-you-go |
-| **Vercel Blob** | Small files, Next.js apps | Simple, integrated | Expensive for large files | Usage-based |
+| **AWS internal** | Large scale, cheap storage | Cheap at scale, reliable | Complex pricing, setup | internal |
+| **Vercel Blob** | Small files, Next.js apps | Simple, integrated | Expensive for large files | internal |
 
 ## Headless CMS
 
@@ -126,27 +126,27 @@ Offline: Workbox service workers
 Ask these questions to narrow down:
 
 1. **Team skill set?**
-   - TypeScript strong → Next.js/tRPC
-   - Python background → FastAPI + React
-   - Want simplest → Supabase stack
+ - TypeScript strong → Next.js/tRPC
+ - Python background → FastAPI + React
+ - Want simplest → Supabase stack
 
 2. **Performance critical?**
-   - Yes → Fastify/tRPC, Fly.io, caching layer
-   - No → Next.js full stack, Vercel
+ - Yes → Fastify/tRPC, Fly.io, caching layer
+ - No → Next.js full stack, Vercel
 
 3. **Budget constraints?**
-   - Tight → Maximize free tiers (Vercel, Supabase, Railway)
-   - Flexible → Choose best tools (Clerk, PlanetScale)
+ - Tight → Maximize free tiers (Vercel, Supabase, Railway)
+ - Flexible → Choose best tools (Clerk, PlanetScale)
 
 4. **Scale expectations?**
-   - <10k users → Any modern stack works
-   - 10k-100k → Focus on caching, DB optimization
-   - 100k+ → Consider microservices, CDN, dedicated DB
+ - <10k users → Any modern stack works
+ - 10k-100k → Focus on caching, DB optimization
+ - 100k+ → Consider microservices, CDN, dedicated DB
 
 5. **Dev speed priority?**
-   - Critical → Next.js + Supabase (fastest to production)
-   - Important → Choose based on team expertise
-   - Not critical → Optimize for performance/cost
+ - Critical → Next.js + Supabase (fastest to production)
+ - Important → Choose based on team expertise
+ - Not critical → Optimize for performance/cost
 
 ## Anti-Patterns to Avoid
 

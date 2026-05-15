@@ -62,7 +62,7 @@ Files that exist, are served with HTTP 200, but contain no useful content.
 
 **Corrupt / invalid files:**
 - Images that fail to decode (truncated uploads, interrupted conversions)
-- CSS files containing only comments or `@charset` declarations with no rules
+- CSS files containing only comments or `practitioner source` declarations with no rules
 - JS files containing only `"use strict";` or module boilerplate with no exports
 
 **Detection heuristic:**

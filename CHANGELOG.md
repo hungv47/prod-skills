@@ -8,16 +8,16 @@ This file tracks stack-level releases. SKILL.md files describe current behavior;
 
 ## [6.0.0] - 2026-05-13
 
-BREAKING: every artifact path migrates from `.agents/skill-artifacts/product/` to `skills-resources/product/`. Loop placement for future product evaluators lives at `skills-resources/product/loops/[slug]/`.
+BREAKING: every artifact path migrates from `.agents/skill-artifacts/product/` to `.agents/skill-artifacts/product/`. Loop placement for future product evaluators lives at `skills-resources/loops/[slug]/`.
 
 ### Changed (BREAKING)
-- `.agents/skill-artifacts/product/flow/` → `skills-resources/product/flow/`.
+- `.agents/skill-artifacts/product/flow/` → `.agents/skill-artifacts/product/flow/`.
 - All SKILL.md `produces:` / `consumes:` paths updated to the new tree.
-- `orchestrate-product` inline pre-dispatch bash scans `skills-resources/`.
+- `orchestrate-product` inline pre-dispatch bash scans `.agents/skill-artifacts/`.
 - README, CLAUDE.md, and workflow-graph.md rewritten for new paths.
 
 ### Migration
-Move existing `product/flow/` artifacts under `skills-resources/product/flow/`. Then run `bun meta-skills/scripts/manifest-sync.ts` to regenerate the index.
+Move existing `product/flow/` artifacts under `.agents/skill-artifacts/product/flow/`. Then run `bun meta-skills/scripts/manifest-sync.ts` to regenerate the index.
 
 ---
 

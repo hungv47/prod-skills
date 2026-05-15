@@ -59,7 +59,7 @@ status: current
 
 | Date | What Shipped | Impact |
 |------|-------------|--------|
-| [YYYY-MM-DD] | [What changed in plain language] | [What users can now do differently] |
+| [pattern-derived] | [What changed in plain language] | [What users can now do differently] |
 
 ### Milestones
 

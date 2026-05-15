@@ -1,6 +1,6 @@
 ---
 name: machine-cleanup
-description: "Audits and cleans a developer's machine — dotfolders, caches, language toolchains, and package-manager globals — with per-target classification, risk surfacing (auth, running processes, side effects), and explicit user confirmation before each deletion. Produces `skills-resources/meta/records/machine-cleanup-*.md`. Not for cleaning code (use code-cleanup) or for triaging user files in Documents/Downloads (those need human review)."
+description: "Audits and cleans a developer's machine — dotfolders, caches, language toolchains, and package-manager globals — with per-target classification, risk surfacing (auth, running processes, side effects), and explicit user confirmation before each deletion. Produces `.agents/skill-artifacts/meta/records/machine-cleanup-*.md`. Not for cleaning code (use code-cleanup) or for triaging user files in Documents/Downloads (those need human review)."
 argument-hint: "[target: home | caches | runtimes | packages | all]"
 allowed-tools: Read Grep Glob Bash
 license: MIT
@@ -50,7 +50,7 @@ routing:
   position: horizontal
   lifecycle: snapshot
   produces:
-    - skills-resources/meta/records/machine-cleanup-*.md
+    - .agents/skill-artifacts/meta/records/machine-cleanup-*.md
   consumes: []
   requires: []
   defers-to:
@@ -72,7 +72,7 @@ routing:
 - User intent: full audit, caches only, runtimes only, package globals only, or specific folder
 
 ## Output
-- `skills-resources/meta/records/machine-cleanup-*.md`
+- `.agents/skill-artifacts/meta/records/machine-cleanup-*.md`
 
 ## Chain Position
 Previous: none | Next: none (standalone)
@@ -83,13 +83,13 @@ Previous: none | Next: none (standalone)
 
 ## Pre-Dispatch
 
-Run the Pre-Dispatch protocol (`meta-skills/references/pre-dispatch-protocol.md`).
+Run the Pre-Dispatch protocol (`references/_shared/pre-dispatch-protocol.md`).
 
 **Needed dimensions:** scope (dotfolders / caches / packages / runtimes / all), aggressiveness (conservative / moderate / aggressive), excluded paths.
 
 **Read order:**
 1. Machine scan: `du -sh ~/.*`, `df -h`, package globals (npm/brew/bun/cargo/go/pipx).
-2. Experience: `skills-resources/experience/technical.md` for prior protected-paths list.
+2. Experience: `.agents/experience/technical.md` for prior protected-paths list.
 
 **Warm Start** (scope clear from invocation, e.g., "clean my caches"):
 
@@ -177,7 +177,7 @@ Layer 3 (interactive — execution):
    - Execute with side-effect fixes
    - Track reclaim
 5. **Critic review** — `critic-agent` checks golden rules. If FAIL, restore from backup and report.
-6. **Assembly** — compile report. Save to `skills-resources/meta/records/machine-cleanup-*.md`.
+6. **Assembly** — compile report. Save to `.agents/skill-artifacts/meta/records/machine-cleanup-*.md`.
 
 ### Routing Rules
 
@@ -223,7 +223,7 @@ When context window is constrained or the cleanup target is a single folder:
 6. Wait for explicit user confirmation.
 7. Execute with side-effect fixes.
 8. Verify post-state.
-9. Save to `skills-resources/meta/records/machine-cleanup-*.md`.
+9. Save to `.agents/skill-artifacts/meta/records/machine-cleanup-*.md`.
 
 ---
 
@@ -339,7 +339,7 @@ Walks the candidate list one at a time. For each target:
 
 **Critic review:** PASS. All 6 golden rules satisfied. No user data touched. All auth surprises were surfaced. Shell rc fixed inline.
 
-**Artifact saved to `skills-resources/meta/records/machine-cleanup-*.md`.**
+**Artifact saved to `.agents/skill-artifacts/meta/records/machine-cleanup-*.md`.**
 
 ---
 

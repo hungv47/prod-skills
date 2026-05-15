@@ -1,6 +1,6 @@
 ---
 name: orchestrate-product
-description: "Stack orchestrator for product-skills. Reads what's already done in `skills-resources/product/`, `architecture/`, and `research/`, parses your intent, and proposes the next 1–3 skills (user-flow → system-architecture → docs-writing, plus standalone code-cleanup and machine-cleanup). Use when you don't know which product skill to invoke, or want a guided run from user flows through architecture to docs. Not for executing the work itself — it routes to the skill that does. Not for cross-stack workflows (use orchestrate-meta or invoke skills directly). Renamed from `start-product` in v3.0.0."
+description: "Stack orchestrator for product-skills. Reads what's already done in `.agents/skill-artifacts/product/`, `architecture/`, and `research/`, parses your intent, and proposes the next 1–3 skills (user-flow → system-architecture → docs-writing, plus standalone code-cleanup and machine-cleanup). Use when you don't know which product skill to invoke, or want a guided run from user flows through architecture to docs. Not for executing the work itself — it routes to the skill that does. Not for cross-stack workflows (use orchestrate-meta or invoke skills directly). Renamed from `start-product` in v3.0.0."
 argument-hint: "[free-form ask, or empty to be guided]"
 allowed-tools: Read Grep Glob Bash
 user-invocable: true
@@ -44,19 +44,19 @@ routing:
   position: orchestrator
   lifecycle: pipeline
   produces:
-    - skills-resources/experience/product-workflow.md
+    - .agents/experience/product-workflow.md
   side-effects:
     - manifest-sync
   consumes:
     - research/product-context.md
-    - skills-resources/product/flow/*.md
-    - skills-resources/product/flow/index.md
+    - .agents/skill-artifacts/product/flow/*.md
+    - .agents/skill-artifacts/product/flow/index.md
     - architecture/system-architecture.md
-    - skills-resources/meta/records/cleanup-*.md
-    - skills-resources/meta/records/machine-cleanup-*.md
-    - skills-resources/meta/specs/*.md
-    - skills-resources/meta/tasks.md
-    - skills-resources/experience/*.md
+    - .agents/skill-artifacts/meta/records/cleanup-*.md
+    - .agents/skill-artifacts/meta/records/machine-cleanup-*.md
+    - .agents/skill-artifacts/meta/specs/*.md
+    - .agents/skill-artifacts/meta/tasks.md
+    - .agents/experience/*.md
   requires: []
   defers-to:
     - skill: user-flow
@@ -82,7 +82,7 @@ routing:
 
 *Meta — Stack orchestrator. The entry point for the product-skills stack when you don't know what to invoke.*
 
-**Core Job:** read what exists in `skills-resources/product/`, `architecture/`, and `research/`, infer where you are, propose the next skill.
+**Core Job:** read what exists in `.agents/skill-artifacts/product/`, `architecture/`, and `research/`, infer where you are, propose the next skill.
 
 **Core Question:** "Given the spec, the user-flow state, and the architecture state, what's the next product skill to run?"
 
@@ -109,7 +109,7 @@ This skill does NOT execute product work. It is a router. The actual work is don
 
 **Tier note (`metadata.budget: fast`):** This is a pure router — no sub-agent dispatch, no critic gate. The body below runs in-line: read state, parse intent, propose next skill, await user confirmation. No `agents/` directory, no L1/L2 layers, no rewrite cycles. The premium-orchestration substrate (multi-agent + critic) lives in the skills this router proposes; running it here would be theater.
 
-1. **State detection** — silently read `skills-resources/product/`, `architecture/`, `skills-resources/meta/specs/*.md`, `skills-resources/meta/tasks.md`, `skills-resources/experience/*.md`, `research/product-context.md`.
+1. **State detection** — silently read `.agents/skill-artifacts/product/`, `architecture/`, `.agents/skill-artifacts/meta/specs/*.md`, `.agents/skill-artifacts/meta/tasks.md`, `.agents/experience/*.md`, `research/product-context.md`.
 2. **Intention analysis** — parse user's free-form ask. If empty, ask one bundled scoping question.
 3. **Routing decision** — propose 1–3 skills with rationale + cost + duration.
 4. **User confirmation** — print hand-off `/skill-name` and exit. Never auto-invoke.
@@ -118,11 +118,11 @@ This skill does NOT execute product work. It is a router. The actual work is don
 
 ## Step 1: State Detection
 
-**Disk snapshot** (rendered inline when `/orchestrate-product` is invoked — see `meta-skills/CLAUDE.md` §"Skill-Authoring Patterns" for the inline-shell-interpolation convention):
+**Disk snapshot** (rendered inline when `/orchestrate-product` is invoked — see this skill's generated support notes for the inline-shell-interpolation convention):
 
 ```
 Artifacts by domain:
-! `[ -d skills-resources ] && find skills-resources -mindepth 2 -name "*.md" -type f 2>/dev/null | awk -F/ '{print $3}' | sort | uniq -c | sort -rn | grep . || echo "  (no skills-resources/ yet)"`
+! `[ -d .agents/skill-artifacts ] && find .agents/skill-artifacts -mindepth 2 -name "*.md" -type f 2>/dev/null | awk -F/ '{print $3}' | sort | uniq -c | sort -rn | grep . || echo "  (no .agents/skill-artifacts/ yet)"`
 
 Top-level canonical folders present:
 ! `found=0; for d in research brand architecture; do [ -d "$d" ] && { echo "  $d/ ✓"; found=1; }; done; [ $found -eq 0 ] && echo "  (none yet)" || true`
@@ -133,15 +133,15 @@ Last 5 commits in this repo:
 
 The `! \`...\`` lines run at slash-command invocation time and substitute the command output — so the orchestrator starts from concrete state instead of speculating about what's on disk.
 
-**Read `skills-resources/manifest.json` first** — it is the canonical state index for all artifact metadata. A single read gives you status, staleness, producer, and a one-line summary for every relevant artifact; no per-path filesystem scanning required.
+**Read `.agents/manifest.json` first** — it is the canonical state index for all artifact metadata. A single read gives you status, staleness, producer, and a one-line summary for every relevant artifact; no per-path filesystem scanning required.
 
 If the manifest is missing or you suspect drift (e.g., artifacts exist that aren't listed), refresh it:
 
 ```bash
-bun ${SKILLS_ROOT:-.claude/skills}/meta-skills/scripts/manifest-sync.ts
+bun scripts/manifest-sync.ts
 ```
 
-**Status-aware lookup:** for each product-relevant artifact key — `architecture/system-architecture.md`, `skills-resources/meta/specs/*.md`, `skills-resources/meta/tasks.md`, `skills-resources/product/flow/*.md`, `skills-resources/meta/records/cleanup-*.md`, `skills-resources/meta/records/machine-cleanup-*.md`, and any `docs-writing` outputs — read the manifest entry's `status` and `stale` fields to qualify the state map:
+**Status-aware lookup:** for each product-relevant artifact key — `architecture/system-architecture.md`, `.agents/skill-artifacts/meta/specs/*.md`, `.agents/skill-artifacts/meta/tasks.md`, `.agents/skill-artifacts/product/flow/*.md`, `.agents/skill-artifacts/meta/records/cleanup-*.md`, `.agents/skill-artifacts/meta/records/machine-cleanup-*.md`, and any `docs-writing` outputs — read the manifest entry's `status` and `stale` fields to qualify the state map:
 
 | Manifest signal | State map value |
 |---|---|
@@ -155,22 +155,22 @@ Staleness is derived per-artifact via the manifest's `stale_after_days` (default
 
 **Experience block:** also read the manifest's `experience` block. The `entries` count for `technical.md`, `audience.md`, and `goals.md` indicates Pre-Dispatch coverage for product-stack questions — a domain with 0–1 entries likely needs a Cold Start; 5+ entries is well-covered.
 
-See [`../../../meta-skills/references/manifest-spec.md`](../../../meta-skills/references/manifest-spec.md) for the full contract.
+See [`references/_shared/manifest-spec.md`](references/_shared/manifest-spec.md) for the full contract.
 
-**Path reference / filesystem fallback** — used only when `skills-resources/manifest.json` doesn't exist (fresh project) or sync hasn't been run.
+**Path reference / filesystem fallback** — used only when `.agents/manifest.json` doesn't exist (fresh project) or sync hasn't been run.
 
 | Path | What it tells you |
 |---|---|
 | `research/product-context.md` | Cross-stack ICP/business context exists. |
-| `skills-resources/meta/specs/*.md` | A scoped spec exists (from `discover`). |
-| `skills-resources/product/flow/index.md` | At least 2 user flows mapped. |
-| `skills-resources/product/flow/*.md` | Specific flows mapped (each file = one flow). |
+| `.agents/skill-artifacts/meta/specs/*.md` | A scoped spec exists (from `discover`). |
+| `.agents/skill-artifacts/product/flow/index.md` | At least 2 user flows mapped. |
+| `.agents/skill-artifacts/product/flow/*.md` | Specific flows mapped (each file = one flow). |
 | `architecture/system-architecture.md` | System blueprint exists. |
-| `skills-resources/meta/tasks.md` | Buildable task list exists (from `task-breakdown`). |
-| `skills-resources/meta/records/cleanup-*.md` | Code cleanup audit done. |
-| `skills-resources/meta/records/machine-cleanup-*.md` | Machine cleanup audit done. |
-| `skills-resources/experience/technical.md` | Cold-start tech context (platforms, OS versions, scale, deployment, codebase conventions) persisted. |
-| `skills-resources/experience/product-workflow.md` | Prior breadcrumb. |
+| `.agents/skill-artifacts/meta/tasks.md` | Buildable task list exists (from `task-breakdown`). |
+| `.agents/skill-artifacts/meta/records/cleanup-*.md` | Code cleanup audit done. |
+| `.agents/skill-artifacts/meta/records/machine-cleanup-*.md` | Machine cleanup audit done. |
+| `.agents/experience/technical.md` | Cold-start tech context (platforms, OS versions, scale, deployment, codebase conventions) persisted. |
+| `.agents/experience/product-workflow.md` | Prior breadcrumb. |
 
 State map:
 
@@ -231,7 +231,7 @@ Apply rules in order — first match wins.
 - Propose 2-step path: `/user-flow` → `/system-architecture`. Show both as the recommended sequence with rationale.
 
 **Cross-stack pull-in:**
-- If intent is architecture AND `skills-resources/meta/sketches/prioritize-*.md` exists, mention: "system-architecture can read `skills-resources/meta/sketches/prioritize-*.md` to align technical work with business priorities."
+- If intent is architecture AND `.agents/skill-artifacts/meta/sketches/prioritize-*.md` exists, mention: "system-architecture can read `.agents/skill-artifacts/meta/sketches/prioritize-*.md` to align technical work with business priorities."
 
 ---
 
@@ -240,7 +240,7 @@ Apply rules in order — first match wins.
 ```
 ## Where you are
 
-- Spec: ✅ done (skills-resources/meta/specs/*.md, last week)
+- Spec: ✅ done (.agents/skill-artifacts/meta/specs/*.md, last week)
 - Flows mapped: 1 (checkout)
 - Architecture: ❌ missing
 - Tasks broken down: ❌ missing
@@ -272,7 +272,7 @@ If multiple options apply, show 2–3.
 
 ## Step 5: Persist + Hand Off
 
-Append to `skills-resources/experience/product-workflow.md`:
+Append to `.agents/experience/product-workflow.md`:
 
 ```markdown
 ## Session 2026-05-06
@@ -299,7 +299,7 @@ For canonical pipeline, decision rules, per-skill catalog, see [`./references/wo
 
 ## Anti-Patterns
 
-- **Don't ignore the manifest** — always read `skills-resources/manifest.json` first; per-path filesystem scans are a fallback, not the default.
+- **Don't ignore the manifest** — always read `.agents/manifest.json` first; per-path filesystem scans are a fallback, not the default.
 - **Don't conflate code-cleanup and machine-cleanup.** Code = source files; machine = dotfolders, caches, globals.
 - **Don't recommend system-architecture without any flows or spec context.** It produces hollow blueprints.
 - **Don't auto-invoke.** Always print `/skill-name`.
@@ -311,7 +311,7 @@ For canonical pipeline, decision rules, per-skill catalog, see [`./references/wo
 ## Output
 
 - **Inline only.**
-- **Side effect:** appends one entry to `skills-resources/experience/product-workflow.md`.
+- **Side effect:** appends one entry to `.agents/experience/product-workflow.md`.
 
 ## Status
 

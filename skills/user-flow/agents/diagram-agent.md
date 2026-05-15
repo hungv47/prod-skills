@@ -42,7 +42,7 @@ graph TD
 ## Sub-Flow References
 
 [If the flow was decomposed into sub-flows:]
-- [Sub-flow name] -> see `skills-resources/product/flow/[slug]-[sub].md` (entry: "[trigger]" from [screen])
+- [Sub-flow name] -> see `.agents/skill-artifacts/product/flow/[slug]-[sub].md` (entry: "[trigger]" from [screen])
 
 ## Diagram Legend
 

@@ -1,6 +1,6 @@
 ---
 name: code-cleanup
-description: "Audits and refactors existing code for readability, maintainability, and dead code removal without changing behavior. Produces `skills-resources/meta/records/[date]-cleanup-<slug>.md` and applies fixes in-place. Not for diagnosing business problems (use diagnose) or writing documentation (use docs-writing). For writing missing docs after cleanup, see docs-writing."
+description: "Audits and refactors existing code for readability, maintainability, and dead code removal without changing behavior. Produces `.agents/skill-artifacts/meta/records/[date]-cleanup-<slug>.md` and applies fixes in-place. Not for diagnosing business problems (use diagnose) or writing documentation (use docs-writing). For writing missing docs after cleanup, see docs-writing."
 argument-hint: "[file or directory to clean]"
 allowed-tools: Read Grep Glob Bash
 license: MIT
@@ -45,7 +45,7 @@ routing:
   position: horizontal
   lifecycle: snapshot
   produces:
-    - skills-resources/meta/records/[date]-cleanup-[slug].md
+    - .agents/skill-artifacts/meta/records/[date]-cleanup-[slug].md
   consumes: []
   requires: []
   defers-to:
@@ -70,19 +70,19 @@ routing:
 - User intent: structural reorganization, code-level cleanup, refactoring, or all three
 
 ## Output
-- `skills-resources/meta/records/[date]-cleanup-<slug>.md`
+- `.agents/skill-artifacts/meta/records/[date]-cleanup-<slug>.md`
 
 ---
 
 ## Pre-Dispatch
 
-Run the Pre-Dispatch protocol (`meta-skills/references/pre-dispatch-protocol.md`).
+Run the Pre-Dispatch protocol (`references/_shared/pre-dispatch-protocol.md`).
 
 **Needed dimensions:** codebase path, cleanup intent (dead code / unused deps / asset / refactor / mixed), test suite available?, conventions to preserve.
 
 **Read order:**
 1. Codebase scan: package manifest, test config, lint config, framework hints (CLAUDE.md, .editorconfig, etc.).
-2. Experience: `skills-resources/experience/technical.md` for prior conventions notes.
+2. Experience: `.agents/experience/technical.md` for prior conventions notes.
 
 **Warm Start** (cleanup intent obvious from invocation, e.g., user said "remove dead code"):
 
@@ -172,7 +172,7 @@ Layer 2 (sequential):
 4. **Refactoring** — pass code scanner results + removal results to `refactoring-agent`. It fixes code-level issues.
 5. **Validation** — `validation-agent` runs all available checks (tests, types, lint, build).
 6. **Critic review** — `critic-agent` checks golden rules compliance. If FAIL, identify the specific change to revert.
-7. **Assembly** — compile cleanup report. Save to `skills-resources/meta/records/[date]-cleanup-<slug>.md`.
+7. **Assembly** — compile cleanup report. Save to `.agents/skill-artifacts/meta/records/[date]-cleanup-<slug>.md`.
 
 ### Routing Rules
 
@@ -216,7 +216,7 @@ When context window is constrained or the cleanup scope is small (fewer than 5 f
 4. Apply fixes one at a time, testing after each
 5. Run all available checks
 6. Verify golden rules compliance as self-review
-7. Save to `skills-resources/meta/records/[date]-cleanup-<slug>.md`
+7. Save to `.agents/skill-artifacts/meta/records/[date]-cleanup-<slug>.md`
 
 ---
 
@@ -298,7 +298,7 @@ The refactoring-agent skips these situations:
 - `validation-agent` → bun test: 47/47 pass. tsc --noEmit: clean. Lint: clean.
 - `critic-agent` → PASS. All 5 golden rules pass.
 
-**Artifact saved to `skills-resources/meta/records/2026-05-08-cleanup-express-api.md`.**
+**Artifact saved to `.agents/skill-artifacts/meta/records/2026-05-08-cleanup-express-api.md`.**
 
 ---
 

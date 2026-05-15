@@ -15,7 +15,7 @@ auth.toml
 auth.yml
 credentials.json
 credentials
-config.toml          (in tool dirs that store tokens — verify by content)
+config.toml (in tool dirs that store tokens — verify by content)
 tokens.json
 tokens.txt
 *_tokens.json
@@ -28,17 +28,17 @@ cookies.json
 cookies.db
 keychain.json
 .netrc
-hosts.yml            (gh CLI token store)
-client_info.json     (OAuth client registration)
-client_secret*.json  (OAuth client secret)
+hosts.yml (gh CLI token store)
+client_info.json (OAuth client registration)
+client_secret*.json (OAuth client secret)
 *_client_info.json
-*_code_verifier.txt  (PKCE)
+*_code_verifier.txt (PKCE)
 oauth*.json
 refresh_token*
 access_token*
 identity.json
 api_keys.json
-.env                 (often holds API keys)
+.env (often holds API keys)
 .env.local
 .env.*
 secrets.yml
@@ -62,7 +62,7 @@ bearer
 authorization
 authToken
 oauth_token
-Bearer eyJ           (JWT in Authorization header)
+Bearer eyJ (JWT in Authorization header)
 ```
 
 ## JWT detection
@@ -78,8 +78,8 @@ id_rsa
 id_ed25519
 id_ecdsa
 id_dsa
-*.pem (in .ssh/)
-*.key (in .ssh/)
+*.pem (in.ssh/)
+*.key (in.ssh/)
 known_hosts
 authorized_keys
 ```
@@ -96,7 +96,7 @@ Also SEVERE — never auto-recommend deletion:
 
 ## Cloud provider credentials
 
-| Provider | Path | Re-auth |
+| Provider | Path | internal |
 |---|---|---|
 | AWS | `~/.aws/credentials` | `aws configure` |
 | GCP (ADC) | `~/.config/gcloud/application_default_credentials.json` | `gcloud auth application-default login` |
