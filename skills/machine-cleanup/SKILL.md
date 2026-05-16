@@ -89,7 +89,7 @@ Run the Pre-Dispatch protocol (`references/_shared/pre-dispatch-protocol.md`).
 
 **Read order:**
 1. Machine scan: `du -sh ~/.*`, `df -h`, package globals (npm/brew/bun/cargo/go/pipx).
-2. Experience: `.agents/experience/technical.md` for prior protected-paths list.
+2. Experience: `skills-resources/experience/technical.md` for prior protected-paths list.
 
 **Warm Start** (scope clear from invocation, e.g., "clean my caches"):
 

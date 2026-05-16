@@ -85,7 +85,7 @@ Run the Pre-Dispatch protocol (`references/_shared/pre-dispatch-protocol.md`).
 **Read order:**
 1. Pipeline: `.agents/skill-artifacts/meta/specs/*.md`, `.agents/skill-artifacts/meta/sketches/prioritize-*.md`, `.agents/skill-artifacts/product/flow/*.md`, existing `architecture/system-architecture.md` (if re-run).
 2. Codebase: package manifest, existing schema files, framework signals.
-3. Experience: `.agents/experience/technical.md` for stack history + constraints.
+3. Experience: `skills-resources/experience/technical.md` for stack history + constraints.
 
 **Warm Start** (spec + flows present, scale either declared or derivable from product context):
 

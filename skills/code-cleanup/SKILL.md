@@ -82,7 +82,7 @@ Run the Pre-Dispatch protocol (`references/_shared/pre-dispatch-protocol.md`).
 
 **Read order:**
 1. Codebase scan: package manifest, test config, lint config, framework hints (CLAUDE.md, .editorconfig, etc.).
-2. Experience: `.agents/experience/technical.md` for prior conventions notes.
+2. Experience: `skills-resources/experience/technical.md` for prior conventions notes.
 
 **Warm Start** (cleanup intent obvious from invocation, e.g., user said "remove dead code"):
 

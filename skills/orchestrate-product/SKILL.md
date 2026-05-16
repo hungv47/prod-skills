@@ -44,7 +44,7 @@ routing:
   position: orchestrator
   lifecycle: pipeline
   produces:
-    - .agents/experience/product-workflow.md
+    - skills-resources/experience/product-workflow.md
   side-effects:
     - manifest-sync
   consumes:
@@ -56,7 +56,7 @@ routing:
     - .agents/skill-artifacts/meta/records/machine-cleanup-*.md
     - .agents/skill-artifacts/meta/specs/*.md
     - .agents/skill-artifacts/meta/tasks.md
-    - .agents/experience/*.md
+    - skills-resources/experience/*.md
   requires: []
   defers-to:
     - skill: user-flow
@@ -109,7 +109,7 @@ This skill does NOT execute product work. It is a router. The actual work is don
 
 **Tier note (`metadata.budget: fast`):** This is a pure router — no sub-agent dispatch, no critic gate. The body below runs in-line: read state, parse intent, propose next skill, await user confirmation. No `agents/` directory, no L1/L2 layers, no rewrite cycles. The premium-orchestration substrate (multi-agent + critic) lives in the skills this router proposes; running it here would be theater.
 
-1. **State detection** — silently read `.agents/skill-artifacts/product/`, `architecture/`, `.agents/skill-artifacts/meta/specs/*.md`, `.agents/skill-artifacts/meta/tasks.md`, `.agents/experience/*.md`, `research/product-context.md`.
+1. **State detection** — silently read `.agents/skill-artifacts/product/`, `architecture/`, `.agents/skill-artifacts/meta/specs/*.md`, `.agents/skill-artifacts/meta/tasks.md`, `skills-resources/experience/*.md`, `research/product-context.md`.
 2. **Intention analysis** — parse user's free-form ask. If empty, ask one bundled scoping question.
 3. **Routing decision** — propose 1–3 skills with rationale + cost + duration.
 4. **User confirmation** — print hand-off `/skill-name` and exit. Never auto-invoke.
@@ -169,8 +169,8 @@ See [`references/_shared/manifest-spec.md`](references/_shared/manifest-spec.md)
 | `.agents/skill-artifacts/meta/tasks.md` | Buildable task list exists (from `task-breakdown`). |
 | `.agents/skill-artifacts/meta/records/cleanup-*.md` | Code cleanup audit done. |
 | `.agents/skill-artifacts/meta/records/machine-cleanup-*.md` | Machine cleanup audit done. |
-| `.agents/experience/technical.md` | Cold-start tech context (platforms, OS versions, scale, deployment, codebase conventions) persisted. |
-| `.agents/experience/product-workflow.md` | Prior breadcrumb. |
+| `skills-resources/experience/technical.md` | Cold-start tech context (platforms, OS versions, scale, deployment, codebase conventions) persisted. |
+| `skills-resources/experience/product-workflow.md` | Prior breadcrumb. |
 
 State map:
 
@@ -272,7 +272,7 @@ If multiple options apply, show 2–3.
 
 ## Step 5: Persist + Hand Off
 
-Append to `.agents/experience/product-workflow.md`:
+Append to `skills-resources/experience/product-workflow.md`:
 
 ```markdown
 ## Session 2026-05-06
@@ -311,7 +311,7 @@ For canonical pipeline, decision rules, per-skill catalog, see [`./references/wo
 ## Output
 
 - **Inline only.**
-- **Side effect:** appends one entry to `.agents/experience/product-workflow.md`.
+- **Side effect:** appends one entry to `skills-resources/experience/product-workflow.md`.
 
 ## Status
 

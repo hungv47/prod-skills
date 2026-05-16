@@ -89,7 +89,7 @@ Run the Pre-Dispatch protocol (`references/_shared/pre-dispatch-protocol.md`).
 
 **Read order:**
 1. Codebase scan: existing README, docs/, package manifest, framework hints.
-2. Experience: `.agents/experience/technical.md` for prior doc conventions.
+2. Experience: `skills-resources/experience/technical.md` for prior doc conventions.
 
 **Warm Start** (audience + type both inferable, e.g., user said "write the README"):
 

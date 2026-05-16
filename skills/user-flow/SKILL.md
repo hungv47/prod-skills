@@ -137,7 +137,7 @@ Run the Pre-Dispatch protocol (`references/_shared/pre-dispatch-protocol.md`). u
 
 **Read order:**
 1. Pipeline: `research/product-context.md` for product/audience grounding. `brand/DESIGN.md` (optional — components, tokens). `brand/BRAND.md` (optional — voice, terminology).
-2. Experience: `.agents/experience/{audience,technical,goals}.md` for product, audience, and platform history.
+2. Experience: `skills-resources/experience/{audience,technical,goals}.md` for product, audience, and platform history.
 3. Catalog: `references/platform-touchpoints.md` for the canonical platform/surface list.
 
 If `research/product-context.md` `date` is >30 days old, recommend re-running `icp-research` to refresh.
