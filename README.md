@@ -2,7 +2,7 @@
 
 ![Product Skills](./assets/banner.png)
 
-> **Agent Skills 2.0** — fresh start on the `refactor/v2.0` branch. Install via `npx skills add hungv47/product-skills@refactor/v2.0`. The `main` branch holds the legacy v1.x line.
+> **Agent Skills 2.0** — fresh start on the `refactor/v2.0` branch. Install via `npx skills add hungv47/product-skills@refactor/v2.0`. The `main` branch holds the legacy v6.x line.
 
 UX design, technical architecture, code cleanup, machine cleanup, and documentation — the skills for designing and building software. 6 skills (incl. `/orchestrate-product` orchestrator).
 
@@ -13,22 +13,28 @@ UX design, technical architecture, code cleanup, machine cleanup, and documentat
 Installs via the [`skills` CLI](https://skills.sh). Requires Node.js 18+. Auto-detects Claude Code, Cursor, Codex, Windsurf, Gemini CLI, or VS Code.
 
 ```bash
-# Install the full product stack
-npx skills add hungv47/product-skills
+# Install the full product stack (Agent Skills 2.0)
+npx skills add hungv47/product-skills@refactor/v2.0
 
 # Cherry-pick a single skill (any skill in the stack — these are just examples)
-npx skills add hungv47/product-skills --skill code-cleanup
-npx skills add hungv47/product-skills --skill system-architecture
-npx skills add hungv47/product-skills --skill user-flow
+npx skills add hungv47/product-skills@refactor/v2.0 --skill code-cleanup
+npx skills add hungv47/product-skills@refactor/v2.0 --skill system-architecture
+npx skills add hungv47/product-skills@refactor/v2.0 --skill user-flow
 
 # List available skills without installing
-npx skills add hungv47/product-skills --list
+npx skills add hungv47/product-skills@refactor/v2.0 --list
 
 # Target a specific editor
-npx skills add hungv47/product-skills --agent claude-code
+npx skills add hungv47/product-skills@refactor/v2.0 --agent claude-code
 
 # Install globally (available in every project)
-npx skills add hungv47/product-skills -g
+npx skills add hungv47/product-skills@refactor/v2.0 -g
+```
+
+**Legacy v6.x install** (main branch — no `@refactor/v2.0` suffix):
+
+```bash
+npx skills add hungv47/product-skills
 ```
 
 See the [root README](https://github.com/hungv47/agent-skills#install) for the full install reference.
