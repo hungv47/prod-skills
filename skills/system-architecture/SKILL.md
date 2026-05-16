@@ -9,6 +9,13 @@ metadata:
   version: "3.0.0"
   budget: deep
   estimated-cost: "$1-3"
+  refactor_history:
+    - refactored_at: 2026-05-17
+      refactored_for: implementation-roadmap v6 Phase 2 Wave 1 (slot 3 — structural; tech-decision logic stays in body, examples + templates to refs)
+      body_before: 328
+      body_after: 167
+      body_delta_pct: -49.0
+      note: body-only line counts (frontmatter excluded). 6 new refs (playbook, pre-dispatch-prompts, anti-patterns, report-template, dependency-classification, examples/saas-invoicing-walkthrough). "Two Modes of Operation" body deleted (duplicate of Routing Logic). 12-section Artifact Template extracted to report-template.md.
 promptSignals:
   phrases:
     - "system design"
@@ -66,15 +73,31 @@ routing:
 
 **Core Question:** "Will this still work at 10x scale with 10x team?"
 
-## Inputs Required
-- Product specification, PRD, or description of what needs to be built
-- Scale expectations (users, requests, data volume) — gathered via interview if missing
-- Known constraints (existing stack, compliance, budget, team skills)
+[Read `references/playbook.md` [PLAYBOOK] to understand why this skill exists, methodology, principles, two modes of operation, history.]
 
-## Output
-- `architecture/system-architecture.md`
+## When To Use
 
----
+- Defined product or feature needing a technical blueprint (stack, schema, API, infra, deployment).
+- Major scale shift (10x growth) or migration to new core infrastructure.
+- Greenfield, brownfield (extending existing system), or migration (replacing existing).
+- Architecture re-run after significant spec change.
+
+## When NOT To Use
+
+- Requirements still fuzzy → defer to `/discover`.
+- Need code-level cleanup → `/code-cleanup`.
+- Need task decomposition from existing architecture → `/task-breakdown`.
+- Need UI/flow mapping → `/user-flow`.
+
+## Before Starting
+
+Apply the [before-starting-check](references/_shared/before-starting-check.md) [PLAYBOOK]:
+
+0. **Mode resolution** — this skill is `budget: deep`. Mode-resolver ([`references/_shared/mode-resolver.md`](references/_shared/mode-resolver.md) [PROCEDURE]) auto-downgrades to `fast` for simple products (fewer than 3 user types AND fewer than 5 data entities) → Single-Agent Fallback path. `--fast` flag forces single-agent regardless of scope. **Safety gates supersede `--fast`:** the 8 Critical Gates fire on every run, regardless of mode. Pre-Dispatch fires under `--fast` if scale + constraints aren't resolvable.
+1. Read `implementation-roadmap/canonical-paths.md` if present — verify output path matches canonical inventory (`architecture/system-architecture.md`).
+2. Read `research/product-context.md`. If missing: interview for product dimensions or recommend `/icp-research` (from research-skills) to bootstrap. If `date` field >30 days old, recommend refresh.
+3. Read `.agents/manifest.json` for prior architecture runs + downstream task-breakdown state.
+4. Read `skills-resources/experience/technical.md` for stack history + constraints.
 
 ## Pre-Dispatch
 
@@ -87,54 +110,40 @@ Run the Pre-Dispatch protocol (`references/_shared/pre-dispatch-protocol.md`).
 2. Codebase: package manifest, existing schema files, framework signals.
 3. Experience: `skills-resources/experience/technical.md` for stack history + constraints.
 
-**Warm Start** (spec + flows present, scale either declared or derivable from product context):
+**Prompts:** see [`references/pre-dispatch-prompts.md`](references/pre-dispatch-prompts.md) [PROCEDURE] for Warm Start, Cold Start, and the 8-question Architecture Interview (vague-invocation path) + write-back rules.
 
-```
-Found:
-- spec → "[1-line summary]"
-- flows → "[N flow files]"
-- declared stack → "[from package.json / experience/technical.md]"
+## Artifact Contract
 
-Need before dispatching: scale targets and any new constraints (compliance, latency, budget tier)?
-```
-
-**Cold Start** (no spec, greenfield, conversation only):
-
-```
-system-architecture produces a full technical blueprint — stack, schema,
-APIs, infra, scaling. Without specifics, defaults will be generic and
-likely wrong for your scale or constraints.
-
-1. **Spec/PRD reference** — file path, paste, or 2-3 paragraph description
-   of what this system does. (Defer to `discover` first if requirements
-   are still fuzzy.)
-2. **Scale targets** — users, requests/second, data volume. (E.g., "10k MAU,
-   peak 50 RPS, ~100GB data".)
-3. **Constraints** — budget tier (bootstrapped / seed / Series A+), team
-   skills (frontend-only / full-stack / specialists), latency requirements,
-   compliance (HIPAA / SOC2 / GDPR / none).
-4. **Deployment context** — greenfield (no existing system), brownfield
-   (extend existing), or migration (replace existing)?
-
-Answer 1-4 in one response. I'll dispatch stack-selection and infrastructure agents.
-```
-
-**Write-back:**
-
-| Q | File | Key |
-|---|---|---|
-| 2. Scale | `technical.md` | `Technical — scale targets` |
-| 3. Constraints | `technical.md` | `Technical — constraints` (durable: compliance, latency tier, team skills) |
-| 4. Deployment context | `technical.md` | `Technical — deployment context` |
-
-Spec is project-specific (lives in spec.md / system-architecture.md), not persisted to experience/.
+- **Path:** `architecture/system-architecture.md` (active); prior runs renamed to `system-architecture.v[N].md`.
+- **Lifecycle:** `canonical` (top-level folder; edited in place by humans + future runs; the team's authoritative architecture record).
+- **Frontmatter fields:** `skill`, `version`, `date`, `status` (DONE / DONE_WITH_CONCERNS / BLOCKED / NEEDS_CONTEXT), `lifecycle`, `produced_by`, `provenance` (with `skill`, `run_date`, `input_artifacts`, `output_eval`).
+- **Required sections:** 12 sections (§1 Overview → §12 Security Review) + §12a STRIDE + §12b OWASP + §12d false-positive log. §12c LLM/AI Security conditional. Not Included + Open Questions when applicable.
+- **Consumed by:** `task-breakdown` (decomposes architecture into tasks), `fresh-eyes` (post-implementation review), `code-cleanup` (preserves boundaries during refactoring), `orchestrate-product` (state detection), operator (canonical reference).
+- Full template + section content + version-increment rule: [`references/report-template.md`](references/report-template.md) [PROCEDURE].
 
 ## Chain Position
-Previous: `discover` or `task-breakdown` (optional) | Next: `task-breakdown` (optional) | Cross-stack: reads `prioritize.md` (from research-skills), `user-flow.md` (from product-skills)
 
-**Re-run triggers:** When product spec changes significantly, when scale requirements change (10x growth), when migrating core infrastructure, or when adding major new integrations.
+Previous: `/discover` or `/user-flow` (optional, both sharpen output) | Next: `/task-breakdown` (decomposes into tasks).
+Cross-stack: reads `.agents/skill-artifacts/meta/sketches/prioritize-*.md` (from research-skills).
 
----
+**Re-run triggers:** when product spec changes significantly, when scale requirements change (10x growth), when migrating core infrastructure, when adding major new integrations.
+
+## Critical Gates
+
+Before delivering, the critic-agent verifies ALL of these pass:
+
+- [ ] Every tech choice has a rationale (not just "it's popular")
+- [ ] API endpoints exist for every user-facing feature
+- [ ] Database schema covers all entities mentioned in product spec
+- [ ] Deployment section includes complete env var list
+- [ ] File structure matches chosen framework conventions
+- [ ] Auth model covers all user roles and permission levels
+- [ ] At least one architectural trade-off is documented with alternatives considered
+- [ ] Every external dependency is classified (in-process / local-substitutable / remote-owned / true-external) per [`references/dependency-classification.md`](references/dependency-classification.md) [PROCEDURE]
+
+**If any gate fails:** the critic identifies which agent must fix it and the orchestrator re-dispatches with specific feedback. Full revision-loop handling + 2-round limit: [`references/anti-patterns.md`](references/anti-patterns.md) [ANTI-PATTERN] "Revision loop — when the critic returns FAIL."
+
+**Safety supersedes `--fast`:** all 8 gates fire under `--fast`, Single-Agent Fallback, and dry-run modes. Mode-resolver's safety-gates-supersede contract applies.
 
 ## Multi-Agent Architecture
 
@@ -167,223 +176,60 @@ Layer 2 (sequential):
 
 ### Dispatch Protocol
 
-1. **Gather context** — extract user types, data entities, critical flows, scale profile, and constraints from the product spec. If missing, run the Architecture Interview (see below).
+1. **Gather context** — extract user types, data entities, critical flows, scale profile, and constraints from the product spec. If missing, run the Architecture Interview (see [`references/pre-dispatch-prompts.md`](references/pre-dispatch-prompts.md) [PROCEDURE]).
 2. **Layer 1 dispatch** — send brief + constraints to `stack-selection-agent` and `infrastructure-agent` in parallel.
 3. **Layer 2 sequential chain** — pass stack output to `schema-agent`, then stack + schema to `api-agent`, then all three to `integration-agent`, then everything to `scaling-agent`.
-4. **Critic review** — send assembled document to `critic-agent`.
-5. **Revision loop** — if critic returns FAIL, re-dispatch affected agents with feedback. Maximum 2 revision rounds.
-6. **Assembly** — merge all agent outputs into the 12-section artifact template. Save to `architecture/system-architecture.md`.
+4. **Critic review** — send assembled document to `critic-agent` to verify all 8 Critical Gates.
+5. **Revision loop** — if critic returns FAIL, re-dispatch affected agents with feedback. Maximum 2 revision rounds; remaining issues move to `## Open Questions`.
+6. **Assembly** — merge all agent outputs into the 12-section artifact template per [`references/report-template.md`](references/report-template.md) [PROCEDURE]. Save to `architecture/system-architecture.md`.
 
 ### Routing Logic
 
 | Condition | Route |
 |-----------|-------|
-| User provides tech stack upfront | Skip stack-selection-agent; pass user's stack directly to schema-agent |
-| User needs stack recommendations | Run stack-selection-agent first |
+| User provides tech stack upfront | Skip stack-selection-agent; pass user's stack directly to schema-agent (Mode 1) |
+| User needs stack recommendations | Run stack-selection-agent first (Mode 2) |
 | Critic returns PASS | Assemble and deliver |
 | Critic returns FAIL | Re-dispatch only the agents cited in critic's issues |
 | Revision round > 2 | Deliver with critic's remaining issues noted as Open Questions |
 
----
-
-## Dependency Classification
-
-When designing integrations and service boundaries, classify every external dependency into one of four categories. Each category has a different testing strategy:
-
-| Category | What it is | Testing strategy | Example |
-|----------|-----------|-----------------|---------|
-| **In-process** | Pure computation, no I/O | Test directly, no mocks needed | Validation logic, formatters, calculators |
-| **Local-substitutable** | Has a lightweight local stand-in | Use the stand-in in tests | PGLite for Postgres, LocalStack for AWS, MailHog for email |
-| **Remote but owned** | Your own services | Ports & Adapters — define interface, test with in-memory adapter | Your auth service, your billing API |
-| **True external** | Third-party, no stand-in | Mock at the boundary only | Stripe API, Twilio, OpenAI |
-
-Document the category for each dependency in the Service Connections section. This directly informs testing strategy in `task-breakdown` and `fresh-eyes`.
-
-## Critical Gates
-
-Before delivering, the critic-agent verifies ALL of these pass:
-
-- [ ] Every tech choice has a rationale (not just "it's popular")
-- [ ] API endpoints exist for every user-facing feature
-- [ ] Database schema covers all entities mentioned in product spec
-- [ ] Deployment section includes complete env var list
-- [ ] File structure matches chosen framework conventions
-- [ ] Auth model covers all user roles and permission levels
-- [ ] At least one architectural trade-off is documented with alternatives considered
-- [ ] Every external dependency is classified (in-process / local-substitutable / remote-owned / true-external)
-
-**If any gate fails:** the critic identifies which agent must fix it and the orchestrator re-dispatches with specific feedback.
-
----
+For an annotated full-stack walkthrough (SaaS invoicing, all 7 agents + critic decisions + trade-offs): [`references/examples/saas-invoicing-walkthrough.md`](references/examples/saas-invoicing-walkthrough.md) [EXAMPLE].
 
 ## Single-Agent Fallback
 
-When context window is constrained or the product is simple (fewer than 3 user types, fewer than 5 data entities):
+Used when mode-resolver downgrades to `fast` (simple product: fewer than 3 user types AND fewer than 5 data entities, context-constrained, or `--fast` flag):
 
-1. Skip multi-agent dispatch
-2. Execute Steps 1-4 from the original process sequentially:
-   - Step 1: Gather context and constraints
-   - Step 2: Architecture decisions (use `references/tech-stack-patterns.md` and `references/tech-stack-matrix.md`)
-   - Step 3: Generate all 12 sections of the architecture document
-   - Step 4: Validation cross-reference
-3. Run the Critical Gates checklist as self-review
-4. Save to `architecture/system-architecture.md`
+1. Skip multi-agent dispatch.
+2. Execute sequentially: gather context + constraints → make architecture decisions (use `references/tech-stack-patterns.md` + `references/tech-stack-matrix.md`) → generate all 12 sections → cross-reference validation.
+3. Run the 8 Critical Gates checklist as self-review.
+4. Save to `architecture/system-architecture.md`.
 
----
-
-## Before Starting
-
-### Step 0: Product Context
-
-Check for `research/product-context.md`. If missing: interview for product dimensions (what, who, problem, differentiator, scale, integrations) and save to `research/product-context.md`. Or recommend running `icp-research` (from `hungv47/research-skills`) to bootstrap it.
-
-If `research/product-context.md` has a `date` field older than 30 days, recommend re-running `icp-research` (from research-skills) to refresh it.
-
-### Required Artifacts
-None — this skill can run standalone.
-
-### Optional Artifacts
-| Artifact | Source | Benefit |
-|----------|--------|---------|
-| `product-context.md` | icp-research (from `hungv47/research-skills`) | Industry context, user personas, and constraints |
-| `task-breakdown.md` | task-breakdown | Feature list already decomposed into buildable units |
-| `prioritize.md` | prioritize (from `hungv47/research-skills`) | Business initiatives and constraints from strategy track |
-| `.agents/skill-artifacts/product/flow/*.md` | user-flow (from `hungv47/product-skills`) | Per-flow user flow diagrams + platform-surface matrix; read every file in the directory. Feeds API endpoint design and feature scoping. |
-
-### Two Modes of Operation
-
-**Mode 1: Tech Stack Already Chosen**
-User provides tech stack upfront. Skip stack-selection-agent. Focus on schema, API, file structure, and implementation details.
-
-**Mode 2: Need Tech Stack Recommendations**
-User needs help choosing stack. Run stack-selection-agent first, then chain remaining agents.
-
-### Architecture Interview
-If the user provides only a vague description ("build me an app", "I need a platform"):
-
-1. What is the product and its core value proposition?
-2. Who are the primary users? Expected concurrent users at launch and at 12 months?
-3. What are the 3-5 critical user flows?
-4. What data needs to be stored and queried?
-5. Existing tech stack or team skill constraints?
-6. Specific integrations needed? (payments, email, auth providers, etc.)
-7. Performance requirements? (real-time updates, complex queries, offline support)
-8. Security/compliance needs? (SOC2, HIPAA, GDPR, PCI)
-
-All 8 answers are necessary before dispatching agents.
-
----
+The 8 Critical Gates + Pre-Dispatch context gate fire in fallback mode regardless — safety contract is mode-independent.
 
 ## Anti-Patterns
 
-| Anti-Pattern | Problem | INSTEAD |
-|--------------|---------|---------|
-| Premature microservices | Adds operational complexity before product-market fit | Start monolith, extract services at pain points |
-| Schema without queries | Tables look clean but critical queries require full scans | Design schema around access patterns via schema-agent |
-| Auth as afterthought | Retrofitting permissions breaks existing flows | api-agent defines roles and permissions before endpoint design |
-| Missing error states | Happy-path-only architecture crumbles in production | scaling-agent traces failure modes for every critical operation |
-| "We'll add monitoring later" | Debugging production without observability is guesswork | infrastructure-agent includes logging and error tracking in v1 |
-| Over-engineering for scale | Building for 1M users when you have 100 wastes months | scaling-agent designs for 10x current load, plans for 100x |
-
----
-
-## Worked Example
-
-**User:** "I need architecture for a SaaS invoicing tool. Small businesses send invoices, clients pay online. Need Stripe integration."
-
-**Orchestrator gathers context:**
-- Users: business owners (send invoices), clients (view/pay)
-- Scale: ~500 businesses, ~2000 invoices/month at launch
-- Integrations: Stripe for payments, SendGrid for email
-- Constraints: small team, fast launch needed
-
-**Layer 1 dispatch (parallel):**
-- `stack-selection-agent` → recommends Next.js + Supabase + Clerk + Stripe + Vercel
-- `infrastructure-agent` → plans Vercel deployment, GitHub Actions CI/CD, Sentry monitoring
-
-**Layer 2 chain (sequential):**
-- `schema-agent` → designs businesses, invoices, payments, clients tables with indexes on (business_id, status) and (stripe_payment_id)
-- `api-agent` → maps POST /api/invoices (business_owner), GET /api/pay/:token (public), POST /api/webhooks/stripe (stripe_signature)
-- `integration-agent` → designs file structure, Stripe checkout flow, SendGrid email integration
-- `scaling-agent` → identifies invoice PDF generation as first bottleneck at 10x, traces webhook failure modes
-
-**Critic review:** PASS — all 7 quality gates pass.
-
-**Artifact saved to `architecture/system-architecture.md` with all 12 sections.**
-
----
-
-## Artifact Template
-
-On re-run: rename existing artifact to `system-architecture.v[N].md` and create new with incremented version.
-
-```markdown
----
-skill: system-architecture
-version: 1
-date: {{today}}
-status: done | done_with_concerns | blocked | needs_context
----
-
-# System Architecture: [Product Name]
-
-## 1. System Overview
-## 2. Tech Stack
-## 3. File & Folder Structure
-## 4. Database Schema
-## 5. API Architecture
-## 6. State Management & Data Flow
-## 7. Service Connections
-## 8. Authentication & Authorization
-## 9. Key Features Implementation
-## 10. Deployment & Infrastructure
-## 11. Monitoring & Debugging
-## 12. Security Review
-
-### 12a. Threat Model (STRIDE)
-For each critical data flow, evaluate: Spoofing, Tampering, Repudiation, Information Disclosure, Denial of Service, Elevation of Privilege.
-See `references/security-patterns.md` for the STRIDE template.
-
-### 12b. OWASP Top 10 Scan
-Architecture-level check against OWASP Top 10 categories. Focus on design decisions, not code patterns.
-See `references/security-patterns.md` for the checklist.
-
-### 12c. LLM/AI Security (conditional — include only if system uses AI/LLM)
-Prompt injection vectors, output sanitization, tool validation, cost amplification.
-See `references/security-patterns.md` for the LLM security checklist.
-
-### 12d. Not Flagged (false-positive exclusions applied)
-List any patterns that were checked but excluded per the false-positive exclusion rules.
-
-## Not Included
-[Explicitly excluded items with rationale — what this architecture intentionally does NOT cover]
-
-## Open Questions
-## Next Step
-Run `task-breakdown` to decompose this architecture into implementable tasks.
-```
-
----
+Critic-load reference: [`references/anti-patterns.md`](references/anti-patterns.md) [ANTI-PATTERN]. Re-read at every doubt — premature microservices, schema without queries, auth-as-afterthought, missing error states, "we'll add monitoring later," over-engineering for scale. Revision-loop handling + when-to-defer-instead-of-architecting also live there.
 
 ## Completion Status
 
 Every run ends with explicit status:
-- **DONE** — full architecture written (stack, schema, API, infra, scaling), critic PASS, open questions explicitly listed
-- **DONE_WITH_CONCERNS** — architecture written but with scaling assumptions or stack tradeoffs the user should validate; flagged in Open Questions
-- **BLOCKED** — requirements contradict (e.g., budget vs scale, latency vs cost); needs user trade-off decision before any single architecture can be specified
-- **NEEDS_CONTEXT** — spec, prioritized initiatives, or user-flows missing; recommend `discover`, `prioritize`, or `user-flow` first
 
----
+- **DONE** — full architecture written (stack, schema, API, infra, scaling), critic PASS, open questions explicitly listed.
+- **DONE_WITH_CONCERNS** — architecture written but with scaling assumptions or stack tradeoffs the user should validate; flagged in Open Questions.
+- **BLOCKED** — requirements contradict (e.g., budget vs scale, latency vs cost); needs user trade-off decision before any single architecture can be specified.
+- **NEEDS_CONTEXT** — spec, prioritized initiatives, or user-flows missing; recommend `/discover`, `/prioritize`, or `/user-flow` first.
 
 ## References
 
-- [references/tech-stack-patterns.md](references/tech-stack-patterns.md) — Tech choice comparisons and recommendations
-- [references/tech-stack-matrix.md](references/tech-stack-matrix.md) — Stack comparison matrix
-- [references/file-structure-patterns.md](references/file-structure-patterns.md) — Directory structures by framework
-- [references/database-patterns.md](references/database-patterns.md) — Common schemas and query patterns
-- [references/api-patterns.md](references/api-patterns.md) — REST best practices and endpoint examples
-- [references/auth-patterns.md](references/auth-patterns.md) — Authentication implementations
-- [references/deployment-patterns.md](references/deployment-patterns.md) — CI/CD and infrastructure patterns
-- [references/failure-modes.md](references/failure-modes.md) — Failure mode criticality, error tracing table, shadow path analysis
-- [references/interaction-edge-cases.md](references/interaction-edge-cases.md) — UI and interaction edge case categories
-- [references/security-patterns.md](references/security-patterns.md) — STRIDE threat model, OWASP Top 10 architecture checks, LLM/AI security, false-positive exclusions
+- [`references/playbook.md`](references/playbook.md) [PLAYBOOK] — why, methodology, principles, two modes of operation, history, required vs optional input artifacts
+- [`references/_shared/pre-dispatch-protocol.md`](references/_shared/pre-dispatch-protocol.md) — canonical Pre-Dispatch spec
+- [`references/_shared/before-starting-check.md`](references/_shared/before-starting-check.md) [PLAYBOOK] — pre-Pre-Dispatch read pattern
+- [`references/_shared/mode-resolver.md`](references/_shared/mode-resolver.md) [PROCEDURE] — `--fast` behavior + safety-gates-supersede contract
+- [`references/pre-dispatch-prompts.md`](references/pre-dispatch-prompts.md) [PROCEDURE] — Warm + Cold + Architecture Interview verbatim
+- [`references/anti-patterns.md`](references/anti-patterns.md) [ANTI-PATTERN] — failure modes + revision-loop handling + when to defer
+- [`references/report-template.md`](references/report-template.md) [PROCEDURE] — 12-section artifact template + security subsections + version-increment rule
+- [`references/dependency-classification.md`](references/dependency-classification.md) [PROCEDURE] — 4-category taxonomy driving downstream testing strategy
+- [`references/examples/saas-invoicing-walkthrough.md`](references/examples/saas-invoicing-walkthrough.md) [EXAMPLE] — Stripe invoicing tool end-to-end
+- [`references/tech-stack-patterns.md`](references/tech-stack-patterns.md) — stack choice comparisons (stack-selection-agent consumes)
+- [`references/tech-stack-matrix.md`](references/tech-stack-matrix.md) — stack comparison matrix
+- [`references/file-structure-patterns.md`](references/file-structure-patterns.md), [`references/database-patterns.md`](references/database-patterns.md), [`references/api-patterns.md`](references/api-patterns.md), [`references/auth-patterns.md`](references/auth-patterns.md), [`references/deployment-patterns.md`](references/deployment-patterns.md), [`references/failure-modes.md`](references/failure-modes.md), [`references/interaction-edge-cases.md`](references/interaction-edge-cases.md), [`references/security-patterns.md`](references/security-patterns.md) — agent-consumed pattern catalogs
