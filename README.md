@@ -2,7 +2,7 @@
 
 ![Product Skills](./assets/banner.png)
 
-> **v3.0.0 BREAKING:** `start-product` renamed to `orchestrate-product`. Update any `/start-product` invocations in your workflows to `/orchestrate-product`.
+> **Agent Skills 2.0** — fresh start on the `refactor/v2.0` branch. Install via `npx skills add hungv47/product-skills@refactor/v2.0`. The `main` branch holds the legacy v1.x line.
 
 UX design, technical architecture, code cleanup, machine cleanup, and documentation — the skills for designing and building software. 6 skills (incl. `/orchestrate-product` orchestrator).
 
