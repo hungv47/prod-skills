@@ -90,6 +90,8 @@ routing:
 
 ## Critical Gates — Read First
 
+*Why this block precedes "Before Starting": the mandatory platforms+surfaces gate (Gate 1) must fire before any Pre-Dispatch question or Layer 1 dispatch — wireframe size, entry triggers, and per-surface edge states are not inferable without it. Other product skills can defer their gate check until after context-loading; this one cannot.*
+
 - **No Layer 1 before platforms + surfaces enumerated.** See `references/platform-touchpoints.md`. Wireframe size, entries, edge states all depend on it.
 - **Reject "cross-platform" as a platform.** Enumerate: macOS, iOS, iPadOS, Android, Windows, web-desktop, web-mobile, watchOS, tvOS, visionOS, CarPlay, Android Auto, Linux.
 - **No diagrams before structure.** Diagram-agent needs structure + edge-case outputs first.

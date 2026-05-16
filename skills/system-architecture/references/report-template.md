@@ -14,12 +14,16 @@ load_class: PROCEDURE
 
 ## Frontmatter
 
+Baseline required fields: `skill`, `version`, `date`, `status`.
+Step 7.5 additions (manifest-sync conformance; backfilled going forward): `lifecycle`, `produced_by`, `provenance`.
+
 ```yaml
 ---
 skill: system-architecture
 version: {N}
 date: YYYY-MM-DD
 status: done | done_with_concerns | blocked | needs_context
+# Step 7.5 fields (artifact-graph hardening; backfilled going forward):
 lifecycle: canonical
 produced_by: system-architecture
 provenance:
