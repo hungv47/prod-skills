@@ -9,6 +9,13 @@ metadata:
   version: "3.2.0"
   budget: standard
   estimated-cost: "$0.10-0.40"
+  refactor_history:
+    - refactored_at: 2026-05-17
+      refactored_for: implementation-roadmap v6 Phase 2 Wave 1 (slot 6 — mixed; 6 standard critical gates + multi-agent architecture preserved in body; 4 specialized routes extracted to modes/)
+      body_before: 452
+      body_after: 183
+      body_delta_pct: -59.5
+      note: body-only line counts (frontmatter excluded). 9 new refs (playbook, pre-dispatch-prompts, anti-patterns, report-template, examples/api-readme-walkthrough, modes/{sync,ship-log,release-notes,audit}). Routes C/D/E + audit mode extracted to per-mode refs.
 promptSignals:
   phrases:
     - "write documentation"
@@ -71,74 +78,81 @@ routing:
 
 **Core Question:** "Could a new team member understand this without asking anyone?"
 
-## Inputs Required
-- A codebase or project to document
-- (Optional) Target audience — developer, end-user, operator, or mixed
-- (Optional) Documentation type — README, User Guide, API Reference, or Configuration Guide
+[Read `references/playbook.md` [PLAYBOOK] to understand why this skill exists, methodology, principles, documentation types catalog, audience types, file importance ranking, when NOT to use.]
 
-## Output
-- Documentation artifact saved to project root or specified location (e.g., `docs/`, `README.md`)
+## When To Use
 
----
+- Codebase needs new docs or a refresh (README, user guide, API reference, config guide, tutorial).
+- After PRs that modify env vars, API routes, or configuration (use Route C — sync).
+- Need a product snapshot for cross-stack context (use Route D — ship log; writes canonical `research/product-context.md`).
+- Need a CHANGELOG entry for an imminent release (use Route E — release notes).
+- Auditing existing docs for staleness (use audit mode; no writing).
+
+## When NOT To Use
+
+- Specifying what to build → `/discover`.
+- Restructuring code for readability → `/code-cleanup`.
+- Visual brand identity for docs site → `/brand-system`.
+- Single-page conversion surface (landing page) → `/lp-brief`.
+
+## Before Starting
+
+Apply the [before-starting-check](references/_shared/before-starting-check.md) [PLAYBOOK]:
+
+0. **Mode resolution** — this skill is `budget: standard`. Mode-resolver ([`references/_shared/mode-resolver.md`](references/_shared/mode-resolver.md) [PROCEDURE]) applies the canonical heuristics. `--fast` flag forces Single-Agent Fallback. **Safety gates supersede `--fast`:** the 6 standard critical gates (or route-specific gates for Routes D + E) fire on every run, regardless of mode.
+1. Read `implementation-roadmap/canonical-paths.md` if present — verify output path matches canonical inventory (default route writes to project; Route D writes to `research/product-context.md`; Route E appends to `CHANGELOG.md`).
+2. Read `.agents/manifest.json` for prior docs-writing runs against the same target; surface staleness signals.
+3. Read `skills-resources/experience/technical.md` for prior doc conventions (voice, formatting preferences).
+4. Read project context: existing README, CLAUDE.md, `research/product-context.md`, `package.json#description` — all available context before scanning code.
 
 ## Pre-Dispatch
 
-Run the Pre-Dispatch protocol (`references/_shared/pre-dispatch-protocol.md`).
+Run the Pre-Dispatch protocol ([`references/_shared/pre-dispatch-protocol.md`](references/_shared/pre-dispatch-protocol.md) [PROCEDURE]).
 
-**Needed dimensions:** audience (end-user / developer / operator / mixed), doc type (readme / user-guide / api-reference / config-guide / tutorial / ship-log), codebase path, fresh write or update existing.
+**Needed dimensions:** audience (end-user / developer / operator / mixed), doc type (readme / user-guide / api-reference / config-guide / tutorial / ship-log / release-notes), codebase path, fresh write or update existing.
 
 **Read order:**
 1. Codebase scan: existing README, docs/, package manifest, framework hints.
 2. Experience: `skills-resources/experience/technical.md` for prior doc conventions.
 
-**Warm Start** (audience + type both inferable, e.g., user said "write the README"):
+**Prompts:** see [`references/pre-dispatch-prompts.md`](references/pre-dispatch-prompts.md) [PROCEDURE] for Warm Start, Cold Start, route-locked Pre-Dispatch (Routes D + E override Q1+Q2), write-back rules.
 
-```
-Found:
-- repo → "[detected framework]"
-- existing docs → "[README.md present / docs/ folder]"
-- inferred audience → "[developer | end-user | mixed]"
-- inferred type → "[readme | api-reference | etc.]"
+## Artifact Contract
 
-Override audience or type, or proceed?
-```
-
-**Cold Start** (vague: "document this"):
-
-```
-docs-writing produces audience-appropriate documentation. The output shape
-depends heavily on who reads it and what they need from it:
-
-1. **Audience** — end-user (people using the product), developer (people
-   building with the API or extending the code), operator (people deploying
-   or maintaining), or mixed?
-2. **Doc type** — readme (project intro + getting started), user-guide
-   (task-oriented walkthroughs), api-reference (signatures + examples),
-   config-guide (settings + flags), tutorial (step-by-step learning),
-   or ship-log (changelog snapshot)?
-3. **Codebase path** — root or specific subset.
-4. **Fresh or update** — write new docs from scratch, or refresh existing
-   ones (preserves human-edited prose, updates code-derived sections only)?
-
-Answer 1-4 in one response. I'll dispatch.
-```
-
-**Write-back:**
-
-| Q | File | Key |
-|---|---|---|
-| 4. Conventions emerging from doc style preferences | `technical.md` | `Technical — doc conventions` (only if user expresses durable preference, e.g., "always use this voice") |
-
-Other answers are run-specific.
+- **Path (default route):** project files — `README.md`, `docs/<topic>.md`, or specified location.
+- **Path (Route C — Sync):** in-place updates to existing docs with `<!-- synced: YYYY-MM-DD -->` markers.
+- **Path (Route D — Ship Log):** `research/product-context.md` (canonical cross-stack artifact; pre-write merge-mode check required).
+- **Path (Route E — Release Notes):** `CHANGELOG.md` (prepend new entry); optionally also GitHub Release body draft to stdout via `--gh-release`.
+- **Path (Audit Mode):** no writes — produces audit report inline.
+- **Lifecycle:** varies by doc-type — see [`references/report-template.md`](references/report-template.md) [PROCEDURE] "Lifecycle by doc-type" table (README/User Guide/Config/Tutorial/Ship Log = canonical; API Reference = pipeline; Release Notes = snapshot).
+- **Frontmatter fields (baseline):** `skill`, `version`, `date`, `status` (DONE / DONE_WITH_CONCERNS / BLOCKED / NEEDS_CONTEXT), `audience`, `doc-type`. **Step 7.5 additions** (manifest-sync conformance; backfilled going forward): `lifecycle`, `produced_by`, `provenance`.
+- **Consumed by:** all 12+ downstream skills (Ship Log → `research/product-context.md` feeds brand-system, copywriting, seo, system-architecture, etc.), users on `/plugin update` (Release Notes → CHANGELOG.md), `code-cleanup` + `fresh-eyes` + `system-architecture` (read docs for drift detection).
+- Full templates + filename + version-increment rule: [`references/report-template.md`](references/report-template.md) [PROCEDURE].
 
 ## Chain Position
-Previous: none | Next: none (standalone)
 
-Pairs well with: `system-architecture` (for architecture docs), `task-breakdown` (for contributor guides)
+Previous: none | Next: none (standalone).
 
-**Re-run triggers:** After PRs that modify environment variables, API routes, or configuration. After major version releases. When new features ship without documentation updates.
+Pairs well with: `system-architecture` (for architecture docs), `task-breakdown` (for contributor guides).
 
----
+**Re-run triggers:** after PRs that modify environment variables, API routes, or configuration; after major version releases; when new features ship without documentation updates.
+
+## Critical Gates
+
+Before delivering, the critic-agent verifies ALL of these pass (default route + README + User Guide + API Reference + Config Guide + Tutorial + Audit + Sync routes):
+
+- [ ] Every user-facing feature has a documentation section
+- [ ] Setup steps are numbered with expected outcomes after each step
+- [ ] A new user could follow Getting Started independently without reading source code
+- [ ] Code examples compile/run — no pseudocode unless explicitly labeled
+- [ ] Configuration options list defaults and valid values
+- [ ] Troubleshooting covers errors visible in the codebase's error handling
+
+**If any gate fails:** the critic identifies which agent must fix it and the orchestrator re-dispatches. Full failure-handling flow: [`references/anti-patterns.md`](references/anti-patterns.md) [ANTI-PATTERN] "When the critic FAILs."
+
+**Route-specific gates:** Routes D (Ship Log) + E (Release Notes) REPLACE the standard checklist with their own — see the respective mode refs. Routes C (Sync) + Audit inherit the standard checklist (their per-mode refs document additional critic *focus* heuristics, not new FAIL gates).
+
+**Safety supersedes `--fast`:** all gates fire under `--fast`, Single-Agent Fallback, and dry-run modes. Mode-resolver's safety-gates-supersede contract applies.
 
 ## Multi-Agent Architecture
 
@@ -169,15 +183,12 @@ Layer 2 (sequential):
 
 ### Dispatch Protocol
 
-1. **Layer 1 dispatch** — send brief to all three Layer 1 agents in parallel:
-   - `scanner-agent` maps the project and ranks files by importance
-   - `concept-extractor-agent` reads ranked files and extracts documentation content
-   - `audience-profiler-agent` determines who reads the docs and how to write for them
-2. **Writer dispatch** — send all Layer 1 outputs to `writer-agent`. It produces the documentation following `references/doc-template.md` (or `references/ship-log-template.md` in Route D), calibrated for the audience.
+1. **Layer 1 dispatch** — send brief to all three Layer 1 agents in parallel.
+2. **Writer dispatch** — send all Layer 1 outputs to `writer-agent`. It produces the documentation following `references/doc-template.md` (or the route-specific template in Routes D + E), calibrated for the audience.
 3. **Staleness check** — send writer output + codebase facts to `staleness-checker-agent`. It verifies every claim in the docs matches the current codebase.
-4. **Critic review** — send documentation + staleness results to `critic-agent`.
-5. **Revision loop** — if critic returns FAIL, re-dispatch affected agents. Maximum 2 rounds.
-6. **Save** — write documentation to project root or specified location.
+4. **Critic review** — send documentation + staleness results to `critic-agent`. Default + Routes A/B/C/audit apply the 6 standard critical gates; Routes D + E apply mode-specific gates.
+5. **Revision loop** — if critic returns FAIL, re-dispatch affected agents per [`references/anti-patterns.md`](references/anti-patterns.md) [ANTI-PATTERN]. Maximum 2 rounds.
+6. **Save** — write documentation to the route-specified path.
 
 ### Routing Rules
 
@@ -185,334 +196,61 @@ Layer 2 (sequential):
 |-----------|-------|
 | User specifies audience | audience-profiler-agent uses it directly (no inference needed) |
 | User says "document this" (no type) | audience-profiler defaults to User Guide (developers) or README (library) |
-| User says "audit docs" | Skip writer-agent; run scanner → staleness-checker → critic directly |
-| User says "sync docs", "update docs", or `--sync` | **Route C: Post-Change Sync** (see below) |
-| User says "ship log", "product context", "what does this app do", or `--ship-log` | **Route D: Ship Log** (see below) |
-| User says "release notes", "changelog entry", "what changed in this version", or `--release-notes` | **Route E: Release Notes** (see below) |
+| User says "audit docs" / "check documentation" / "are docs up to date" | **Audit mode** — see [`references/modes/audit.md`](references/modes/audit.md) [PROCEDURE]; skip writer-agent |
+| User says "sync docs", "update docs", or `--sync` | **Route C: Post-Change Sync** — see [`references/modes/sync.md`](references/modes/sync.md) [PROCEDURE] |
+| User says "ship log", "product context", "what does this app do", or `--ship-log` | **Route D: Ship Log** — see [`references/modes/ship-log.md`](references/modes/ship-log.md) [PROCEDURE]; writes canonical `research/product-context.md` with merge-mode check |
+| User says "release notes", "changelog entry", "what changed in this version", or `--release-notes <version>` | **Route E: Release Notes** — see [`references/modes/release-notes.md`](references/modes/release-notes.md) [PROCEDURE]; CHANGELOG entry + convention-enforcing critic gates |
 | Monorepo detected | scanner-agent identifies package boundaries; writer produces per-package docs |
 | Critic PASS | Save and deliver |
-| Critic FAIL | Re-dispatch cited agents with feedback |
+| Critic FAIL | Re-dispatch cited agents with feedback (max 2 rounds) |
 
-### Route C: Post-Change Sync
-
-Triggered by: `/docs-writing --sync`, "update the docs after this change", "sync docs", or "docs are stale after that PR."
-
-This route cross-references the git diff against ALL existing documentation and makes targeted updates — not a full rewrite. It's the documentation equivalent of a patch, not a rebuild.
-
-**Execution flow:**
-```
-scanner-agent ──────────────── inventory existing docs + read git diff
-  → staleness-checker-agent ── compare diff against docs, find stale content
-    → writer-agent ──────────── make targeted updates only (not full rewrite)
-      → critic-agent ────────── verify factual accuracy of updates
-```
-
-**What's different from the full route:**
-- `concept-extractor-agent` and `audience-profiler-agent` are SKIPPED — the docs already exist with established audience and structure
-- `scanner-agent` reads the git diff (not the full codebase) to scope changes
-- `writer-agent` receives a list of stale sections and makes MINIMAL targeted edits — it does NOT rewrite sections that aren't affected by the diff
-- `staleness-checker-agent` focuses on the diff's blast radius: changed API routes, modified env vars, renamed files, updated config
-
-**What the staleness-checker looks for in sync mode:**
-1. **File paths** — did any documented paths change? (renamed, moved, deleted files)
-2. **API routes** — did any endpoints change signature, parameters, or response shape?
-3. **Environment variables** — were any added, removed, or renamed?
-4. **Configuration** — did defaults, valid values, or required settings change?
-5. **Version numbers** — did package.json version, Node/runtime version, or dependency versions change?
-6. **Feature descriptions** — did any documented behavior change?
-7. **Setup steps** — did installation or getting-started steps change?
-
-**What the writer-agent does in sync mode:**
-- For factual updates (paths, versions, env vars): auto-fix directly
-- For narrative updates (feature descriptions, architecture explanations): flag for user approval before changing
-- Never rewrite sections unaffected by the diff
-- Add a `<!-- synced: YYYY-MM-DD -->` comment to updated sections for traceability
-
-### Route D: Ship Log
-
-Triggered by: `/docs-writing --ship-log`, "write a ship log", "product context", "what does this app do", or "document the current state of the app."
-
-This route produces a **plain-language product snapshot** saved to `research/product-context.md`. It answers the questions: What does this app do? What's been built? How do you use it? What's the tech stack? What shipped recently? Written so a non-technical person could understand, while still being precise enough for coding agents to use as context.
-
-**Why `research/product-context.md`:** This is the canonical cross-stack artifact consumed by 12+ downstream skills (brand-system, copywriting, seo, system-architecture, etc.). Writing the ship log here means every skill automatically gets current product context.
-
-**Execution flow:**
-```
-scanner-agent ──────────────┐
-concept-extractor-agent ────┤── Layer 1 (parallel) — scan codebase + git history
-audience-profiler-agent ─────┘── (locked to "mixed: non-technical user + coding agent")
-
-writer-agent ────────────────── writes ship log following references/ship-log-template.md
-  → staleness-checker-agent ── verifies every claim against codebase
-    → critic-agent ──────────── ship-log-specific quality gates
-```
-
-**What's different from the full route:**
-- `audience-profiler-agent` receives a pre-set audience in dispatch: `{ type: "mixed", technical_level: "dual", key_goal: "understand product state" }`. The profiler returns this value directly without inference.
-- `scanner-agent` also extracts **git shipping history** (`git log --oneline --since="6 months ago"` or full history for young repos)
-- `concept-extractor-agent` focuses on **user-facing features and workflows**, not internals
-- `writer-agent` receives `references/ship-log-template.md` in its `references` field (NOT `doc-template.md`)
-- `critic-agent` applies **ship-log-specific quality gates** (see below) — replaces the standard checklist entirely
-
-**Pre-write step (orchestrator responsibility):**
-Before dispatching writer-agent, the orchestrator checks for `research/product-context.md`:
-- If it exists with `skill: icp-research` in frontmatter: pass `merge-mode: preserve-marketing` to writer-agent
-- If it exists with `skill: docs-writing` in frontmatter: rename to `product-context.v[N].md`, pass `merge-mode: overwrite` to writer-agent
-- If it exists with unknown origin: rename to `product-context.v[N].md`, pass `merge-mode: overwrite` to writer-agent
-- If it doesn't exist: pass `merge-mode: create` to writer-agent
-
-**Referencing the artifact:**
-After writing, the orchestrator checks if the project's `CLAUDE.md` references `research/product-context.md`. If not, suggest the user add: `Read research/product-context.md for current product state (features, tech stack, shipping history).`
-
----
-
-### Route E: Release Notes
-
-Triggered by: `/docs-writing --release-notes <version>`, "release notes", "changelog entry", "what changed in this version", "write the release."
-
-This route produces a **CHANGELOG.md entry** that follows the agent-skills CHANGELOG convention (defined in `agent-skills/RELEASING.md` § "CHANGELOG entries — release notes, not journal"). Optionally also emits a **GitHub Release body draft** for `gh release create`. The route is convention-enforcing: the critic-agent fails any output that reproduces the pre-convention anti-patterns (file inventories, fresh-eyes recaps, anti-goals lists).
-
-**Why CHANGELOG, not a free-form doc:** Release notes are what users see on `/plugin update`. They are NOT the canonical record of everything that happened — canonical lives in commit history + `.agents/skill-artifacts/meta/records/` + roadmap.md. This route writes the user-facing summary; depth links to records.
-
-**Inputs:**
-- `version` (required) — the version being released, e.g., `5.0.0`
-- `--range <ref>..HEAD` (optional, default: `$(git describe --tags --abbrev=0)..HEAD`, or staged commits when no prior tag)
-- `--gh-release` (optional flag) — also emit a GitHub Release body draft to stdout
-- `--stack <name>` (optional, default: detect from cwd) — which CHANGELOG.md to target when run from the umbrella
-
-**Execution flow:**
-```
-scanner-agent ──────────────┐
-concept-extractor-agent ────┤── Layer 1 (parallel) — read git log, CHANGELOG, fresh-eyes records, roadmap
-audience-profiler-agent ────┘── (locked to "user on /plugin update — wants user-visible delta")
-
-writer-agent ────────────────── writes entry following agent-skills/CLAUDE.md CHANGELOG convention
-  → staleness-checker-agent ── verifies every claim traces to a commit in <ref>..HEAD
-    → critic-agent ──────────── enforces convention gates (≤20 lines, ≤4 bullets, no anti-patterns)
-```
-
-**What's different from the full route:**
-- `audience-profiler-agent` is locked to `{ type: "stack user", goal: "decide whether/why to update" }`. No inference.
-- `scanner-agent` reads `git log <range>` + existing `CHANGELOG.md` (to learn voice + avoid duplicating prior entries) + `plugin.json` (to confirm version) — NOT the full codebase.
-- `concept-extractor-agent` reads `.agents/skill-artifacts/meta/records/{date}-fresh-eyes-*.md` for any fresh-eyes report in the release window + `.agents/skill-artifacts/meta/roadmap.md` for strategic-context tags. Does NOT scan source files.
-- `writer-agent` receives the CHANGELOG convention inline (from `agent-skills/RELEASING.md` § "CHANGELOG entries") as its primary template. Output is a single ≤20-line entry, NOT a multi-section document.
-- `critic-agent` applies **release-notes-specific gates** (see below), replacing the standard checklist.
-
-**Release-notes critic gates (replaces standard checklist):**
-- [ ] ≤20 lines total (hard cap — FAIL above)
-- [ ] ≤4 bullets in any single `### {Added|Changed|Fixed|Removed}` section
-- [ ] One-paragraph user-visible summary present (one paragraph, not multi-paragraph rationale)
-- [ ] No `### Files changed` heading present (FAIL on detect — git diff is authoritative)
-- [ ] No `### Anti-goals respected` heading (FAIL — lives in roadmap.md)
-- [ ] No `### Fresh-eyes pattern` recap (FAIL — lives in records dir)
-- [ ] No "What did NOT change" inventory (FAIL — assume nothing changed unless stated)
-- [ ] If a fresh-eyes report exists in `.agents/skill-artifacts/meta/records/` for the release window, the entry links to it (one-line link, not embedded recap)
-- [ ] Frame is user-seat, not implementor-seat (no "we caught a regression," yes "behavior corrected so X works")
-
-**Staleness gates:** every bullet must trace to at least one commit in the release range. Bullets describing changes outside the range FAIL. Bullets describing changes within range that don't match the commit's diff FAIL (the writer hallucinated a feature).
-
-**Pre-write step (orchestrator responsibility):**
-1. Confirm `version` parameter is set and matches `plugin.json` (or the user's intent for the imminent bump).
-2. Resolve the git range: if `--range` not provided, use `$(git describe --tags --abbrev=0)..HEAD`; if no prior tag exists, use all commits since branch divergence.
-3. Read existing `CHANGELOG.md` to confirm the new version doesn't already have an entry (prevent duplicate).
-4. Scan `.agents/skill-artifacts/meta/records/` for fresh-eyes reports within the release window (filter by date in filename + window dates).
-
-**Post-write step:**
-- Prepend the new entry to `CHANGELOG.md` (below `# Title`, above prior entries — Keep a Changelog convention).
-- If `--gh-release` flag set: emit GitHub Release body draft to stdout (same content as CHANGELOG entry plus a one-line installation reminder: `npx skills update` or `npx skills add hungv47/<stack>`).
-
-**Worked example output shape:**
-```markdown
-## [5.0.0] - 2026-05-12
-
-Stack-wide coordinated cut. Tier discipline now load-bearing: 5 skills changed budget (funnel-planner deep→standard with new default route; 4 orchestrate-* skills standard→fast). No skill rewrites. Versions aligned across the 4 stacks at v5.0.0 to mark the post-tier-discipline stable era.
-
-### Changed
-- `funnel-planner` defaults to Route B (Standard Path); Route A reserved for `--deep` or 3+ initiatives across 2+ funnel models. New Route C handles bump-update asks under 3 sentences.
-- All 4 `orchestrate-*` skills now declare `budget: fast` and explicitly state they are pure routers (no agent dispatch, no critic gate).
-
-Full review: `.agents/skill-artifacts/meta/records/2026-05-12-fresh-eyes-tier-discipline-phase-ab.md`
-```
-
----
-
-## Critical Gates
-
-Before delivering, the critic-agent verifies ALL of these pass:
-
-- [ ] Every user-facing feature has a documentation section
-- [ ] Setup steps are numbered with expected outcomes after each step
-- [ ] A new user could follow Getting Started independently without reading source code
-- [ ] Code examples compile/run — no pseudocode unless explicitly labeled
-- [ ] Configuration options list defaults and valid values
-- [ ] Troubleshooting covers errors visible in the codebase's error handling
-
-**If any gate fails:** the critic identifies which agent must fix it and the orchestrator re-dispatches.
-
-### Ship Log Quality Gates
-
-When in ship log mode (Route D), the critic-agent verifies these INSTEAD of the standard gates:
-
-- [ ] A non-technical person could read this and explain what the app does to someone else
-- [ ] Every user-facing feature is listed with a plain-language description of what it does and how to use it
-- [ ] Tech stack is listed with purpose for each choice (not just names)
-- [ ] Shipping history includes at least the last 5 significant changes with dates
-- [ ] No jargon leak in user-facing sections (What This App Does, Features, Shipping History, Current State) — technical terms are permitted in the "For Coding Agents" section only
-- [ ] Current state section accurately reflects what's working, what's in progress, and known limitations
-- [ ] The document works as agent context — a coding agent reading only this file would understand what to build next
-
----
+For an annotated default-route walkthrough (Node.js REST API README, all 6 agents + staleness loop + critic decisions): [`references/examples/api-readme-walkthrough.md`](references/examples/api-readme-walkthrough.md) [EXAMPLE].
 
 ## Single-Agent Fallback
 
-When context window is constrained or the project is small (fewer than 20 files):
+Used when mode-resolver downgrades to `fast` (small project: <20 files, context-constrained, or `--fast` flag):
 
-1. Skip multi-agent dispatch
-2. Scan project structure and identify key files using the 7-rank importance system
-3. Read 5-10 highest-ranked files
-4. Determine audience (developer, end-user, operator)
-5. Write documentation following `references/doc-template.md`
-6. Cross-check env vars, setup steps, and API endpoints against code
-7. Run Critical Gates as self-review
-8. Save to project root or specified location
+1. Skip multi-agent dispatch.
+2. Scan project structure and identify key files using the 7-rank importance system (see playbook).
+3. Read 5-10 highest-ranked files.
+4. Determine audience (developer, end-user, operator).
+5. Write documentation following `references/doc-template.md`.
+6. Cross-check env vars, setup steps, and API endpoints against code.
+7. Run Critical Gates as self-review.
+8. Save to project root or specified location per [`references/report-template.md`](references/report-template.md) [PROCEDURE].
 
----
-
-## Documentation Types
-
-| Type | Audience | Focus | Length |
-|------|----------|-------|--------|
-| **README** | Developers discovering the project | What it does, quick start, contribution | 1-3 pages |
-| **User Guide** | End-users operating the product | Workflows, features, troubleshooting | 5-20 pages |
-| **API Reference** | Developers integrating | Endpoints, parameters, responses, errors | Varies |
-| **Configuration Guide** | Operators deploying | Environment vars, settings, infrastructure | 2-5 pages |
-| **Getting Started Tutorial** | New users of any type | Single workflow, start to finish | 1-2 pages |
-| **Ship Log** | Humans + coding agents | Product snapshot, features, tech stack, shipping history | 2-5 pages |
-| **Release Notes** | Stack users on `/plugin update` | What changed in a version — user-visible delta only | ≤20 lines per entry |
-
-Default to **User Guide** if the user says "document this" without specifying type. Default to **Ship Log** if the user says "product context" or "what does this app do." Default to **Release Notes** if the user says "release notes," "changelog entry," or passes `--release-notes`.
-
----
-
-## File Importance Ranking (7 Ranks)
-
-The scanner-agent ranks files by documentation value:
-
-| Rank | File Type | What It Reveals | Priority |
-|------|-----------|-----------------|----------|
-| 1 | Entry points (`main.*`, `index.*`, `app.*`) | App initialization, core structure | Read first |
-| 2 | Route/endpoint definitions | Feature surface area | Read second |
-| 3 | Config/env files | Setup requirements, feature flags | Read third |
-| 4 | Models/Types/Schemas | Core data entities, relationships | Read for depth |
-| 5 | Components/Views | UI structure, user interactions | Read for UX docs |
-| 6 | Middleware/Interceptors | Auth, logging, error handling | Read for ops docs |
-| 7 | Migration files | Data model evolution, schema requirements | Skim for setup |
-
----
-
-## 3 Audience Types
-
-| Audience | Vocabulary | Code Examples | Assumed Knowledge |
-|----------|-----------|---------------|-------------------|
-| **End-user** | Plain language, no jargon | Only CLI commands they run | Can install software, use a browser |
-| **Developer** | Technical terms, API vocabulary | Request/response samples, code snippets | Can read code, use package managers |
-| **Operator** | Infrastructure terminology | Config files, deployment commands | Understands networking, servers, CI/CD |
-
----
-
-## Documentation Audit Mode
-
-Trigger when asked to "audit docs", "check documentation", or "are docs up to date."
-
-In audit mode, the orchestrator skips the writer-agent and runs:
-1. `scanner-agent` — inventory all documentation files
-2. `staleness-checker-agent` — compare each doc against current codebase
-3. `critic-agent` — report findings with priority (security-relevant > setup > architecture > everything else)
-
-Prioritize: auth docs and env var docs being stale is a security risk.
-
----
+The 6 standard critical gates fire in fallback mode regardless — safety contract is mode-independent. Route-specific gates (Routes D + E) also fire when those routes are invoked under `--fast`.
 
 ## Anti-Patterns
 
-| Anti-Pattern | Problem | INSTEAD |
-|--------------|---------|---------|
-| Restating code as prose | "handleSubmit handles form submission" adds nothing | writer-agent describes user experience, not internal code |
-| Missing prerequisites | User stuck at step 3 because step 0 was assumed | concept-extractor lists every dependency and version |
-| Wall of text | Users scan, not read — long paragraphs get skipped | writer-agent uses tables, numbered lists, headers |
-| Outdated screenshots | Screenshots rot faster than text | writer-agent prefers text descriptions of UI elements |
-| Documenting internals | Users don't care about ORM layer | writer-agent documents behavior and interfaces |
-| "See code for details" | Defeats purpose of documentation | concept-extractor extracts the relevant detail |
-| Stale docs shipped as current | Actively mislead users | staleness-checker verifies every claim against codebase |
-
----
-
-## Worked Example
-
-**User:** "Document this project" (a Node.js REST API for task management)
-
-**Layer 1 (parallel):**
-- `scanner-agent` → maps project: src/index.ts, src/routes/, src/models/, prisma/schema.prisma, package.json, .env.example. Existing README is stale (references Node 16, project uses Node 18).
-- `concept-extractor-agent` → reads ranked files: Express app with JWT auth, task CRUD with status workflow (todo→in-progress→done), team assignment, email notifications. Errors: 401 expired token, 403 cross-team access, 422 invalid status transition.
-- `audience-profiler-agent` → Developer audience (API consumers). Recommended type: README + API Reference.
-
-**Layer 2 (sequential):**
-- `writer-agent` → writes README with Getting Started (5 numbered steps), API Reference, Configuration table, Troubleshooting section
-- `staleness-checker-agent` → flags: Node version in setup (docs say 16, code needs 18), missing SMTP_PORT env var (in code but not documented)
-- `critic-agent` → FAIL: 2 staleness issues must be fixed
-
-**Revision:** writer-agent updates Node version and adds SMTP_PORT. Critic → PASS.
-
-**Artifact saved to `README.md`.**
-
----
-
-## Before Starting
-
-### Step 0: Product Context
-Check for existing context files: `README.md`, `CLAUDE.md`, `research/product-context.md`, `package.json#description`. Read all available context before scanning code.
-
-### Optional Artifacts
-| Artifact | Source | Benefit |
-|----------|--------|---------|
-| `product-context.md` | icp-research (from `hungv47/research-skills`) | Product positioning and audience already defined |
-| `system-architecture.md` | system-architecture | Architecture decisions pre-mapped |
-| `brand/BRAND.md` + `brand/DESIGN.md` | brand-system (from `hungv47/marketing-skills`) | Brand voice, terminology, and design system |
-
----
-
-## Artifact Template
-
-On re-run: rename existing artifact to `[name].v[N].md` and create new with incremented version.
-
-```yaml
----
-skill: docs-writing
-version: 1
-date: {{today}}
-status: done | done_with_concerns | blocked | needs_context
-audience: [end-user | developer | operator | mixed]
-doc-type: [readme | user-guide | api-reference | config-guide | tutorial | ship-log]
----
-```
-
-## Next Step
-
-Documentation complete. Run `fresh-eyes` for quality review. Run `seo` if docs are public-facing.
-
----
+Critic-load reference: [`references/anti-patterns.md`](references/anti-patterns.md) [ANTI-PATTERN]. 7-pattern catalog — re-read before delivering any doc that smells off (restating code, missing prerequisites, wall of text, documenting internals, "see code for details"). Route-specific anti-patterns + critic-FAIL handling + when-to-defer guidance also live there.
 
 ## Completion Status
 
 Every run ends with explicit status:
-- **DONE** — docs written for the requested audience and doc-type, staleness checks passed, critic PASS
-- **DONE_WITH_CONCERNS** — docs written but some areas thin (advanced features under-documented, code samples stub-only, examples missing); flagged in artifact
-- **BLOCKED** — codebase too large or contradictory for in-scope coverage; needs scope reduction before continuing
-- **NEEDS_CONTEXT** — audience or doc-type not specified and can't be inferred from codebase; ask the user
 
----
+- **DONE** — docs written for the requested audience and doc-type, staleness checks passed, critic PASS.
+- **DONE_WITH_CONCERNS** — docs written but some areas thin (advanced features under-documented, code samples stub-only, examples missing); flagged in artifact.
+- **BLOCKED** — codebase too large or contradictory for in-scope coverage; needs scope reduction before continuing.
+- **NEEDS_CONTEXT** — audience or doc-type not specified and can't be inferred from codebase; ask the user.
+
+## Next Step
+
+Documentation complete. Run `/fresh-eyes` for quality review. Run `/seo` if docs are public-facing.
 
 ## References
 
-- [references/doc-template.md](references/doc-template.md) — Full documentation template with writing guidelines and code-to-doc mapping
-- [references/ship-log-template.md](references/ship-log-template.md) — Ship log template for product context snapshots
+- [`references/playbook.md`](references/playbook.md) [PLAYBOOK] — why, methodology, principles, documentation types catalog, audience types, file importance ranking, when NOT to use, history
+- [`references/_shared/pre-dispatch-protocol.md`](references/_shared/pre-dispatch-protocol.md) [PROCEDURE] — canonical Pre-Dispatch spec
+- [`references/_shared/before-starting-check.md`](references/_shared/before-starting-check.md) [PLAYBOOK] — pre-Pre-Dispatch read pattern
+- [`references/_shared/mode-resolver.md`](references/_shared/mode-resolver.md) [PROCEDURE] — `--fast` behavior + safety-gates-supersede contract
+- [`references/pre-dispatch-prompts.md`](references/pre-dispatch-prompts.md) [PROCEDURE] — Warm + Cold prompts + route-locked Pre-Dispatch variants
+- [`references/anti-patterns.md`](references/anti-patterns.md) [ANTI-PATTERN] — 7-pattern catalog + route-specific anti-patterns + critic-FAIL handling
+- [`references/report-template.md`](references/report-template.md) [PROCEDURE] — default frontmatter + lifecycle by doc-type + filename + version-increment
+- [`references/modes/sync.md`](references/modes/sync.md) [PROCEDURE] — Route C: Post-Change Sync (git diff → targeted updates)
+- [`references/modes/ship-log.md`](references/modes/ship-log.md) [PROCEDURE] — Route D: Ship Log (canonical `research/product-context.md` + merge-mode check + ship-log critic gates)
+- [`references/modes/release-notes.md`](references/modes/release-notes.md) [PROCEDURE] — Route E: Release Notes (CHANGELOG + GH Release + 9 convention-enforcing critic gates)
+- [`references/modes/audit.md`](references/modes/audit.md) [PROCEDURE] — Audit mode (staleness-only, no writes, security-priority ranking)
+- [`references/doc-template.md`](references/doc-template.md) — default writer-template (pre-existing, writer-agent consumes)
+- [`references/ship-log-template.md`](references/ship-log-template.md) — ship-log writer-template (pre-existing, writer-agent consumes in Route D)
+- [`references/examples/api-readme-walkthrough.md`](references/examples/api-readme-walkthrough.md) [EXAMPLE] — Node.js REST API README end-to-end
