@@ -9,6 +9,13 @@ metadata:
   version: "4.0.0"
   budget: standard
   estimated-cost: "$0.20-0.50"
+  refactor_history:
+    - refactored_at: 2026-05-17
+      refactored_for: implementation-roadmap v6 Phase 2 Wave 1 (slot 5 — mixed; 7 Critical Gates + mandatory platforms+surfaces gate + multi-agent architecture preserved in body per safety contract)
+      body_before: 457
+      body_after: 195
+      body_delta_pct: -57.3
+      note: body-only line counts (frontmatter excluded). 5 new refs (playbook, pre-dispatch-prompts, anti-patterns, report-template, examples/checkout-walkthrough). Artifact Template (183 lines) was the largest single-section extraction in v6 program.
 promptSignals:
   phrases:
     - "user flow"
@@ -64,6 +71,23 @@ routing:
 
 **Core Question:** "Can the user complete their goal without thinking — on every surface of every platform it ships on?"
 
+[Read `references/playbook.md` [PLAYBOOK] to understand why this skill exists, methodology, principles, when NOT to use.]
+
+## When To Use
+
+- Designing a feature with multiple screens / decisions / states / platforms.
+- Redesigning an existing flow (new research, usability failures, new user roles).
+- Auditing a shipped flow for missing edge cases or surface coverage gaps.
+- Mapping a new platform-native surface (widget, Live Activity, watch app) into an existing flow.
+
+## When NOT To Use
+
+- Visual brand identity → `/brand-system`.
+- Technical API design → `/system-architecture`.
+- Task decomposition from existing flow → `/task-breakdown`.
+- Scoping unclear requirements → `/discover` first.
+- Single-page landing surface → `/lp-brief`.
+
 ## Critical Gates — Read First
 
 - **No Layer 1 before platforms + surfaces enumerated.** See `references/platform-touchpoints.md`. Wireframe size, entries, edge states all depend on it.
@@ -74,21 +98,19 @@ routing:
 - **One flow = one file.** No pooling. Each run writes `.agents/skill-artifacts/product/flow/<flow-name>.md`.
 - **Stale product context (>30 days) misaligns flows.** Recommend re-running `icp-research`.
 
-## Inputs Required
-- Product/feature requiring flow mapping (new, redesign, or audit)
-- Target user role/persona (flows change per role)
-- Single user goal (one per flow)
-- **Target platforms** — explicit list from `references/platform-touchpoints.md`
-- **Per-platform surfaces in scope** — explicit list per platform
+## Before Starting
 
-## Output
-- `.agents/skill-artifacts/product/flow/<flow-name>.md` — one file per flow run
-- `.agents/skill-artifacts/product/flow/index.md` — auto-created/updated when ≥2 flow files exist
+Apply the [before-starting-check](references/_shared/before-starting-check.md) [PLAYBOOK]:
 
-Slug derived from brief (e.g., "checkout flow" → `checkout.md`); orchestrator confirms if ambiguous.
+0. **Mode resolution** — this skill is `budget: standard`. Mode-resolver ([`references/_shared/mode-resolver.md`](references/_shared/mode-resolver.md) [PROCEDURE]) applies the canonical heuristics (≤3 sentences / single-topic clear-scope / multi-artifact). `--fast` flag forces Single-Agent Fallback (multi-agent unavailable also routes there). **Safety gates supersede `--fast`:** the 7 Critical Gates + mandatory platforms+surfaces gate fire on every run, regardless of mode.
+1. Read `implementation-roadmap/canonical-paths.md` if present — verify output path matches canonical inventory.
+2. Read `.agents/manifest.json` for prior flow files at this slug + cross-flow staleness.
+3. Read `skills-resources/experience/{audience,technical,goals}.md` for product, audience, and platform history.
 
 ## Quality Gate
+
 **Critic agent** runs full rubric (see `agents/critic-agent.md`). Non-negotiable PASS checks:
+
 - Platforms + per-platform surfaces explicitly enumerated (no "cross-platform")
 - Every platform × surface has entry + mini-frame + per-surface edge state (Surface Coverage Map complete)
 - Mini-frame dimensions match `references/platform-touchpoints.md`
@@ -97,14 +119,37 @@ Slug derived from brief (e.g., "checkout flow" → `checkout.md`); orchestrator 
 - Every core screen has ASCII wireframe + 2-4 sentence Description; wireframe CTAs match structure actions
 - 2-3 critical edge-state variants included
 
+## Pre-Dispatch
+
+Run the Pre-Dispatch protocol ([`references/_shared/pre-dispatch-protocol.md`](references/_shared/pre-dispatch-protocol.md) [PROCEDURE]). user-flow has a **mandatory platforms+surfaces gate** before any Layer 1 dispatch — that gate sits inside Pre-Dispatch's question set.
+
+**Needed dimensions:** feature, role/persona, goal (success state), platforms (explicit list, never "cross-platform"), surfaces per platform, primary surface per platform, constraints (auth + min OS versions).
+
+**Read order:**
+1. Pipeline: `research/product-context.md` for product/audience grounding. `brand/DESIGN.md` (optional — components, tokens). `brand/BRAND.md` (optional — voice, terminology).
+2. Experience: `skills-resources/experience/{audience,technical,goals}.md` for product, audience, and platform history.
+3. Catalog: `references/platform-touchpoints.md` for the canonical platform/surface list.
+
+If `research/product-context.md` `date` is >30 days old, recommend re-running `icp-research` to refresh.
+
+**Prompts:** see [`references/pre-dispatch-prompts.md`](references/pre-dispatch-prompts.md) [PROCEDURE] for Warm Start, Cold Start (with the mandatory platforms+surfaces gate inside), write-back rules, and the brief-context contract passed to all agents.
+
+## Artifact Contract
+
+- **Path:** `.agents/skill-artifacts/product/flow/<flow-name>.md` (one file per flow); `.agents/skill-artifacts/product/flow/index.md` auto-generated when ≥2 distinct slugs exist (excluding `.v[N]` versioned files).
+- **Lifecycle:** `pipeline` (regenerated on re-run via rename-and-replace).
+- **Frontmatter fields (baseline):** `skill`, `version`, `date`, `status` (DONE / DONE_WITH_CONCERNS / BLOCKED / NEEDS_CONTEXT), `flow_name` (matches filename slug), `platforms` (explicit list). **Step 7.5 additions** (manifest-sync conformance; backfilled going forward): `lifecycle`, `produced_by`, `provenance`.
+- **Required sections:** Context, Target Platforms & Surfaces, Flow Diagram, Per-Surface Entry Points, Screen Inventory, Screen Wireframes, Per-Surface Mini-Frames, Critical Edge-State Variants, Coverage Map, Surface Coverage Map, Edge Cases Handled, Per-Surface Edge States, Validation Summary. Sub-flows + Next Step when applicable.
+- **Consumed by:** `system-architecture` (reads every flow for API design), `task-breakdown` (reads flows to scope decomposition), `orchestrate-product` (reads index.md for state detection), `fresh-eyes` (post-implementation verification).
+- Full per-flow template + index.md template + filename + version-increment rule: [`references/report-template.md`](references/report-template.md) [PROCEDURE].
+
 ## Chain Position
+
 Prev: `brand-system` (optional — design tokens). Next: implementation. Related: `system-architecture` (API design), `task-breakdown` (decomposition), `discover` (specs).
 
 **Re-run triggers:** significant feature changes, new research, usability failures, new user roles.
 
 **Deference:** `discover` if requirements unclear · `brand-system` for design tokens · `task-breakdown` for decomposition.
-
----
 
 ## Agent Manifest
 
@@ -117,89 +162,21 @@ Prev: `brand-system` (optional — design tokens). Next: implementation. Related
 | Validation | 2b seq | `agents/validation-agent.md` | Miller's threshold, ≤3 actions/screen, integrity, **surface coverage** |
 | Critic | 2b final | `agents/critic-agent.md` | Full rubric PASS/FAIL + **surface coverage matrix** |
 
-### Shared References (read by agents)
+### Shared references (read by agents)
+
 - `references/research-checklist.md` — pre-design research methods, IA, content strategy
 - `references/platform-touchpoints.md` — surface catalog (13 platforms + cross-platform channels): entry triggers, flow roles, native dimensions, per-surface edge states
-
----
 
 ## Routing Logic
 
 Single route — all flows use the full stack. Flows >15 screens auto-split via structure-agent's sub-flow decomposition. Pipeline: Step 0 (interview + gated enumeration) → **Layer 1 parallel** (structure + edge-case) → Merge → **Layer 2a parallel** (diagram + wireframe) → **Layer 2b sequential** (validation → critic). Critic FAIL re-dispatches named agents (max 2 cycles). Deliver to `.agents/skill-artifacts/product/flow/<flow-name>.md`; update `index.md` if ≥2 flows.
-
----
-
-## Pre-Dispatch
-
-Run the Pre-Dispatch protocol (`references/_shared/pre-dispatch-protocol.md`). user-flow has a **mandatory platform/surface gate** before any Layer 1 dispatch — that gate sits inside Pre-Dispatch's question set.
-
-**Needed dimensions:** feature, role/persona, goal (success state), platforms (explicit list, never "cross-platform"), surfaces per platform, primary surface per platform, constraints (auth + min OS versions).
-
-**Read order:**
-1. Pipeline: `research/product-context.md` for product/audience grounding. `brand/DESIGN.md` (optional — components, tokens). `brand/BRAND.md` (optional — voice, terminology).
-2. Experience: `skills-resources/experience/{audience,technical,goals}.md` for product, audience, and platform history.
-3. Catalog: `references/platform-touchpoints.md` for the canonical platform/surface list.
-
-If `research/product-context.md` `date` is >30 days old, recommend re-running `icp-research` to refresh.
-
-**Warm Start** (product-context + prior flow files exist, target platforms inferable from project history):
-
-```
-Found:
-- product/audience → "[from product-context.md]"
-- prior flows → "[list of .agents/skill-artifacts/product/flow/*.md]"
-- typical platform set → "[from experience/technical.md]"
-
-Need before dispatching: feature name + goal + platform set + primary surface per platform.
-(Platform set is the mandatory gate — must be explicit, no "cross-platform".)
-```
-
-**Cold Start** (no upstream context):
-
-```
-user-flow maps a feature into structure, edge cases, and platform-native
-wireframes. The mandatory gate is platforms+surfaces — without explicit
-enumeration, wireframe size, entries, and edge states all become guesses.
-
-1. **Feature/flow name** — what's being mapped? (E.g., "checkout", "onboarding".)
-2. **Role + goal** — who's using it (role, technical skill, frequency)
-   and what's the single user goal this flow serves?
-3. **Platforms** — explicit list from this catalog ONLY:
-   `macOS`, `iOS`, `iPadOS`, `Android`, `Windows`, `web-desktop`,
-   `web-mobile`, `watchOS`, `tvOS`, `visionOS`, `CarPlay`, `Android Auto`, `Linux`.
-   "Cross-platform" is rejected.
-4. **Surfaces per platform + primary** — for each platform you listed, name
-   the surfaces (from `references/platform-touchpoints.md` catalog) and
-   designate the *one* primary surface (drives default wireframe size).
-   E.g., "iOS: app + widget + Live Activity, primary=app".
-5. **Constraints** — authentication (logged in / guest / role-based),
-   business rules forcing specific paths, minimum OS versions.
-
-Answer 1-5 in one response. Q3 + Q4 are gates — no Layer 1 dispatch until both are explicit.
-```
-
-**Write-back:**
-
-| Q | File | Key |
-|---|---|---|
-| 2. Role | `audience.md` | `Audience — [feature] persona` (only if novel) |
-| 3. Platforms | `technical.md` | `Technical — supported platforms` (durable across flows) |
-| 5. Min OS versions | `technical.md` | `Technical — min OS versions` |
-
-Feature name, goal, surfaces per flow, and per-flow constraints stay project-specific (live in the flow file itself).
-
-### Context to Pass to All Agents
-
-After Pre-Dispatch resolves: product · user · goal · slug · platform list · surface matrix · cross-platform channels · primary surface per platform · min OS versions · constraints.
-
----
 
 ## Dispatch Protocol
 
 ### How to spawn a sub-agent
 
 1. **Read** the agent instruction file — include FULL content in the Agent prompt.
-2. **Append** context (product, user, goal, platform, constraints).
+2. **Append** context (product, user, goal, platform, constraints) per [`references/pre-dispatch-prompts.md`](references/pre-dispatch-prompts.md) [PROCEDURE] "Context to pass to all agents."
 3. **Resolve paths to absolute** (rooted at this skill's directory).
 4. **Pass upstream artifacts by content**: orchestrator reads `.agents/skill-artifacts/` files and includes excerpts; sub-agents don't read artifact files directly.
 5. On critic FAIL, append feedback under `## Critic Feedback — Address Every Point`.
@@ -209,13 +186,7 @@ After Pre-Dispatch resolves: product · user · goal · slug · platform list ·
 - **Source citation:** Cite UX heuristics/research/patterns; include URLs; flag unattributable claims `[UNVERIFIED]`.
 - **Context loaded:** Artifact body lists which upstream artifacts were read + versions/dates (audit trail).
 
-### Single-agent fallback
-
-If multi-agent dispatch is unavailable, execute agent instructions sequentially in-context: Layer 1 (structure → edge cases) → Layer 2 (diagram + wireframes → validation) → critic.
-
----
-
-## Layer 1: Parallel Foundation
+### Layer 1: Parallel Foundation
 
 Spawn **IN PARALLEL** (wait for both — outputs feed merge and Layer 2):
 
@@ -224,9 +195,7 @@ Spawn **IN PARALLEL** (wait for both — outputs feed merge and Layer 2):
 | Structure Agent | `agents/structure-agent.md` | brief (product + user + goal + platforms + surface matrix + constraints) | `references/research-checklist.md`, `references/platform-touchpoints.md` |
 | Edge Case Agent | `agents/edge-case-agent.md` | brief (product + user + goal + platforms + surface matrix + constraints) | `references/research-checklist.md`, `references/platform-touchpoints.md` |
 
----
-
-## Merge Step
+### Merge step
 
 Combine structure + edge-case outputs into a unified flow model:
 
@@ -235,9 +204,7 @@ Combine structure + edge-case outputs into a unified flow model:
 
 **Cross-reference checks before Layer 2:** (1) every screen has edge coverage; (2) every platform × surface has an entry-matrix row; (3) every platform × surface has a per-surface edge-state row. Flag failures before dispatching Layer 2.
 
----
-
-## Layer 2a: Parallel Rendering
+### Layer 2a: Parallel Rendering
 
 Spawn **IN PARALLEL** (both consume merged Layer 1 output; wait for both before Layer 2b):
 
@@ -246,7 +213,7 @@ Spawn **IN PARALLEL** (both consume merged Layer 1 output; wait for both before 
 | Diagram Agent | `agents/diagram-agent.md` | brief + merged structure + edge cases | none |
 | Wireframe Agent | `agents/wireframe-agent.md` | brief + platforms + surface matrix + merged structure + edge cases | `references/platform-touchpoints.md` (per-surface native dimensions) |
 
-## Layer 2b: Sequential Chain
+### Layer 2b: Sequential Chain
 
 Dispatch **ONE AT A TIME, IN ORDER:**
 
@@ -255,262 +222,40 @@ Dispatch **ONE AT A TIME, IN ORDER:**
 | 1 | Validation Agent | `agents/validation-agent.md` | Structure + edge cases + diagram + wireframes |
 | 2 | Critic Agent | `agents/critic-agent.md` | Complete flow (all outputs merged + validation results) |
 
----
+### Critic Gate
 
-## Critic Gate
+- **PASS:** Deliver artifact per [`references/report-template.md`](references/report-template.md) [PROCEDURE].
+- **FAIL:** Re-dispatch named agent(s) with feedback per [`references/anti-patterns.md`](references/anti-patterns.md) [ANTI-PATTERN] "When the critic FAILs." Max 2 cycles. After 2 failures, deliver with critic annotations and flag to user (status: DONE_WITH_CONCERNS).
 
-- **PASS:** Deliver artifact.
-- **FAIL:** Re-dispatch named agent(s) with feedback. Max 2 cycles. After 2 failures, deliver with critic annotations and flag to user.
+For an annotated full walkthrough (food-delivery checkout, 13 surfaces, all 6 agents + critic decisions): [`references/examples/checkout-walkthrough.md`](references/examples/checkout-walkthrough.md) [EXAMPLE].
 
----
+## Single-Agent Fallback
 
-## Artifact Template
-
-**Output path:** `.agents/skill-artifacts/product/flow/<flow-name>.md` (one file per flow).
-
-**Re-run of same flow:** rename existing `<flow-name>.md` → `<flow-name>.v[N].md`, create new `<flow-name>.md` with incremented version.
-
-**Multi-flow products:** run once per flow — each creates its own file. After any run yielding ≥2 **distinct slugs** (excluding `.v[N]` versioned files) in `.agents/skill-artifacts/product/flow/`, orchestrator auto-creates/updates `.agents/skill-artifacts/product/flow/index.md` (template below). Versioned files sit next to live ones and are excluded from slug count and index.
-
-### Per-flow file
-
-```markdown
----
-skill: user-flow
-version: 1
-date: {{today}}
-status: done | done_with_concerns | blocked | needs_context
-flow_name: [slug, matches filename]
-platforms: [macOS, iOS, web-desktop, ...]
----
-
-# User Flow: [Flow Name]
-
-## Context
-- **Product:** [product/feature]
-- **User:** [role/persona]
-- **Goal:** [single user goal]
-- **Platforms:** [explicit list — e.g., macOS 13+, iOS 17+, web-desktop]
-- **Flow type:** [linear/branching/cyclical/hub-and-spoke]
-
-## Target Platforms & Surfaces
-
-Matrix of every surface the flow occupies. Surfaces not listed are explicitly out of scope. Primary surface per platform marked ★.
-
-| Platform | Primary surface ★ | Other surfaces in scope | Out-of-scope surfaces (explicit) |
-|----------|-------------------|-------------------------|----------------------------------|
-| [platform] | ★ [surface] | [surface · surface · ...] | [surface · surface · ...] |
-
-### Cross-platform channels in scope
-- [ ] Email / SMS / Push / Calendar / Clipboard / In-app / Third-party chat *(check all that apply; pull from catalog)*
-
-## Flow Diagram
-
-​```mermaid
-graph TD
-    [diagram here]
-​```
-
-**Annotations:**
-1. [Node]: [implementation detail or business rule]
-
-## Per-Surface Entry Points
-
-One row per platform × surface from the matrix above.
-
-| Platform | Surface | Entry trigger | Pre-loaded state | Auth required | First screen in flow | Handback when flow ends |
-|----------|---------|--------------|-------------------|----------------|----------------------|--------------------------|
-| [platform] | [surface] | [concrete trigger from catalog] | [data loaded before UI shows] | [yes/no/optional] | [screen name] | [where focus/state goes] |
-
-## Screen Inventory
-
-| # | Screen | Purpose | Actions | Next States |
-|---|--------|---------|---------|-------------|
-| 1 | [concrete name] | [why it exists] | [user actions] | [where each action leads] |
-
-## Screen Wireframes
-
-*Low-fidelity ASCII layouts — one per core screen. Shows regions and hierarchy, not brand design. Pair with `brand-system` for visual tokens.*
-
-### Screen 1: [Name]
-
-**Primary actions (≤3):** [action 1] · [action 2] · [action 3]
-**Description:** [2-4 sentences — content/data, visual priority, mood. Designer-ready.]
-
-​```
-┌──────────────────────────────────────┐
-│ [ wireframe ]                        │
-└──────────────────────────────────────┘
-​```
-
-[Repeat for every screen in the inventory]
-
-## Per-Surface Mini-Frames
-
-*One ASCII mini-frame per selected surface, rendered at the surface's native dimensions. See `references/platform-touchpoints.md` for dimensions per surface.*
-
-### [Platform] — [Surface name] ([native dimensions])
-
-**Why this surface carries this flow:** [one line]
-
-​```
-┌──────────────────────────────┐
-│  [ mini-frame ]              │
-└──────────────────────────────┘
-​```
-
-[Repeat for every selected surface from the matrix. For multi-state surfaces (Dynamic Island compact/expanded, widget small/medium/large), include a mini-frame per state.]
-
-## Critical Edge-State Variants
-
-*2-3 high-stakes edge states across the whole flow — not one per screen.*
-
-**Variant: [Screen — State]**
-
-**Why this variant matters:** [one line]
-
-​```
-┌──────────────────────────────────────┐
-│ [ variant wireframe ]                │
-└──────────────────────────────────────┘
-​```
-
-## Coverage Map
-
-| # | Screen | Wireframed | Edge variant(s) |
-|---|--------|------------|-----------------|
-| 1 | [name] | ✓ | — or [state] |
-
-## Surface Coverage Map
-
-| Platform | Surface | Entry defined ✓ | Mini-frame ✓ | Edge states ✓ |
-|----------|---------|-----------------|--------------|----------------|
-| [platform] | [surface] | ✓ | ✓ | ✓ |
-
-## Edge Cases Handled
-
-| State | Screen(s) | Handling |
-|-------|-----------|----------|
-| Error | [screens] | [recovery path] |
-| Empty | [screens] | [placeholder/onboarding] |
-| Loading | [screens] | [skeleton/spinner] |
-| Permission | [screens] | [upgrade/redirect] |
-
-## Per-Surface Edge States
-
-Surface-specific failure modes that generic error/empty/loading don't capture. Pull candidates from the "Edge states to check" column of `references/platform-touchpoints.md` for each declared surface.
-
-| Platform | Surface | Edge state | Handling |
-|----------|---------|------------|----------|
-| [platform] | [surface] | [surface-specific failure mode] | [recovery path] |
-
-## Validation Summary
-
-- Happy path length: [N steps]
-- Decision points: [N total]
-- Error recovery paths: [N total]
-- Dead ends: 0
-- Platforms × surfaces covered: [N]
-- Surfaces with mini-frames: [N / total]
-- Surfaces with per-surface edge states: [N / total]
-
-## Sub-flows
-
-- [Sub-flow name] → see `.agents/skill-artifacts/product/flow/[slug]-[sub].md`
-
-## Next Step
-
-Hand off to implementation. Pair with `brand-system` for visual design tokens if not already created.
-```
-
-### `index.md` (auto-generated when ≥2 flow files exist)
-
-```markdown
----
-skill: user-flow
-type: index
-date: {{today}}
----
-
-# Product Flow Index
-
-Generated from the files in this directory. Update whenever a flow file is added, renamed, or versioned.
-
-## Flows
-
-| File | Flow | Platforms | Last updated | Version | Status |
-|------|------|-----------|--------------|---------|--------|
-| [flow-slug.md](./flow-slug.md) | [Flow name] | [platforms] | [date] | [n] | [draft/done] |
-
-## Platform coverage at a glance
-
-| Platform | Flows touching this platform |
-|----------|-------------------------------|
-| [platform] | [slug · slug · ...] |
-```
-
----
-
-## Worked Example — Food-Delivery Checkout (Multi-Platform)
-
-**User:** "Map the checkout flow for our food-delivery app. We ship on iOS, Android, and web."
-
-**Step 0 — Interview** produces: slug `checkout`; platforms `iOS 17+` / `iPadOS 17+` / `Android 13+` / `web-desktop` / `web-mobile`; surfaces picked per platform from the catalog (primary marked ★), ~13 surfaces total across Home icon, Lock-screen widget, Dynamic Island / Live Activity, Apple Pay, Quick Settings tile, notification + inline reply, Google Pay, URL routing, Web Push, OAuth redirect, PWA install, Add-to-Home-Screen; cross-platform channels email + push + SMS; branching flow type; Apple Pay / Google Pay / card; minimum order $10; Live Activity required.
-
-**Layer 1** — Structure agent returns 6 core screens (Cart Review → Shipping Address → Shipping Method → Payment Selection → Order Review → Order Confirmation), 3 decision points, 3 exits, and a 13-row Per-Surface Entry Matrix. Edge-case agent returns standard 5-category coverage per screen plus per-surface edge states pulled from the catalog (Live Activity 8h ceiling, Quick Settings tile desync, Web Push denied, PWA state loss on iOS, universal link fallback).
-
-**Merge** — all 6 screens covered, all 13 platform × surface rows have entry + edge rows. Proceed.
-
-**Layer 2a** — Diagram agent returns Mermaid `graph TD`. Wireframe agent returns 6 core-screen wireframes (mobile 34ch, desktop 68ch), 2 critical edge variants, and 13 per-surface mini-frames at native dimensions from the catalog.
-
-**Layer 2b** — Validation: happy path 5 steps (PASS), ≤3 actions/screen (PASS), surface coverage 13/13 (PASS). Critic: PASS 4.8.
-
-**Deliver** — `.agents/skill-artifacts/product/flow/checkout.md`. No `index.md` yet (only one flow). Second flow triggers index creation.
-
----
+If multi-agent dispatch is unavailable or mode-resolver downgrades to `fast`, execute agent instructions sequentially in-context: Layer 1 (structure → edge cases) → Layer 2 (diagram + wireframes → validation) → critic. The 7 Critical Gates + mandatory platforms+surfaces gate fire in fallback mode regardless — safety contract is mode-independent.
 
 ## Anti-Patterns
 
-**Happy path only** — Flows break at the first error. INSTEAD: Edge-case-agent maps error/empty/loading/permission/offline for every screen.
-
-**Generic screen names** — "Step 1", "Step 2" tell nobody anything. INSTEAD: Concrete names matching dev/design vocabulary — "Payment Method Selection", "Order Review."
-
-**Unlabeled edges / wrong shapes** — Bare `-->` connections and mixed-up shapes break diagrams. INSTEAD: Every edge has a present-tense label (`-->|"Clicks Submit"|`); 5 shapes used consistently — rectangle=screen, diamond=decision, stadium=start/end, hexagon=process, parallelogram=I/O.
-
-**Dead-end errors** — "Something went wrong" with no recovery path. INSTEAD: Every error state leads to a recovery action (retry, back, contact support, alternative).
-
-**Overloaded screens** — 5+ primary actions creates decision paralysis. INSTEAD: ≤3 primary actions per screen; split or move to navigation.
-
-**Vague decision conditions** — "If appropriate" is not implementable. INSTEAD: Exact rules a developer can code — `cart.subtotal >= 10.00`, `user.role === 'admin'`.
-
-**Skipping validation** — Assuming structure is correct without tracing paths. INSTEAD: Validation-agent traces every path from every entry to an exit, checking orphans and dead ends.
-
-**Flow tables without wireframes / wireframing every edge** — A screen inventory is not a screen; wireframing every edge state creates 30 frames of noise. INSTEAD: One wireframe per core screen + 2-3 critical edge variants picked on impact.
-
-**"Cross-platform" as a platform answer** — Collapses platform-specific surface decisions into nothing. macOS, iOS, and Android surfaces are different — a flow on "cross-platform" has no defined surface set. INSTEAD: Enumerate every platform. "Cross-platform" is a refusal to enumerate.
-
-**Pooling many flows into one file** — One `FLOW.md` for checkout + onboarding + password reset drifts quickly. INSTEAD: One flow per file at `.agents/skill-artifacts/product/flow/<flow-name>.md`. Use `index.md` for the catalog view.
-
-**Skipping per-surface coverage** — Picking surfaces at Step 0 but only wireframing main screens, or treating "widget refresh budget exhausted" / "Live Activity 8h ceiling hit" / "universal link fell back to web" as generic "network errors." Each declared surface has specific layout constraints and specific failure modes. INSTEAD: One mini-frame per selected surface at its native dimensions, plus a per-surface edge-state table — both pulled from `references/platform-touchpoints.md`.
-
-**Drift between wireframe and structure inventory** — Wireframe shows 5 CTAs when the structure-agent listed 2 actions. INSTEAD: Wireframe CTAs must match the structure actions column exactly.
-
-**Wireframes without descriptions** — An ASCII frame + CTA label gives layout but not intent. INSTEAD: Each screen has a 2-4 sentence Description covering content/data, visual priority, and mood. "Shows information" is not a description — name the actual content, hierarchy, and mood.
-
----
+Critic-load reference: [`references/anti-patterns.md`](references/anti-patterns.md) [ANTI-PATTERN]. 13-pattern catalog — re-read before dispatching any layer that smells off (happy-path-only edge-case output, generic screen names, wireframe-structure drift, "cross-platform" creeping back in, edge-state-skipping). When-to-defer guidance + critic-FAIL handling also live there.
 
 ## Completion Status
 
 Every run ends with explicit status:
-- **DONE** — flow specified for all declared platforms with structure, wireframes, edge states, and per-surface coverage; critic PASS
-- **DONE_WITH_CONCERNS** — flow complete but with platform surfaces under-specified (e.g., widget refresh budget unverified, Live Activity ceiling not modeled); flagged inline
-- **BLOCKED** — feature scope unclear or contradictory across declared platforms; needs user clarification before flow can converge
-- **NEEDS_CONTEXT** — `research/product-context.md` missing for audience grounding; recommend `icp-research` or interview the user
 
----
+- **DONE** — flow specified for all declared platforms with structure, wireframes, edge states, and per-surface coverage; critic PASS.
+- **DONE_WITH_CONCERNS** — flow complete but with platform surfaces under-specified (e.g., widget refresh budget unverified, Live Activity ceiling not modeled); flagged inline.
+- **BLOCKED** — feature scope unclear or contradictory across declared platforms; needs user clarification before flow can converge.
+- **NEEDS_CONTEXT** — `research/product-context.md` missing for audience grounding; recommend `icp-research` or interview the user.
 
-## Files
+## References
 
-**Agents:** see Agent Manifest above for the canonical list. Full instructions in [`agents/`](agents/).
-**References:** [`references/research-checklist.md`](references/research-checklist.md) (pre-design research), [`references/platform-touchpoints.md`](references/platform-touchpoints.md) (surface catalog).
-**Scripts:** [`scripts/generate_flow.py`](scripts/generate_flow.py) — generate Mermaid diagrams programmatically for complex / multi-variant flows.
+- [`references/playbook.md`](references/playbook.md) [PLAYBOOK] — why, methodology, principles, when NOT to use, history
+- [`references/_shared/pre-dispatch-protocol.md`](references/_shared/pre-dispatch-protocol.md) [PROCEDURE] — canonical Pre-Dispatch spec
+- [`references/_shared/before-starting-check.md`](references/_shared/before-starting-check.md) [PLAYBOOK] — pre-Pre-Dispatch read pattern
+- [`references/_shared/mode-resolver.md`](references/_shared/mode-resolver.md) [PROCEDURE] — `--fast` behavior + safety-gates-supersede contract
+- [`references/pre-dispatch-prompts.md`](references/pre-dispatch-prompts.md) [PROCEDURE] — Warm + Cold prompts + platforms+surfaces gate + brief-context contract
+- [`references/anti-patterns.md`](references/anti-patterns.md) [ANTI-PATTERN] — 13-pattern catalog + when to defer + critic-FAIL handling
+- [`references/report-template.md`](references/report-template.md) [PROCEDURE] — per-flow template + index.md template + filename + version-increment
+- [`references/examples/checkout-walkthrough.md`](references/examples/checkout-walkthrough.md) [EXAMPLE] — food-delivery checkout (13 surfaces, multi-platform) end-to-end
+- [`references/platform-touchpoints.md`](references/platform-touchpoints.md) — surface catalog (13 platforms + cross-platform channels): entry triggers, flow roles, native dimensions, per-surface edge states (pre-existing, agents consume)
+- [`references/research-checklist.md`](references/research-checklist.md) — pre-design research methods, IA, content strategy (pre-existing, agents consume)
+- `scripts/generate_flow.py` — generate Mermaid diagrams programmatically for complex / multi-variant flows
