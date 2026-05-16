@@ -9,6 +9,13 @@ metadata:
   version: "3.0.0"
   budget: deep
   estimated-cost: "$1-3"
+  refactor_history:
+    - refactored_at: 2026-05-17
+      refactored_for: implementation-roadmap v6 Phase 2 Wave 1 (slot 2 — structural, 5 golden rules preserved in body per safety contract)
+      body_before: 296
+      body_after: 180
+      body_delta_pct: -39.1
+      note: body-only line counts (frontmatter excluded). 5 new refs (playbook, pre-dispatch-prompts, anti-patterns, report-template, examples/cleanup-walkthrough). Triage section deleted (triple-duplicate with Dispatch Protocol + Routing Rules). AI Slop Patterns body section deleted (already in references/ai-slop-patterns.md).
 promptSignals:
   phrases:
     - "dead code"
@@ -65,69 +72,73 @@ routing:
 
 **Core Question:** "Is this change purely structural with zero behavioral impact?"
 
-## Inputs Required
-- A codebase or set of files to clean up
-- User intent: structural reorganization, code-level cleanup, refactoring, or all three
+[Read `references/playbook.md` [PLAYBOOK] to understand why this skill exists, methodology, principles, when NOT to refactor.]
 
-## Output
-- `.agents/skill-artifacts/meta/records/[date]-cleanup-<slug>.md`
+## When To Use
 
----
+- Codebase has accumulated dead code, AI slop, unused dependencies, or production-waste assets.
+- After major feature additions, before release milestones, when test runtime grows.
+- When onboarding new team members and structural cruft slows them down.
+- Standalone — no upstream gate required.
+
+## When NOT To Use
+
+- Cleanup is mixed with a feature change (separate commits — always).
+- No test coverage AND behavior-preservation matters (write tests first; see [`references/anti-patterns.md`](references/anti-patterns.md) [ANTI-PATTERN] "When NOT to refactor").
+- Pre-existing test/build failures unrelated to cleanup (BLOCKED until baseline is green).
+- Code that won't change again — if nobody will read or modify it, the investment doesn't pay off.
+
+## Before Starting
+
+Apply the [before-starting-check](references/_shared/before-starting-check.md) [PLAYBOOK]:
+
+0. **Mode resolution** — this skill is `budget: deep`. Mode-resolver ([`references/_shared/mode-resolver.md`](references/_shared/mode-resolver.md) [PROCEDURE]) auto-downgrades to `fast` for ≤5-file scopes (→ Single-Agent Fallback path below); `--fast` flag forces single-agent regardless of scope. **Safety gates supersede `--fast`:** the 5 golden rules (Critical Gates below) fire on every run, regardless of mode. Pre-Dispatch fires under `--fast` if test-suite presence + conventions aren't resolvable.
+1. Read `implementation-roadmap/canonical-paths.md` if present — verify output path matches canonical inventory (`.agents/skill-artifacts/meta/records/[date]-cleanup-<slug>.md`).
+2. Read `.agents/manifest.json` for prior cleanup runs against the same scope; surface staleness if a recent cleanup already covered this path.
+3. Read `skills-resources/experience/technical.md` for prior conventions notes.
 
 ## Pre-Dispatch
 
 Run the Pre-Dispatch protocol (`references/_shared/pre-dispatch-protocol.md`).
 
-**Needed dimensions:** codebase path, cleanup intent (dead code / unused deps / asset / refactor / mixed), test suite available?, conventions to preserve.
+**Needed dimensions:** codebase path, cleanup intent (dead code / unused deps / asset / refactor / mixed), test suite available, conventions to preserve.
 
 **Read order:**
-1. Codebase scan: package manifest, test config, lint config, framework hints (CLAUDE.md, .editorconfig, etc.).
+1. Codebase scan: package manifest, test config, lint config, framework hints (CLAUDE.md, `.editorconfig`, etc.).
 2. Experience: `skills-resources/experience/technical.md` for prior conventions notes.
 
-**Warm Start** (cleanup intent obvious from invocation, e.g., user said "remove dead code"):
+**Prompts:** see [`references/pre-dispatch-prompts.md`](references/pre-dispatch-prompts.md) [PROCEDURE] for Warm Start (obvious intent), Cold Start (vague invocation), and write-back rules.
 
-```
-Found:
-- repo → "[detected framework + test runner]"
-- intent → "[parsed from invocation: dead code / deps / asset / refactor]"
+## Artifact Contract
 
-Test suite detected: [yes/no]. Override or proceed?
-```
-
-**Cold Start** (vague invocation, e.g., "clean this up"):
-
-```
-code-cleanup applies the 5 golden rules (preserve behavior, small steps,
-check conventions, test after each change, rollback awareness). Before I scan:
-
-1. **Codebase path** — root directory or specific files/glob.
-2. **Cleanup intent** — pick one or more:
-   - dead code (unused exports, unreachable branches, abandoned features)
-   - unused dependencies
-   - asset cleanup (orphaned images, unused config files)
-   - refactor (consolidation, splitting, naming)
-3. **Test suite** — does the project have one? (Identifies your validation
-   floor; if no, I'll skip auto-validation and flag DONE_WITH_CONCERNS.)
-4. **Conventions to preserve** — anything I should NOT touch (file structure,
-   naming patterns, in-flight refactors)?
-
-Answer 1-4 in one response. I'll dispatch scanners.
-```
-
-**Write-back:**
-
-| Q | File | Key |
-|---|---|---|
-| 4. Conventions | `technical.md` | `Technical — codebase conventions` (only if user gave durable rules, not "leave file X alone for this run") |
-
-Other answers are run-specific, not persisted.
+- **Path:** `.agents/skill-artifacts/meta/records/[date]-cleanup-<slug>.md` (re-run same slug same day → append `-v[N]`)
+- **Lifecycle:** `snapshot` (dated, immutable record of one cleanup run)
+- **Frontmatter fields:** `skill`, `version`, `date`, `status` (DONE / DONE_WITH_CONCERNS / BLOCKED / NEEDS_CONTEXT), `lifecycle`, `produced_by`, `provenance`
+- **Required sections:** Scope, Changes Made (≥1 subsection populated), Validation, Critic Verdict. Manual Verification Needed + Rollback when applicable.
+- **Consumed by:** `cleanup-artifacts` (skill, scans filenames for staleness), `fresh-eyes` (when reviewing cleanup-touched code), operator (history audit).
+- Full template: [`references/report-template.md`](references/report-template.md) [PROCEDURE].
 
 ## Chain Position
-Previous: none | Next: none (standalone)
 
-**Re-run triggers:** After major feature additions, before release milestones, when test suite runtime grows significantly, or when onboarding new team members.
+Previous: none | Next: none (standalone).
 
----
+**Re-run triggers:** after major feature additions, before release milestones, when test runtime grows significantly, when onboarding new team members.
+
+## Critical Gates (The 5 Golden Rules)
+
+Before delivering, the critic-agent verifies ALL golden rules pass:
+
+1. **Preserve behavior** — Every change must produce the same observable behavior. If you can't verify this, don't make the change.
+2. **Small incremental steps** — One change at a time. Commit between steps. Never combine a refactor with a feature change.
+3. **Check existing conventions first** — Before changing anything, read the codebase's existing coding guidelines, linting config, naming patterns, and file structure. Match them.
+4. **Test after each change** — Run the test suite after every modification. If tests break, revert and try a smaller step.
+5. **Rollback awareness** — Commit before starting. Note the hash. If a change chain gets too complex, revert and try a different approach.
+
+**Additional gate:** Session limits — target ~30 changes per cleanup session. After 15 changes, generate an interim summary. If each fix spawns 2+ new issues, stop and reassess.
+
+**If any golden rule fails:** the critic identifies the specific change that violated it and recommends reverting. Never silently bypass — the rules are the safety contract. Full failure-handling flow: [`references/anti-patterns.md`](references/anti-patterns.md) [ANTI-PATTERN] "When the critic FAILs."
+
+**Safety supersedes `--fast`:** all 5 rules fire under `--fast`, single-agent fallback, and dry-run modes. Mode-resolver's safety-gates-supersede contract applies.
 
 ## Multi-Agent Architecture
 
@@ -167,12 +178,12 @@ Layer 2 (sequential):
    - "Remove AI slop" → code-scanner only
    - "Find unused assets" → asset-scanner only
    - "Clean up the codebase" → all four scanners
-2. **Layer 1 dispatch** — send brief to relevant scanner agents in parallel.
+2. **Layer 1 dispatch** — send brief to relevant scanner agents in parallel. Scanners consume [`references/ai-slop-patterns.md`](references/ai-slop-patterns.md) and [`references/production-waste-patterns.md`](references/production-waste-patterns.md) as their pattern catalogs.
 3. **Safe removal** — pass all scan results to `safe-removal-agent`. It creates a backup commit, then removes verified-safe targets.
 4. **Refactoring** — pass code scanner results + removal results to `refactoring-agent`. It fixes code-level issues.
 5. **Validation** — `validation-agent` runs all available checks (tests, types, lint, build).
-6. **Critic review** — `critic-agent` checks golden rules compliance. If FAIL, identify the specific change to revert.
-7. **Assembly** — compile cleanup report. Save to `.agents/skill-artifacts/meta/records/[date]-cleanup-<slug>.md`.
+6. **Critic review** — `critic-agent` checks golden rules compliance. If FAIL, identify the specific change to revert per [`references/anti-patterns.md`](references/anti-patterns.md) [ANTI-PATTERN] "When the critic FAILs."
+7. **Assembly** — compile cleanup report per [`references/report-template.md`](references/report-template.md) [PROCEDURE]. Save to `.agents/skill-artifacts/meta/records/[date]-cleanup-<slug>.md`.
 
 ### Routing Rules
 
@@ -188,169 +199,49 @@ Layer 2 (sequential):
 | Critic FAIL | Revert specific change; re-run validation |
 | Session >30 changes | Stop and reassess scope |
 
----
-
-## Critical Gates (The 5 Golden Rules)
-
-Before delivering, the critic-agent verifies ALL golden rules pass:
-
-1. **Preserve behavior** — Every change must produce the same observable behavior. If you can't verify this, don't make the change.
-2. **Small incremental steps** — One change at a time. Commit between steps. Never combine a refactor with a feature change.
-3. **Check existing conventions first** — Before changing anything, read the codebase's existing coding guidelines, linting config, naming patterns, and file structure. Match them.
-4. **Test after each change** — Run the test suite after every modification. If tests break, revert and try a smaller step.
-5. **Rollback awareness** — Commit before starting. Note the hash. If a change chain gets too complex, revert and try a different approach.
-
-**Additional gate:** Session limits — target ~30 changes per cleanup session. After 15 changes, generate an interim summary. If each fix spawns 2+ new issues, stop and reassess.
-
-**If any golden rule fails:** the critic identifies the specific change that violated it and recommends reverting.
-
----
+For an annotated full-codebase walkthrough (Express API, all 4 scanners + Layer 2 + critic decisions): [`references/examples/cleanup-walkthrough.md`](references/examples/cleanup-walkthrough.md) [EXAMPLE].
 
 ## Single-Agent Fallback
 
-When context window is constrained or the cleanup scope is small (fewer than 5 files):
+Used when mode-resolver downgrades to `fast` (≤5-file scope, context-constrained, or `--fast` flag):
 
-1. Skip multi-agent dispatch
-2. Create backup commit
-3. Scan the target files for structural issues, code smells, and dead code
-4. Apply fixes one at a time, testing after each
-5. Run all available checks
-6. Verify golden rules compliance as self-review
-7. Save to `.agents/skill-artifacts/meta/records/[date]-cleanup-<slug>.md`
+1. Skip multi-agent dispatch.
+2. Create backup commit.
+3. Scan the target files for structural issues, code smells, and dead code.
+4. Apply fixes one at a time, testing after each.
+5. Run all available checks.
+6. Verify golden rules compliance as self-review.
+7. Save to `.agents/skill-artifacts/meta/records/[date]-cleanup-<slug>.md`.
 
----
-
-## Triage
-
-Determine scope before starting. Parts can be used independently or combined.
-
-| User intent | Scanners to dispatch |
-|---|---|
-| "Reorganize files", "remove dead code", "clean up repo structure" | structural-scanner-agent |
-| "Remove AI slop", "clean up PR", "fix code smells" | code-scanner-agent |
-| "Check dependencies", "remove unused packages" | dependency-scanner-agent |
-| "Find unused assets", "production waste", "what's shipping that shouldn't be", "nuke dead assets" | asset-scanner-agent |
-| "Refactor this", "extract this", "redesign this module" | code-scanner-agent → refactoring-agent |
-| "Clean up the codebase" (broad) | All four scanners → safe-removal → refactoring |
-
----
-
-## AI Slop Patterns
-
-The code-scanner-agent specifically looks for these AI-generated code patterns:
-
-**Comments to remove:**
-- Obvious/redundant comments explaining what code clearly does
-- Comments that don't match the commenting style elsewhere in the file
-- Section divider comments when not used elsewhere
-
-**Defensive code to remove:**
-- Try/catch blocks around code that doesn't throw
-- Null/undefined checks when callers guarantee valid input
-- Type guards that duplicate earlier validation
-
-**Type issues to fix:**
-- Casts to `any` that bypass TypeScript's type system
-- Type assertions that hide real type mismatches
-- Overly broad generic types when specific types exist
-
----
-
-## When NOT to Refactor
-
-The refactoring-agent skips these situations:
-
-- **No test coverage** — you can't verify behavior is preserved. Write tests first.
-- **Tight deadline** — ship first, refactor later.
-- **Code that won't change again** — if nobody will read or modify it, the investment doesn't pay off.
-- **During a feature change** — separate commits. Always.
-
----
+The 5 golden rules + Pre-Dispatch test-suite gate fire in fallback mode regardless — safety contract is mode-independent.
 
 ## Anti-Patterns
 
-| Anti-Pattern | Problem | INSTEAD |
-|--------------|---------|---------|
-| Behavioral changes disguised as cleanup | Observable output changes | refactoring-agent verifies same behavior, different structure |
-| "Tests pass so it's fine" | Incomplete coverage means passing tests don't guarantee equivalence | validation-agent flags uncovered code for manual verification |
-| Combining cleanup with features | One change at a time | safe-removal and refactoring agents never add features |
-| Removing "probably unused" code | May be dynamically imported | dependency-scanner verifies zero imports before flagging |
-| Flagging conventions as smells | Existing patterns are intentional | code-scanner reads surrounding code before flagging |
-| Large batch removals | Can't identify which removal broke something | safe-removal-agent works in small batches, tests between each |
-
----
-
-## Worked Example
-
-**User:** "Clean up this Express API project, it's gotten messy after 6 months."
-
-**Triage:** Broad cleanup — dispatch all four scanners.
-
-**Layer 1 (parallel):**
-- `structural-scanner-agent` → 4 unused files in /utils, 2 duplicate helpers, naming inconsistency (userController.js vs product-controller.js)
-- `code-scanner-agent` → Pass 1: 0 safety issues. Pass 2: 12 TODO comments, 3 console.log, 2 commented-out blocks (>50 lines each), 5 AI slop instances
-- `dependency-scanner-agent` → 2 unused dependencies (lodash, moment), 1 duplicate (underscore alongside lodash)
-- `asset-scanner-agent` → 1 broken asset (0-byte favicon.avif, failed conversion), 3 test fixtures in public/ (user-fixture.json, seed-data.csv, mock-response.json — 45KB total), 2 unused images (old-hero.png 1.2MB, draft-logo.png 340KB — never referenced), 1 unoptimized (hero-bg.png 2.1MB, should be WebP at ~400KB)
-
-**Layer 2 (sequential):**
-- `safe-removal-agent` → backup commit, removes 4 unused files + 2 commented blocks + lodash + underscore + 0-byte favicon.avif + 3 test fixtures + 2 unused images. Tests pass.
-- `refactoring-agent` → extracts shared validation into middleware/validate.js, normalizes to kebab-case, removes 12 TODOs and 3 console.logs
-- `validation-agent` → bun test: 47/47 pass. tsc --noEmit: clean. Lint: clean.
-- `critic-agent` → PASS. All 5 golden rules pass.
-
-**Artifact saved to `.agents/skill-artifacts/meta/records/2026-05-08-cleanup-express-api.md`.**
-
----
-
-## Artifact Template
-
-On re-run with the same slug on the same day, append `-v[N]` to the dated filename — e.g., `2026-05-08-cleanup-api-v2.md`. Different days produce new dated files automatically.
-
-```markdown
----
-skill: code-cleanup
-version: 1
-date: {{today}}
-status: done | done_with_concerns | blocked | needs_context
----
-
-# Cleanup Report
-
-## Scope
-[Structural / Code-Level / Refactoring / All]
-
-## Changes Made
-### Structural
-### Code-Level
-### Assets
-### Refactoring
-
-## Validation
-- Tests: [PASS/FAIL]
-- Type check: [PASS/FAIL/SKIPPED]
-- Lint: [PASS/FAIL/SKIPPED]
-- Build: [PASS/FAIL/SKIPPED]
-
-## Manual Verification Needed
-[Features lacking test coverage]
-```
+Critic-load reference: [`references/anti-patterns.md`](references/anti-patterns.md) [ANTI-PATTERN]. Re-read before applying any change that smells off — large batch, behavioral side-effect, untested deletion, convention override, generated-code touch. The "When NOT to refactor" exit conditions also live there.
 
 ## Next Step
 
-Run `fresh-eyes` for a fresh-eyes quality review.
-
----
+Run `/fresh-eyes` for a fresh-eyes quality review on cleanup-touched code.
 
 ## Completion Status
 
 Every run ends with explicit status:
-- **DONE** — all approved removals applied, behavior preserved (tests + lint + build PASS), critic PASS
-- **DONE_WITH_CONCERNS** — cleanup applied but some validation skipped (no test suite, pre-existing build break, manual verification required); report flags what wasn't checked
-- **BLOCKED** — pre-existing test/build failures unrelated to cleanup; pause so the baseline can be fixed before proceeding (otherwise rollback signal is unreliable)
-- **NEEDS_CONTEXT** — codebase conventions unclear (no framework detected, mixed language stack, ambiguous test runner); ask user before scanning
 
----
+- **DONE** — all approved removals applied, behavior preserved (tests + lint + build PASS), critic PASS.
+- **DONE_WITH_CONCERNS** — cleanup applied but some validation skipped (no test suite, pre-existing build break, manual verification required); report flags what wasn't checked.
+- **BLOCKED** — pre-existing test/build failures unrelated to cleanup; pause so the baseline can be fixed before proceeding (otherwise rollback signal is unreliable).
+- **NEEDS_CONTEXT** — codebase conventions unclear (no framework detected, mixed language stack, ambiguous test runner); ask user before scanning.
 
-## Scripts
+## References
 
+- [`references/playbook.md`](references/playbook.md) [PLAYBOOK] — why, methodology, principles, when NOT to refactor, history
+- [`references/_shared/pre-dispatch-protocol.md`](references/_shared/pre-dispatch-protocol.md) — canonical Pre-Dispatch spec
+- [`references/_shared/before-starting-check.md`](references/_shared/before-starting-check.md) [PLAYBOOK] — pre-Pre-Dispatch read pattern (canonical at `meta-skills/references/`, synced)
+- [`references/_shared/mode-resolver.md`](references/_shared/mode-resolver.md) [PROCEDURE] — `--fast` behavior + safety-gates-supersede contract
+- [`references/pre-dispatch-prompts.md`](references/pre-dispatch-prompts.md) [PROCEDURE] — Warm + Cold prompts verbatim
+- [`references/ai-slop-patterns.md`](references/ai-slop-patterns.md) — code-scanner-agent's pattern catalog (comments, defensive code, types, structural, frontend AI slop)
+- [`references/production-waste-patterns.md`](references/production-waste-patterns.md) — asset-scanner-agent's pattern catalog
+- [`references/anti-patterns.md`](references/anti-patterns.md) [ANTI-PATTERN] — failure modes + When NOT to refactor + When the critic FAILs
+- [`references/report-template.md`](references/report-template.md) [PROCEDURE] — artifact frontmatter + section template + filename conventions
+- [`references/examples/cleanup-walkthrough.md`](references/examples/cleanup-walkthrough.md) [EXAMPLE] — Express API cleanup end-to-end
 - `scripts/analyze_codebase.py` — Static analysis tool that generates dependency reports, identifies junk files, empty directories, large directories, potentially unused code files, unused/broken/duplicate assets, and unoptimized media. Used by structural-scanner-agent, dependency-scanner-agent, and asset-scanner-agent.
